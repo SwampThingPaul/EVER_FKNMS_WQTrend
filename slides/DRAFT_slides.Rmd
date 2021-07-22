@@ -32,9 +32,9 @@ wd="C:/Julian_LaCie/_GitHub/EVER_FKNMS_WQTrend"
 plot.path="C:/Julian_LaCie/_GitHub/EVER_FKNMS_WQTrend/Plots/"
 export.path="C:/Julian_LaCie/_GitHub/EVER_FKNMS_WQTrend/Export/"
 
-# plot.figs=list.files(plot.path,full.names=T)
-# slides.figs="C:/Julian_LaCie/_GitHub/EVER_FKNMS_WQTrend/slides/plots"
-# file.copy(plot.figs,slides.figs,overwrite=T,recursive=T)
+plot.figs=list.files(plot.path,full.names=T)
+slides.figs="C:/Julian_LaCie/_GitHub/EVER_FKNMS_WQTrend/slides/plots"
+file.copy(plot.figs,slides.figs,overwrite=T,recursive=T)
 
 ### 
 # Functions
@@ -154,12 +154,18 @@ name: Trend
 
 ### Trend
 
-```{r,out.width="75%",fig.align="center"}
+Figure caption
+
+**Left:** Annual rate of change for geometric mean total nitrogen (TN), dissolved inorganic nutrient (DIN), total phosphorous (TP), soluble reactive phosphorus (SRP) and chlorophyll-a (Chl-a) concentrations at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record. **Right:** Average annual geometric mean TN, DIN, TP, SRP and Chl-a concentrations  across the study area.
+
+Plot is on the next slide.
+---
+name: Trend
+```{r,out.width="90%",fig.align="center"}
 
 knitr::include_graphics("./plots/TrendMaps.png")
 ```
 <!-- .center[.small[**Left:** Annual rate of change for geometric mean total nitrogen (TN), dissolved inorganic nutrient (DIN), total phosphorous (TP), soluble reactive phosphorus (SRP) and chlorophyll-a (Chl-a) concentrations at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record. **Right:** Average annual geometric mean TN, DIN, TP, SRP and Chl-a concentrations  across the study area.]] -->
-
 ---
 name: TNGAM
 
@@ -207,6 +213,15 @@ name: climate
 ```{r,out.width="100%",fig.align="center",fig.cap="Altantic Multi-decadal Oscillation (AMO) and Pacific Decadal Oscillation (PDO) index (1870 - 2021). Data source: NOAA."}
 
 knitr::include_graphics("./plots/ClimateIndex.png")
+```
+
+---
+name: climate
+
+<br>
+```{r,out.width="100%",fig.align="center",fig.cap="Altantic Multi-decadal Oscillation (AMO) and Pacific Decadal Oscillation (PDO) index (1995 - 2021). Data source: NOAA."}
+
+knitr::include_graphics("./plots/ClimateIndex_v2.png")
 ```
 
 ---
