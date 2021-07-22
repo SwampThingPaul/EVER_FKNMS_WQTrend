@@ -34,7 +34,6 @@ library(viridis)
 library(mgcv)
 library(gratia)
 
-
 #Paths
 wd="C:/Julian_LaCie/_GitHub/EVER_FKNMS_WQTrend"
 
@@ -64,7 +63,86 @@ read.lter=function(data.package,PASTA,DOI,na.string.val=c("-9999","-9999.00","-9
   dt1=read.csv(infile1,na.strings=na.string.val)
   return(dt1)
 }
+notidy_glance_gam<-function(model,...){
+  data.frame(
+    df=sum(model$edf),
+    df.residual=stats::df.residual(model),
+    logLik=as.numeric(stats::logLik(model)),
+    AIC = stats::AIC(model),
+    BIC = stats::BIC(model),
+    adj.r.squared=summary(model)$r.sq,
+    deviance=summary(model)$dev.expl,
+    nobs = stats::nobs(model),
+    method=as.character(summary(model)$method),
+    sp.crit=as.numeric(summary(model)$sp.criterion),
+    scale.est=summary(model)$scale
+  )
+}
 
+notidy_tidy_gam<-function(model,dig.num=2,...){
+  ptab <- data.frame(summary(model)$p.table)
+  ptab$term<-rownames(ptab)
+  rownames(ptab)=NULL
+  ptab$Component="A. parametric coefficients"
+  ptab<-ptab[,c(6,5,1:4)]
+  colnames(ptab) <- c("Component","Term", "Estimate", "Std.Error", "t.value", "p.value")
+  ptab$p.value=with(ptab,ifelse(p.value<0.01,"<0.01",round(p.value,2)))
+  ptab[,3:5]=format(round(ptab[,3:5],dig.num),nsmall=dig.num)
+  ptab
+  
+  stab= data.frame(summary(model)$s.table)
+  stab$term<-rownames(stab)
+  rownames(stab)=NULL
+  stab$Component="B. smooth terms"
+  stab<-stab[,c(6,5,1:4)]
+  colnames(stab) <- c("Component","Term", "edf", "Ref. df", "F.value", "p.value")
+  stab$p.value=with(stab,ifelse(p.value<0.01,"<0.01",round(p.value,2)))
+  stab[,3:5]=format(round(stab[,3:5],dig.num),nsmall=dig.num)
+  stab
+  
+  ptab.cnames = c("Component","Term", "Estimate", "Std Error", "t-value", "p-value")
+  stab.cnames = c("Component","Term", "edf", "Ref. df", "F-value", "p-value")
+  
+  colnames(ptab) = c("A", "B", "C", "D")
+  if (ncol(stab) != 0) {
+    colnames(stab) = colnames(ptab)
+  }
+  tab = rbind(ptab, stab)
+  colnames(tab) = ptab.cnames
+  
+  tab2 = rbind(c(ptab.cnames), tab[1:nrow(ptab), ])
+  if (nrow(stab) > 0) {
+    tab2 = rbind(tab2, c(stab.cnames), tab[(nrow(ptab) + 1):nrow(tab), ])
+  }
+  
+  tab2
+}
+
+notidy_as_flextable_gam<-function(x,data_t=NULL,data_g=NULL,dig.num=2,r2dig=2,...){
+  # needs flextable
+  # magrittr
+  if(sum(class(x)%in%c("gam"))==1&is.null(data_t)&is.null(data_g)){
+    data_t <- notidy_tidy_gam(x)
+    data_g <- notidy_glance_gam(x)
+  }
+  
+  std_border=officer::fp_border(color = "black", style = "solid", width = 2)
+  data.frame(data_t)%>%
+    flextable()%>%
+    delete_part(part="header")%>%
+    hline(i=which(data_t=="Component"),border=std_border)%>%
+    hline(i=which(data_t=="Component")[2]-1,border=std_border)%>%
+    bold(i=which(data_t=="Component"))%>%
+    align(j=1,part="all")%>%
+    hline_top(border=std_border)%>%
+    hline_bottom(border=std_border)%>%
+    merge_v(j=1)%>%valign(j=1,valign="top")%>%fix_border_issues()%>%
+    autofit(part = c("header", "body"))%>%
+    add_footer_lines(values = c(
+      sprintf("Adjusted R-squared: %s, Deviance explained %s", formatC(data_g$adj.r.squared,digits = r2dig,format="f"), formatC(data_g$deviance,digits = r2dig,format="f")),
+      paste0(data_g$method,": ",format(round(data_g$sp.crit,dig.num),dig.num),", Scale est.: ",format(round(data_g$scale.est,dig.num),dig.num),", N: ",data_g$nobs)
+    ))
+}
 
 tmap_mode("view")
 # GIS ---------------------------------------------------------------------
@@ -78,6 +156,8 @@ lter=spTransform(readOGR(paste0(gen.GIS,"/LTER"),"ltersites_utm"),utm17)
 canal=spTransform(readOGR(paste(gen.GIS,"/SFER_GIS_Geodatabase.gdb",sep=""),"SFWMD_Canals"),utm17)
 ENP.shore=spTransform(readOGR(paste(gen.GIS,"/SFER_GIS_Geodatabase.gdb",sep=""),"Shoreline_ENPClip"),utm17)
 ENP=spTransform(readOGR(paste(gen.GIS,"/SFER_GIS_Geodatabase.gdb",sep=""),"ENP"),utm17)
+wca=spTransform(readOGR(paste(gen.GIS,"/SFER_GIS_Geodatabase.gdb",sep=""),"WCAs"),utm17)
+bcnp=spTransform(readOGR(paste(gen.GIS,"/SFER_GIS_Geodatabase.gdb",sep=""),"BCNP"),utm17)
 
 regions=spTransform(readOGR(paste0(GIS.path,"/Segments"),"SFL_NNC"),utm17)
 regions=merge(regions,data.frame(ESTUARY_SE=c(paste0("ENRE",9:15),paste0("ENRE",5:7),paste0("ENRF",1:6),"ENRH2",paste0("ENRG",1:7)),
@@ -290,16 +370,18 @@ dates=date.fun(c(paste(min(WYs)-1,"05-01",sep="-"),paste(max(WYs),"05-01",sep="-
 
 ENP_FLB$STATION
 
-params=data.frame(Test.Number=c(21,20,18,80,25,23,61,179),param=c("TKN","NH4","NOx","TN","TP","SRP","Chla","Chla"))
-wmd.dat=data.frame()
-for(i in 1:length(ENP_FLB$SITE)){
-  tmp=DBHYDRO_WQ(dates[1],dates[2],ENP_FLB$STATION[i],params$Test.Number)
-  wmd.dat=rbind(tmp,wmd.dat)
-  print(i)
-}
-wmd.dat=merge(wmd.dat,params,"Test.Number")
-wmd.dat=subset(wmd.dat,Collection.Method%in%c("G","GP"))
+# params=data.frame(Test.Number=c(21,20,18,80,25,23,61,179),param=c("TKN","NH4","NOx","TN","TP","SRP","Chla","Chla"))
+# wmd.dat=data.frame()
+# for(i in 1:length(ENP_FLB$SITE)){
+#   tmp=DBHYDRO_WQ(dates[1],dates[2],ENP_FLB$STATION[i],params$Test.Number)
+#   wmd.dat=rbind(tmp,wmd.dat)
+#   print(i)
+# }
+# wmd.dat=merge(wmd.dat,params,"Test.Number")
+# wmd.dat=subset(wmd.dat,Collection.Method%in%c("G","GP"))
 # write.csv(wmd.dat,paste0(export.path,"wmd_dat.csv"),row.names = F)
+wmd.dat=read.csv(paste0(export.path,"wmd_dat.csv"))
+wmd.dat$Date.EST=date.fun(wmd.dat$Date.EST)
 
 wmd.dat.xtab=reshape2::dcast(wmd.dat,Station.ID+Date.EST~param,value.var="HalfMDL",mean)
 wmd.dat.xtab$TN=with(wmd.dat.xtab,TN_Combine(NOx,TKN,TN))
@@ -354,6 +436,8 @@ vars=c("STATION","DATE","WY","season","TN","DIN","TP","SRP","Chla")
 dat.all=rbind(serc2[,vars],fce.wq[,vars],wmd.dat.xtab[,vars])
 # write.csv(dat.all,paste0(export.path,"SERC_FCE_WMD_data.csv"),row.names = F)
 
+all.sites.region=rbind(serc.sites.region,LTER.sites.region,wmd.sites.region)
+
 # test=merge(dat.all,all.sites.region,"STATION",all.x=T)
 # nrow(test)
 # nrow(dat.all)
@@ -370,7 +454,7 @@ dat.all=rbind(serc2[,vars],fce.wq[,vars],wmd.dat.xtab[,vars])
 dat.all2=merge(dat.all,all.sites.region,"STATION",all.x=T)
 head(dat.all2)
 
-all.sites.region=rbind(serc.sites.region,LTER.sites.region,wmd.sites.region)
+
 
 
 # TN ----------------------------------------------------------------------
@@ -580,6 +664,45 @@ levels(sites.shp.Chla.trend$stat.sig)
 
 sites.shp2=SpatialPointsDataFrame(sites.shp[,c("UTMX","UTMY")],data=sites.shp,proj4string = CRS(SRS_string="EPSG:26917"))
 
+
+# SamplingMap -------------------------------------------------------------
+serc.shp2=SpatialPointsDataFrame(serc.shp[,c("UTMX","UTMY")],data=serc.shp,proj4string =CRS(SRS_string="EPSG:26917") )
+wmd.shp2=SpatialPointsDataFrame(wmd.shp[,c("UTMX","UTMY")],data=wmd.shp,proj4string =CRS(SRS_string="EPSG:26917") )
+lter.shp2=SpatialPointsDataFrame(lter.shp[,c("UTMX","UTMY")],data=lter.shp,proj4string =CRS(SRS_string="EPSG:26917") )
+
+cols=wesanderson::wes_palette("Zissou1",4,"continuous")
+# png(filename=paste0(plot.path,"SamplingMap.png"),width=6.5,height=4,units="in",res=200,type="windows",bg="white")
+par(family="serif",oma=c(0.25,0.25,0.25,0.25),mar=c(0.1,0.1,0.1,0.1),xpd=F)
+layout(matrix(c(1:2),1,2,byrow=T),widths = c(1,0.3))
+bbox.lims=bbox(region.mask)
+
+plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.01)
+plot(wca,add=T,col="grey90",border=NA)
+plot(bcnp,add=T,col="grey90",border=NA)
+plot(canal,add=T,col="lightblue",lwd=1)
+plot(gSimplify(subset(regions2,Region=="Coastal_Mangroves"),500),add=T,col=adjustcolor(cols[1],0.5),lwd=0.5)
+plot(gSimplify(subset(regions2,Region=="FLBay"),500),add=T,col=adjustcolor(cols[2],0.5),lwd=0.5)
+plot(gSimplify(subset(regions2,Region=="Shelf"),500),add=T,col=adjustcolor(cols[3],0.5),lwd=0.5)
+plot(gSimplify(subset(regions2,Region=="Keys"),500),add=T,col=adjustcolor(cols[4],0.5),lwd=0.5)
+plot(ENP,add=T,bg=NA,lwd=1)
+plot(serc.shp2,add=T,lwd=0.1,pch=21,bg="white",cex=0.75)
+plot(wmd.shp2,add=T,lwd=0.1,pch=22,bg="grey",cex=0.75)
+plot(lter.shp2,add=T,lwd=0.1,pch=24,bg="black",cex=0.75)
+mapmisc::scaleBar(utm17,"bottomright",bty="n",cex=1,seg.len=4)
+box(lwd=1)
+plot(0:1,0:1,ann=F,axes=F,type="n")
+legend(0.5,0.8,legend=c("SERC","SFWMD","FCE LTER"),
+       pch=c(21,22,24),lty=c(NA),lwd=c(0.1),
+       col=c("black"),pt.bg=c("white","grey","black"),
+       pt.cex=1.25,ncol=1,cex=0.8,bty="n",y.intersp=1,x.intersp=0.75,xpd=NA,xjust=0.5,yjust=1,
+       title.adj = 0,title="Monitoring")
+legend(0.5,0.4,legend=c("ENP","Mangrove Fringe","Florida Bay","W. Florida Shelf","Keys"),
+       pch=c(22),lty=c(NA),lwd=c(0.1),
+       col=c("black"),pt.bg=c("white",adjustcolor(cols,0.5)),
+       pt.cex=1.25,ncol=1,cex=0.8,bty="n",y.intersp=1,x.intersp=0.75,xpd=NA,xjust=0.5,yjust=1,
+       title.adj = 0,title="Regions")
+dev.off()
+
 # Spline ------------------------------------------------------------------
 #thin plate spline https://rspatial.org/raster/analysis/4-interpolation.html
 
@@ -724,18 +847,246 @@ tm_shape(tps.Chla.GM.SE)+tm_raster(title="SE of average GM Chla (ug N L\u207B\u0
   tm_shape(sites.shp.TN.GM)+tm_dots(col="white",alpha=0.5)
 
 
+# Climate -----------------------------------------------------------------
+## AMO
+vars=c('year',month.abb)
+row.count=length(seq(1856,2021,1))
+noaa.amo.path="https://psl.noaa.gov/data/correlation/amon.us.long.data"
+
+# AMO.dat=read.table("https://psl.noaa.gov/data/correlation/amon.us.long.data",header=F,skip=1,col.names=vars,nrows=row.count,na.string="-99.990")
+AMO.dat=read.table("https://psl.noaa.gov/data/correlation/amon.sm.long.data",header=F,skip=1,col.names=vars,nrows=row.count,na.string="-99.990")
+AMO.dat.melt=melt(AMO.dat,id.vars="year")
+AMO.dat.melt=merge(AMO.dat.melt,data.frame(variable=month.abb,month=1:12))
+AMO.dat.melt$Date.mon=with(AMO.dat.melt,date.fun(paste(year,month,"01",sep="-")))
+AMO.dat.melt=AMO.dat.melt[order(AMO.dat.melt$Date.mon),c("Date.mon","value")]
+AMO.dat.melt$warm=with(AMO.dat.melt,ifelse(value>0,value,0))
+AMO.dat.melt$dry=with(AMO.dat.melt,ifelse(value<0,value,0))
+AMO.dat.melt$ma=with(AMO.dat.melt,c(rep(NA,120),zoo::rollapply(value,width=121,FUN=function(x)mean(x,na.rm=T))))
+head(AMO.dat.melt)
+tail(AMO.dat.melt)
+
+layout(matrix(c(1:2),2,1,byrow=T))
+ylim.val=c(-0.4,0.4);by.y=0.5;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+xlim.val=date.fun(c("1870-01-01","2016-12-01"));xmaj=seq(xlim.val[1],xlim.val[2],"20 years");xmin=seq(xlim.val[1],xlim.val[2],"1 years")
+
+plot(value~Date.mon,AMO.dat.melt,xlim=xlim.val,ylim=ylim.val,type="n")
+#with(AMO.dat.melt,lines(Date.mon,ma,col="red"))
+with(subset(AMO.dat.melt,is.na(value)==F),shaded.range(Date.mon,rep(0,length(Date.mon)),ifelse(value>0,value,0),"indianred1",lty=1))
+with(subset(AMO.dat.melt,is.na(value)==F),shaded.range(Date.mon,ifelse(value<0,value,0),rep(0,length(Date.mon)),"dodgerblue1",lty=1))
+abline(h=0)
+
+# PDO
+# https://www.ncdc.noaa.gov/teleconnections/pdo/
+# pdo=read.csv("https://www.ncdc.noaa.gov/teleconnections/pdo/data.csv",skip=1)
+nrow.val=length(seq(1854,2021,1))
+head.val=c("yr",month.abb)
+pdo=read.table(paste0(data.path,"NOAA/PDO/data.txt"),skip=2,header=F,col.names=head.val,nrows = nrow.val-1)
+head(pdo);tail(pdo)
+pdo$yr=as.numeric(pdo$yr)
+pdo=melt(pdo,id.var="yr")
+pdo$month.num=with(pdo,as.numeric(match(variable,month.abb)))
+pdo$monCY.date=with(pdo,date.fun(paste(yr,month.num,1,sep="-")))
+pdo$WY=WY(pdo$monCY.date)
+pdo$dec.WY=decimal.WY(pdo$monCY.date)
+pdo=pdo[order(pdo$dec.WY),]
+
+pdo.WY.dat=ddply(pdo,"WY",summarise,mean.PDO=mean(as.numeric(value),na.rm=T),sd.PDO=sd(as.numeric(value),na.rm=T),N.val=N.obs(value))
+pdo.WY.dat$UCI=with(pdo.WY.dat,mean.PDO+qnorm(0.975)*sd.PDO/sqrt(N.val))
+pdo.WY.dat$LCI=with(pdo.WY.dat,mean.PDO-qnorm(0.975)*sd.PDO/sqrt(N.val))
+
+plot(mean.PDO~WY,pdo.WY.dat)
+with(pdo.WY.dat,lines(WY,UCI))
+with(pdo.WY.dat,lines(WY,LCI))
+
+# png(filename=paste0(plot.path,"ClimateIndex.png"),width=6.5,height=5,units="in",res=200,type="windows",bg="white")
+par(family="serif",mar=c(1,3,1,1.5),oma=c(2,1,0.25,0.25),xpd=F);
+layout(matrix(c(1:2),2,1,byrow=T))
+
+xlim.val=date.fun(c("1870-01-01","2016-12-01"));xmaj=seq(xlim.val[1],xlim.val[2],"20 years");xmin=seq(xlim.val[1],xlim.val[2],"1 years")
+ylim.val=c(-0.4,0.4);by.y=0.2;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+plot(value~Date.mon,AMO.dat.melt,xlim=xlim.val,ylim=ylim.val,type="n",axes=F,ann=F)
+abline(h=ymaj,v=xmaj,lty=1,col=adjustcolor("grey",0.5))
+#with(AMO.dat.melt,lines(Date.mon,ma,col="red"))
+with(subset(AMO.dat.melt,is.na(value)==F),shaded.range(Date.mon,rep(0,length(Date.mon)),ifelse(value>0,value,0),"indianred1",lty=1))
+with(subset(AMO.dat.melt,is.na(value)==F),shaded.range(Date.mon,ifelse(value<0,value,0),rep(0,length(Date.mon)),"dodgerblue1",lty=1))
+abline(h=0)
+axis_fun(1,xmaj,xmin,NA)
+axis_fun(2,ymaj,ymin,format(ymaj,nsmall=1));box(lwd=1)
+abline(v=date.fun(c("1995-05-01","2019-05-01")),lty=2)
+text(date.fun(date.fun("1995-05-01")+lubridate::ddays(4383)),ylim.val[2],"Study Period",cex=0.75,font=3)
+mtext(side=2,line=2.5,"AMO Index")
+
+ylim.val=c(-4,4);by.y=2;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+plot(value~monCY.date,pdo,xlim=xlim.val,ylim=ylim.val,type="n",axes=F,ann=F)
+abline(h=ymaj,v=xmaj,lty=1,col=adjustcolor("grey",0.5))
+with(subset(pdo,is.na(value)==F),shaded.range(monCY.date,rep(0,length(monCY.date)),ifelse(value>0,value,0),"indianred1",lty=1))
+with(subset(pdo,is.na(value)==F),shaded.range(monCY.date,ifelse(value<0,value,0),rep(0,length(monCY.date)),"dodgerblue1",lty=1))
+abline(h=0)
+axis_fun(1,xmaj,xmin,format(xmaj,"%Y"),line=-0.5)
+axis_fun(2,ymaj,ymin,format(ymaj,nsmall=1));box(lwd=1)
+abline(v=date.fun(c("1995-05-01","2019-05-01")),lty=2)
+mtext(side=2,line=2.5,"PDO Index")
+mtext(side=1,line=1.5,"Year")
+dev.off()
 # GAM ---------------------------------------------------------------------
+# TN
+dat.all.TN.GM2=merge(dat.all.TN.GM,sites.shp,"STATION")
+
+WY.k=23
+loc.k=200
+m.TN<-bam(log(TN.GM)~
+            s(WY,bs="cr",k=WY.k)+
+            s(UTMX,UTMY,bs="ds",k=loc.k,m=c(1,0.5))+
+            ti(UTMX,UTMY,WY,d=c(2,1),bs=c("ds","cr"),k=c(100,24)),
+          data=dat.all.TN.GM2,
+          nthreads = c(12),discrete=T)
+summary(m.TN)
+qq.gam(m.TN)
+nvar=3;layout(matrix(1:nvar,1,nvar))
+plot(m.TN,residuals=T,pch=21)
+plot(m.TN,residuals=T,pch=21,select=1,shade=T)
+
+nvar=4;layout(matrix(1:nvar,1,nvar))
+gam.check(m.TN)
+dev.off()
+
+m.TN.sum=notidy_tidy_gam(m.TN)
+m.TN.est=notidy_glance_gam(m.TN)
+# write.csv(m.TN.sum,export.path("TN_gam_mod_sum.csv"),row.names=F)
+# write.csv(m.TN.est,export.path("TN_gam_mod_est.csv"),row.names=F)
+
+tmp=plot(m.TN,residuals=T)
+# png(filename=paste0(plot.path,"GAM_TN_draw_base.png"),width=8,height=3,units="in",res=200,type="windows",bg="white")
+par(family="serif",mar=c(2,2,1,0.5),oma=c(2,2,0.25,0.25),xpd=F);
+layout(matrix(1:3,1,3),widths=c(1,1,0.4))
+
+crit=qnorm((1 - 0.95) / 2, lower.tail = FALSE)
+ylim.val=c(-1.25,1);by.y=0.5;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+xlim.val=c(1996,2019);by.x=5;xmaj=seq(xlim.val[1],xlim.val[2],by.x);xmin=seq(xlim.val[1],xlim.val[2],by.x/by.x)
+plot(tmp[1][[1]]$fit~tmp[1][[1]]$x,ylim=ylim.val,xlim=xlim.val,ann=F,axes=F,type="n")
+abline(h=ymaj,v=xmaj,lty=3,col="grey")
+with(tmp[1][[1]],points(jitter(raw,0.5),p.resid,pch=19,col=adjustcolor("dodgerblue1",0.10)))
+with(tmp[1][[1]],shaded.range(x,fit-(crit*se),fit+(crit*se),"grey",lty=1))
+with(tmp[1][[1]],lines(x,fit,lwd=2))
+abline(h=0)
+axis_fun(1,xmaj,xmin,xmaj,line=-0.5);axis_fun(2,ymaj,ymin,format(ymaj));box(lwd=1)
+mtext(side=3,adj=0,"Total Nitrogen")
+mtext(side=3,adj=1,"s(WY)")
+mtext(side=1,line=2,"WY")
+mtext(side=2,line=2.5,"Effect")
+
+bbox.lims=bbox(regions2)
+tmp.ma=with(tmp[2][[1]],matrix(fit,nrow=length(y),ncol=length(x)))
+dat1=list()
+dat1$x=tmp[2][[1]]$x
+dat1$y=tmp[2][[1]]$y
+dat1$z=tmp.ma
+r=raster(dat1)
+
+brk=20
+breaks.val=classInt::classIntervals(tmp[2][[1]]$fit[is.na(tmp[2][[1]]$fit)==F],style="equal",n=brk)
+pal=hcl.colors(n=brk,alpha=0.75)
+plot(ENP,ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],border=NA)
+image(r,add=T,breaks=breaks.val$brks,col = pal)
+plot(shore,add=T,lwd=0.1)
+plot(ENP,add=T)
+plot(sites.shp2,add=T,cex=0.5,pch=19,col=adjustcolor("red",0.25))
+plot(rasterToContour(r),col=adjustcolor("white",0.5),add=T)
+box(lwd=1)
+mtext(side=3,adj=0,"ti(UTMX,UTMY)")
+
+legend_image=as.raster(matrix(rev(pal),ncol=1))
+par(xpd=NA,mar=c(2,1,1,0))
+plot(c(0,1),c(0,1),type = 'n', axes = F,ann=F)
+rasterImage(legend_image, 0, 0.25, 0.3,0.75)
+leg.labs=with(breaks.val,c(format(round(min(brks),1),nsmall=1),"0.0",format(round(max(brks),1),nsmall=1)))
+text(x=0.3, y = seq(0.25,0.75,length.out=3), labels = leg.labs,cex=1,pos=4)
+text(0.15,0.76,"Effect",pos=3,xpd=NA)
+dev.off()
+
+# TP
+dat.all.TP.GM2=merge(dat.all.TP.GM,sites.shp,"STATION")
+head(dat.all.TP.GM2)
+gc()
+WY.k=23
+loc.k=500
+m.TP<-bam(log(TP.GM)~
+            s(WY,bs="cr",k=WY.k)+
+            s(UTMX,UTMY,bs="ds",k=loc.k,m=c(1,0.5))+
+            ti(UTMX,UTMY,WY,d=c(2,1),bs=c("ds","cr"),m = list(c(1, 0.5), NA),k=c(85,24)),
+          data=dat.all.TP.GM2,
+          nthreads = 6,discrete=T)
+
+summary(m.TP)
+qq.gam(m.TP)
+nvar=3;layout(matrix(1:nvar,1,nvar))
+plot(m.TP,residuals=T,pch=21)
+
+nvar=4;layout(matrix(1:nvar,1,nvar))
+gam.check(m.TP)
+dev.off()
+
+m.TP.sum=notidy_tidy_gam(m.TP)
+m.TP.est=notidy_glance_gam(m.TP)
+# write.csv(m.TP.sum,export.path("TP_gam_mod_sum.csv"),row.names=F)
+# write.csv(m.TP.est,export.path("TP_gam_mod_est.csv"),row.names=F)
 
 
+tmp=plot(m.TP,residuals=T)
+# png(filename=paste0(plot.path,"GAM_TP_draw_base.png"),width=8,height=3,units="in",res=200,type="windows",bg="white")
+par(family="serif",mar=c(2,2,1,0.5),oma=c(2,2,0.25,0.25),xpd=F);
+layout(matrix(1:3,1,3),widths=c(1,1,0.4))
 
+crit=qnorm((1 - 0.95) / 2, lower.tail = FALSE)
+ylim.val=c(-1.25,1);by.y=0.5;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+xlim.val=c(1996,2019);by.x=5;xmaj=seq(xlim.val[1],xlim.val[2],by.x);xmin=seq(xlim.val[1],xlim.val[2],by.x/by.x)
+plot(tmp[1][[1]]$fit~tmp[1][[1]]$x,ylim=ylim.val,xlim=xlim.val,ann=F,axes=F,type="n")
+abline(h=ymaj,v=xmaj,lty=3,col="grey")
+with(tmp[1][[1]],points(jitter(raw,0.5),p.resid,pch=19,col=adjustcolor("dodgerblue1",0.10)))
+with(tmp[1][[1]],shaded.range(x,fit-(crit*se),fit+(crit*se),"grey",lty=1))
+with(tmp[1][[1]],lines(x,fit,lwd=2))
+abline(h=0)
+axis_fun(1,xmaj,xmin,xmaj,line=-0.5);axis_fun(2,ymaj,ymin,format(ymaj));box(lwd=1)
+mtext(side=3,adj=0,"Total Phosphorus")
+mtext(side=3,adj=1,"s(WY)")
+mtext(side=1,line=2,"WY")
+mtext(side=2,line=2.5,"Effect")
 
+bbox.lims=bbox(regions2)
+tmp.ma=with(tmp[2][[1]],matrix(fit,nrow=length(y),ncol=length(x)))
+dat1=list()
+dat1$x=tmp[2][[1]]$x
+dat1$y=tmp[2][[1]]$y
+dat1$z=tmp.ma
+r=raster(dat1)
 
+brk=20
+breaks.val=classInt::classIntervals(tmp[2][[1]]$fit[is.na(tmp[2][[1]]$fit)==F],style="equal",n=brk)
+pal=hcl.colors(n=brk,alpha=0.75)
+plot(ENP,ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],border=NA)
+image(r,add=T,breaks=breaks.val$brks,col = pal)
+plot(shore,add=T,lwd=0.1)
+plot(ENP,add=T)
+plot(sites.shp2,add=T,cex=0.5,pch=19,col=adjustcolor("red",0.25))
+plot(rasterToContour(r),col=adjustcolor("white",0.5),add=T)
+box(lwd=1)
+mtext(side=3,adj=0,"ti(UTMX,UTMY)")
+
+legend_image=as.raster(matrix(rev(pal),ncol=1))
+par(xpd=NA,mar=c(2,1,1,0))
+plot(c(0,1),c(0,1),type = 'n', axes = F,ann=F)
+rasterImage(legend_image, 0, 0.25, 0.3,0.75)
+leg.labs=with(breaks.val,c(format(round(min(brks),1),nsmall=1),"0.0",format(round(max(brks),1),nsmall=1)))
+text(x=0.3, y = seq(0.25,0.75,length.out=3), labels = leg.labs,cex=1,pos=4)
+text(0.15,0.76,"Effect",pos=3,xpd=NA)
+dev.off()
 # Static Trend and GM maps ------------------------------------------------
 
 cols.val=c("white","red")
 # tiff(filename=paste0(plot.path,"TrendMaps_v1.tiff"),width=6.5,height=6,units="in",res=200,type="windows",compression=c("lzw"),bg="white")
+# png(filename=paste0(plot.path,"TrendMaps.png"),width=6.5,height=6,units="in",res=200,type="windows",bg="white")
 par(family="serif",oma=c(0.25,0.25,0.25,0.25),mar=c(0.1,0.1,0.1,0.1),xpd=F)
-layout(matrix(c(1:20),5,4,byrow=T),widths = c(1,0.5,1,0.5))
+layout(matrix(c(1:20),5,4,byrow=T),widths = c(1,0.4,1,0.4))
 bbox.lims=bbox(region.mask)
 {
 # TN
@@ -1024,3 +1375,342 @@ comboplot
 TN.trend.gg
 ggsave(paste0(plot.path,"TrendMaps_vgg.tiff"),comboplot,device="tiff",height =7,width=6.5,units="in")
 ggsave(paste0(plot.path,"TNtrendgg_vgg.tiff"),TN.trend.gg,device="tiff",height =4,width=6.5,units="in")
+
+
+# Regional Summaries ------------------------------------------------------
+dev.off()
+library(dunn.test)
+library(rcompanion)
+###
+## TN
+levels.var=c("ENP","Coastal_Mangroves","FLBay","Shelf","Keys")
+levels.var.labs=c("ENP","Mangrove Fringe","Florida Bay","West Florida Shelf","Keys")
+dat.all.TN.GM2=merge(dat.all.TN.GM,all.sites.region,"STATION",all.x=T)
+dat.all.TN.GM2$Region=factor(dat.all.TN.GM2$Region,levels=levels.var)
+
+## DIN
+dat.all.DIN.GM2=merge(dat.all.DIN.GM,all.sites.region,"STATION",all.x=T)
+dat.all.DIN.GM2$Region=factor(dat.all.DIN.GM2$Region,levels=levels.var)
+
+## TP
+dat.all.TP.GM2=merge(dat.all.TP.GM,all.sites.region,"STATION",all.x=T)
+dat.all.TP.GM2$Region=factor(dat.all.TP.GM2$Region,levels=c("ENP","Coastal_Mangroves","FLBay","Shelf","Keys"))
+
+## SRP
+dat.all.SRP.GM2=merge(dat.all.SRP.GM,all.sites.region,"STATION",all.x=T)
+dat.all.SRP.GM2$Region=factor(dat.all.SRP.GM2$Region,levels=c("ENP","Coastal_Mangroves","FLBay","Shelf","Keys"))
+
+## Chl-a
+dat.all.Chla.GM2=merge(dat.all.Chla.GM,all.sites.region,"STATION",all.x=T)
+dat.all.Chla.GM2$Region=factor(dat.all.Chla.GM2$Region,levels=c("ENP","Coastal_Mangroves","FLBay","Shelf","Keys"))
+boxplot(Chla.GM~Region,dat.all.Chla.GM2,outline=F)
+
+
+cols=c("white",adjustcolor(wesanderson::wes_palette("Zissou1",4,"continuous"),0.5))
+levels.var.labs=c("ENP\n"," Mangrove\nFringe"," Florida\nBay","W. Florida\nShelf"," Keys\n")
+# png(filename=paste0(plot.path,"RegionComp.png"),width=6.5,height=5,units="in",res=200,type="windows",bg="white")
+par(family="serif",mar=c(1,3.5,0.5,0.75),oma=c(3,2,1,0.5));
+layout(matrix(c(1:6),3,2,byrow=T))
+
+ylim.val=c(0,2);by.y=0.5;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+x=boxplot(TN.GM~Region,dat.all.TN.GM2,outline=F,ylim=ylim.val,axes=F,ann=F,col=cols,boxwex=0.5)
+TN.DT=with(dat.all.TN.GM2,dunn.test(TN.GM, Region))
+TN.DT.ltr=cldList(P.adjusted ~ comparison,data=TN.DT,threshold = 0.05)
+TN.DT.ltr$Letter=toupper(TN.DT.ltr$Letter)
+TN.DT.ltr=TN.DT.ltr[order(match(TN.DT.ltr$Group,levels.var)),]
+text(1:5,x$stats[5,],TN.DT.ltr$Letter,pos=3)
+axis_fun(2,ymaj,ymin,format(ymaj))
+axis_fun(1,1:5,1:5,NA);box(lwd=1)
+mtext(side=2,line=2.5,"TN (mg N L\u207B\u00B9)")
+
+ylim.val=c(0,2.1);by.y=0.5;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+x=boxplot(DIN.GM~Region,dat.all.DIN.GM2,outline=F,ylim=ylim.val,axes=F,ann=F,col=cols,boxwex=0.5)
+DIN.DT=with(dat.all.DIN.GM2,dunn.test(DIN.GM, Region))
+DIN.DT.ltr=cldList(P.adjusted ~ comparison,data=DIN.DT,threshold = 0.05)
+DIN.DT.ltr$Letter=toupper(DIN.DT.ltr$Letter)
+DIN.DT.ltr=DIN.DT.ltr[order(match(DIN.DT.ltr$Group,levels.var)),]
+text(1:5,x$stats[5,],DIN.DT.ltr$Letter,pos=3)
+axis_fun(2,ymaj,ymin,format(ymaj))
+axis_fun(1,1:5,1:5,NA);box(lwd=1)
+mtext(side=2,line=2.5,"DIN (mg N L\u207B\u00B9)")
+
+ylim.val=c(0,50);by.y=10;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+x=boxplot(TP.GM~Region,dat.all.TP.GM2,outline=F,ylim=ylim.val,axes=F,ann=F,col=cols,boxwex=0.5)
+TP.DT=with(dat.all.TP.GM2,dunn.test(TP.GM, Region))
+TP.DT.ltr=cldList(P.adjusted ~ comparison,data=TP.DT,threshold = 0.05)
+TP.DT.ltr$Letter=toupper(TP.DT.ltr$Letter)
+TP.DT.ltr=TP.DT.ltr[order(match(TP.DT.ltr$Group,levels.var)),]
+text(1:5,x$stats[5,],TP.DT.ltr$Letter,pos=3)
+axis_fun(2,ymaj,ymin,format(ymaj))
+axis_fun(1,1:5,1:5,NA);box(lwd=1)
+mtext(side=2,line=2.5,"TP (\u03BCg P L\u207B\u00B9)")
+
+ylim.val=c(0,10);by.y=2;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+x=boxplot(SRP.GM~Region,dat.all.SRP.GM2,outline=F,ylim=ylim.val,axes=F,ann=F,col=cols,boxwex=0.5)
+SRP.DT=with(dat.all.SRP.GM2,dunn.test(SRP.GM, Region))
+SRP.DT.ltr=cldList(P.adjusted ~ comparison,data=SRP.DT,threshold = 0.05)
+SRP.DT.ltr$Letter=toupper(SRP.DT.ltr$Letter)
+SRP.DT.ltr=SRP.DT.ltr[order(match(SRP.DT.ltr$Group,levels.var)),]
+text(1:5,x$stats[5,],SRP.DT.ltr$Letter,pos=3)
+axis_fun(2,ymaj,ymin,format(ymaj))
+axis_fun(1,1:5,1:5,levels.var.labs,line=0.3,cex=0.9);box(lwd=1)
+mtext(side=2,line=2.5,"SRP (\u03BCg P L\u207B\u00B9)")
+
+ylim.val=c(0,3);by.y=1;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+x=boxplot(Chla.GM~Region,dat.all.Chla.GM2,outline=F,ylim=ylim.val,axes=F,ann=F,col=cols,boxwex=0.5)
+Chla.DT=with(dat.all.Chla.GM2,dunn.test(Chla.GM, Region))
+Chla.DT.ltr=cldList(P.adjusted ~ comparison,data=Chla.DT,threshold = 0.05)
+Chla.DT.ltr$Letter=toupper(Chla.DT.ltr$Letter)
+Chla.DT.ltr=Chla.DT.ltr[order(match(Chla.DT.ltr$Group,levels.var)),]
+text(1:5,x$stats[5,],Chla.DT.ltr$Letter,pos=3)
+axis_fun(2,ymaj,ymin,format(ymaj))
+axis_fun(1,1:5,1:5,levels.var.labs,line=0.3,cex=0.9);box(lwd=1)
+mtext(side=2,line=2.5,"Chl-a (\u03BCg L\u207B\u00B9)")
+mtext(side=1,line=1,outer=T,"Region")
+dev.off()
+
+# Hydroperiod -------------------------------------------------------------
+
+stage.sites=data.frame(SITE=c("NP201","NESRS1","NESRS2","NP203","P33","P36","NP-112","TSB","R127","TSH"),
+                       Region=c(rep("UpperSRS",3),rep("MidSRS",2),"LowSRS",rep("UpperTS",2),"MidTS","LowTS"),
+                       min.GndElev.NAVD88=c(5.32,4.27,4.19,3.01,3.81,1.65,1.98,1.29,0.00,-0.15),
+                       NAVD88.to.NGVD29=c(-1.51,-1.53,-1.54,-1.51,-1.51,-1.51,-1.51,-1.51,-1.57,-1.56))
+stage.sites$min.GndElev.NGVD29=with(stage.sites,min.GndElev.NAVD88-NAVD88.to.NGVD29)
+stage.sites
+
+stg.dbkeys=data.frame(SITE=c("NP201","NESRS1","NESRS2","NP203","P33","P36","NP-112","TSB","TSH"),
+                      DBKEY=c("06719","01140","01218","G6154","06717","06718","H2427","H2442","07090"))
+
+
+# download R127 from EDEN webpage
+# https://sofia.usgs.gov/eden/station.php?stn_name=R127
+R127=read.csv(paste0(data.path,"EDEN/1604536339_water_level.csv"),skip=4)
+R127$SITE="R127"
+R127$Date=date.fun(as.character(R127$Date))
+R127$Data.Value=R127$R127.Daily.median.water.Level.feet.NAVD88.-(-1.57)
+R127=R127[,c("SITE","Date","Data.Value")]
+
+stg.dat=data.frame()
+for(i in 1:nrow(stg.dbkeys)){
+  tmp=DBHYDRO_daily(dates[1],dates[2],stg.dbkeys$DBKEY[i])
+  tmp$DBKEY=as.character(stg.dbkeys$DBKEY[i])
+  stg.dat=rbind(stg.dat,tmp)
+  print(i)
+}
+stg.dat=merge(stg.dat,stg.dbkeys,"DBKEY")
+
+stg.dat=stg.dat[,c("SITE","Date","Data.Value")]
+stg.dat=rbind(stg.dat,R127)
+stg.dat=merge(stg.dat,stage.sites[,c("SITE","Region","min.GndElev.NGVD29")],"SITE")
+stg.dat$WL.GT.Gnd=with(stg.dat,ifelse(Data.Value>min.GndElev.NGVD29,1,0))
+stg.dat$Depth.cm=with(stg.dat,ft.to.m(Data.Value-min.GndElev.NGVD29)*100)
+stg.dat$WY=WY(stg.dat$Date)
+
+stg.dat.WY.HP=ddply(stg.dat,c("SITE","Region","WY"),summarise,HP.days=sum(WL.GT.Gnd,na.rm=T),N.val=N.obs(SITE),meanDepth=mean(Depth.cm,na.rm=T))
+stg.dat.WY.HP=subset(stg.dat.WY.HP,WY%in%seq(1996,2019,1))
+stg.dat.WY.HP$HP.freq=with(stg.dat.WY.HP,HP.days/N.val)
+subset(stg.dat.WY.HP,N.val!=365)
+
+plot(HP.freq~WY,subset(stg.dat.WY.HP,SITE=="NP-112"))
+plot(meanDepth~WY,subset(stg.dat.WY.HP,SITE=="NP-112"))
+plot(HP.freq~WY,subset(stg.dat.WY.HP,SITE=="R127"))
+plot(meanDepth~WY,subset(stg.dat.WY.HP,SITE=="R127"))
+stg.dat.WY.HP.region=ddply(stg.dat.WY.HP,c("WY","Region"),summarise,meanHP.f=mean(HP.freq,na.rm=T),meanZ=mean(meanDepth,na.rm=T))
+
+ddply(stg.dat.WY.HP.region,c("Region"),summarise,
+      est=as.numeric(cor.test(WY,meanZ,method="kendall")$estimate),
+      pval=cor.test(WY,meanZ,method="kendall")$p.value)
+
+
+
+# Discharge Data ----------------------------------------------------------
+SRS.dbkeys=data.frame(SITE=c(rep("S12A",3),rep("S12B",3),rep("S12C",3),rep("S12D",3),rep("S333",2),rep("S334",2),"S355A","S355B_P","S355B","S356","S335"),
+                      DBKEY=c(c("FE771","P0796","03620"),c("FE772","P0950","03626"),c("FE773","P0951","03632"),c("FE774","P0952","03638"),c("15042","91487"),c("FB752","91488"),"MQ895","AM173","MQ896","64136","91489"),
+                      Priority=paste0("P",c(rep(c(1,2,3),4),c(1,2),c(1,2),rep(1,5))),
+                      WQSite=c(rep("S12A",3),rep("S12B",3),rep("S12C",3),rep("S12D",3),rep("S333",2),rep("S334",2),"S355A","S355B","S355B","S356-334","S356-334"))
+
+
+srs.flow=data.frame()
+for(i in 1:nrow(SRS.dbkeys)){
+  tmp=DBHYDRO_daily(dates[1],dates[2],SRS.dbkeys$DBKEY[i])
+  tmp$DBKEY=SRS.dbkeys$DBKEY[i]
+  srs.flow=rbind(tmp,srs.flow)
+  print(i)
+}
+srs.flow$WY=WY(srs.flow$Date)
+srs.flow=merge(srs.flow,SRS.dbkeys,"DBKEY")
+flow.xtab=data.frame(cast(srs.flow,Date+WY+SITE+WQSite~Priority,value="Data.Value",fun.aggregate=function(x) ifelse(sum(x,na.rm=T)==0,NA,sum(x,na.rm=T))))
+flow.xtab$fflow.cfs=with(flow.xtab,ifelse(is.na(P1)==T&is.na(P2)==T,P3,ifelse(is.na(P2)==T&is.na(P3)==T,P1,ifelse(is.na(P1)==T&is.na(P3)==T,P2,P1))));#final flow value for analysis
+
+srs.flow.da.xtab=cast(flow.xtab,Date+WY~SITE,value="fflow.cfs",fun.aggregate=function(x) mean(cfs.to.km3d(ifelse(x<0,NA,x)),na.rm=T))
+srs.flow.da.xtab$S355B=rowSums(srs.flow.da.xtab[,c("S355B","S355B_P")],na.rm=T)
+srs.flow.da.xtab=srs.flow.da.xtab[,c("Date","WY","S12A","S12B", "S12C", "S12D", "S333", "S334", "S355A", "S355B","S356","S335")]
+
+plot(S12A~Date,srs.flow.da.xtab)
+srs.flow.da.xtab[is.na(srs.flow.da.xtab)]<-0
+srs.flow.da.xtab$minS356_S335=apply(srs.flow.da.xtab[,c('S356','S335')],1,min); # with(srs.flow.da.xtab,ifelse(S356>S335,S335,S356));
+srs.flow.da.xtab$m15.ESRS.Q=rowSums(srs.flow.da.xtab[,c("S333","S355A","S355B","minS356_S335")],na.rm=T)
+# srs.flow.da.xtab$S333R.m15=with(srs.flow.da.xtab,S333*(1-ifelse(m15.ESRS.Q>0,ifelse(S334/m15.ESRS.Q>1,1,S334/m15.ESRS.Q),0)))
+# srs.flow.da.xtab$S355A.adj.m15=with(srs.flow.da.xtab,S355A*(1-ifelse(m15.ESRS.Q>0,ifelse(S334/m15.ESRS.Q>1,1,S334/m15.ESRS.Q),0)))
+# srs.flow.da.xtab$S355B.adj.m15=with(srs.flow.da.xtab,S355B*(1-ifelse(m15.ESRS.Q>0,ifelse(S334/m15.ESRS.Q>1,1,S334/m15.ESRS.Q),0)))
+# srs.flow.da.xtab$S356.adj.m15=with(srs.flow.da.xtab,minS356_S335*(1-ifelse(m15.ESRS.Q>0,ifelse(S334/m15.ESRS.Q>1,1,S334/m15.ESRS.Q),0)))
+srs.flow.da.xtab$TFlow.m15=rowSums(srs.flow.da.xtab[,c("S12A","S12B","S12C","S12D","S333","S355A","S355B","minS356_S335")],na.rm=T)
+srs.flow.da.xtab.WY=ddply(subset(srs.flow.da.xtab,WY%in%seq(1996,2019,1)),"WY",summarise,TFlow.km3=sum(TFlow.m15,na.rm=T))
+
+plot(TFlow.km3~WY,srs.flow.da.xtab.WY,type="b")
+with(srs.flow.da.xtab.WY,cor.test(WY,TFlow.km3,method="kendall"))
+
+# https://www.sfwmd.gov/sites/default/files/documents/ag_item_4_TSCB_Method3.pdf
+# https://www.sfwmd.gov/sites/default/files/documents/TS%26CB_TP_Compliance_1st_qtr_2020_Data_Report_method1%262%263_0.pdf
+
+# TSCB
+TS.dbkeys=data.frame(SITE=c("S332","S175","S332D","S332D","S332DX1","S328","G737","S18C"),
+                     DBKEY=c("91486","15752","TA413","91485","91484","AN558","AN674","15760"),
+                     Priority=c("P1","P1","P1","P2","P1","P1","P1","P1"))
+TS.flow=data.frame()
+for(i in 1:nrow(TS.dbkeys)){
+  tmp=DBHYDRO_daily(dates[1],dates[2],TS.dbkeys$DBKEY[i])
+  tmp$DBKEY=TS.dbkeys$DBKEY[i]
+  TS.flow=rbind(tmp,TS.flow)
+  print(i)
+}
+TS.flow$WY=WY(TS.flow$Date)
+TS.flow=merge(TS.flow,TS.dbkeys,"DBKEY")
+TS.flow$Date=date.fun(TS.flow$Date)
+
+ts.flow.xtab=data.frame(cast(TS.flow,Date+WY+SITE~Priority,value="Data.Value",fun.aggregate=function(x) ifelse(sum(x,na.rm=T)==0,NA,sum(x,na.rm=T))))
+ts.flow.xtab$P3=NA
+ts.flow.xtab$fflow.cfs=with(ts.flow.xtab,ifelse(is.na(P1)==T&is.na(P2)==T,P3,ifelse(is.na(P2)==T&is.na(P3)==T,P1,ifelse(is.na(P1)==T&is.na(P3)==T,P2,P1))));#final flow value for analysis
+ts.flow.xtab$fflow.cfs=with(ts.flow.xtab,ifelse(SITE%in%c("S332","S175")&Date>date.fun("1999-08-30"),NA,fflow.cfs))
+
+ts.flow.da.xtab=cast(ts.flow.xtab,Date+WY~SITE,value="fflow.cfs",fun.aggregate=function(x) mean(cfs.to.km3d(ifelse(x<0,NA,x)),na.rm=T))
+ts.flow.da.xtab[is.na(ts.flow.da.xtab)]<-0
+ts.flow.da.xtab$DBasin.Flow=with(ts.flow.da.xtab,(S332D-S332DX1-S328))
+ts.flow.da.xtab$DBasin.Flow=with(ts.flow.da.xtab,ifelse(DBasin.Flow<0,0,DBasin.Flow))
+ts.flow.da.xtab$TFlow=with(ts.flow.da.xtab,DBasin.Flow+S328+G737+S18C+S332+S175)
+
+ts.flow.da.xtab.WY=ddply(subset(ts.flow.da.xtab,WY%in%seq(1996,2019,1)),"WY",summarise,TFlow.km3=sum(TFlow,na.rm=T))
+
+plot(TFlow.km3~WY,ts.flow.da.xtab.WY,type="b")
+with(ts.flow.da.xtab.WY,cor.test(WY,TFlow.km3,method="kendall"))
+
+
+##
+SRS.hydro=merge(subset(stg.dat.WY.HP.region,Region%in%c("UpperSRS","MidSRS","LowSRS")),
+                srs.flow.da.xtab.WY,"WY")
+range(SRS.hydro$meanHP,na.rm=T)
+ddply(SRS.hydro,"Region",summarise,mean.val=mean(meanHP.f))
+range(SRS.hydro$TFlow.km3)
+
+plot(meanHP.f~TFlow.km3,SRS.hydro,type="n")
+with(subset(SRS.hydro,Region=="UpperSRS"),points(TFlow.km3,meanHP.f,pch=21,bg="indianred1"))
+with(subset(SRS.hydro,Region=="MidSRS"),points(TFlow.km3,meanHP.f,pch=21,bg="dodgerblue1"))
+with(subset(SRS.hydro,Region=="LowSRS"),points(TFlow.km3,meanHP.f,pch=21,bg="forestgreen"))
+
+ddply(SRS.hydro,c("Region"),summarise,
+      est=as.numeric(cor.test(TFlow.km3,meanHP.f,method="spearman")$estimate),
+      pval=cor.test(TFlow.km3,meanHP.f,method="spearman")$p.value)
+
+srs.HP.Q=lm(meanHP.f~TFlow.km3+WY+Region,SRS.hydro)
+layout(matrix(1:4,2,2));plot(srs.HP.Q)
+gvlma::gvlma(srs.HP.Q)
+
+TS.hydro=merge(subset(stg.dat.WY.HP.region,Region%in%paste0(c("Upper","Mid","Low"),"TS")),
+               ts.flow.da.xtab.WY,"WY")
+
+range(TS.hydro$meanHP.f,na.rm=T)
+ddply(TS.hydro,"Region",summarise,mean.val=mean(meanHP.f))
+range(TS.hydro$TFlow.km3)
+
+ddply(TS.hydro,c("Region"),summarise,
+      est=as.numeric(cor.test(TFlow.km3,meanHP.f,method="spearman")$estimate),
+      pval=cor.test(TFlow.km3,meanHP.f,method="spearman")$p.value)
+
+
+### hydro figure
+# png(filename=paste0(plot.path,"Hydro_Trend.png"),width=6.5,height=4,units="in",res=200,bg="white")
+par(family="serif",oma=c(0.5,0.5,0.5,1),mar=c(0.1,0.1,0.1,0.1),xpd=F)
+layout(matrix(c(1:6),2,3,byrow=T))
+
+SRS.stg.site=c("NP-201","NESRS1","NESRS2","NP-203","NP-P33","NP-P36")
+TS.stg.site=c("NP-112","NP-TSB","NP-TSH")
+
+bbox.lims=bbox(subset(sloughs,NAME=="Shark River"))
+plot(ENP.shore,col="white",border="grey",lwd=0.05,ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)])
+plot(sloughs.clp,col="grey90",border=NA,add=T)
+plot(canal,col="grey",add=T)
+plot(ENP,bg=NA,lwd=0.5,add=T)
+plot(subset(structures,NAME%in%c(paste0("S12",LETTERS[1:4]),"S333","S334","S356","S355A","S355B")),add=T,pch=21,bg="black")
+tmp=subset(wmd.mon,STATION%in%SRS.stg.site&ACTIVITY_S=="Stage")
+tmp=tmp[order(match(tmp$STATION,SRS.stg.site)),]
+plot(tmp,pch=21,bg=c(rep("indianred1",3),rep("dodgerblue1",2),"forestgreen"),add=T,lwd=0.01)
+text(tmp,"SITE",pos=1,cex=0.5,halo=T)
+mapmisc::scaleBar(utm17,"bottomleft",bty="n",cex=1,seg.len=4)
+legend("topleft",legend=c("Discharge","Upper Slough Stage","Mid Slough Stage","Lower Slough Stage"),
+       pch=c(21),lty=c(NA),lwd=c(0.01),
+       pt.bg=c("black","indianred1","dodgerblue1","forestgreen"),
+       pt.cex=1,ncol=1,cex=0.7,bg="white",box.lty=0,y.intersp=1,x.intersp=0.75,xpd=NA,xjust=0.5,yjust=1,title.adj = 0,title=" Monitoring Locations")
+box(lwd=1)
+
+xlim.val=c(1996,2019);by.x=10;xmaj=seq(xlim.val[1],xlim.val[2],by.x);xmin=seq(xlim.val[1],xlim.val[2],by.x/by.x)
+ylim.val=c(0.5,1);by.y=0.1;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+par(family="serif",mar=c(3,4,0.5,0.5),xpd=F)
+plot(meanHP.f~WY,stg.dat.WY.HP.region,type="n",ylim=ylim.val,xlim=xlim.val,ann=F,axes=F)
+abline(h=ymaj,v=xmaj,lty=3,col="grey",lwd=0.5)
+with(subset(stg.dat.WY.HP.region,Region=="UpperSRS"),pt_line(WY,meanHP.f,1,"indianred1",1,21,"indianred1"))
+with(subset(stg.dat.WY.HP.region,Region=="MidSRS"),pt_line(WY,meanHP.f,1,"dodgerblue1",1,21,"dodgerblue1"))
+with(subset(stg.dat.WY.HP.region,Region=="LowSRS"),pt_line(WY,meanHP.f,1,"forestgreen",1,21,"forestgreen"))
+axis_fun(1,xmaj,xmin,xmaj,line=-0.5)
+axis_fun(2,ymaj,ymin,format(ymaj));box(lwd=1)
+mtext(side=2,line=2.5,"Hydroperiod (Prop of WY)",cex=0.8)
+
+ylim.val=c(0,3);by.y=1;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+plot(TFlow.km3~WY,srs.flow.da.xtab.WY,type="n",ylim=ylim.val,xlim=xlim.val,ann=F,axes=F)
+abline(h=ymaj,v=xmaj,lty=3,col="grey",lwd=0.5)
+with(srs.flow.da.xtab.WY,pt_line(WY,TFlow.km3,1,"black",1.25,21,"black"))
+axis_fun(1,xmaj,xmin,xmaj,line=-0.5)
+axis_fun(2,ymaj,ymin,format(ymaj,nsmall=1));box(lwd=1)
+mtext(side=2,line=2.5,"Discharge (km\u00B3 WY\u207B\u00B9)",cex=0.8)
+text(xlim.val[2]+2,ylim.val[2],"A",xpd=NA,cex=1.5)
+
+par(mar=c(0.1,0.1,0.1,0.1))
+bbox.lims=bbox(subset(sloughs,NAME=="Taylor Sloug"))
+plot(ENP.shore,col="white",border="grey",lwd=0.05,ylim=c(bbox.lims[c(2)],2818533),xlim=bbox.lims[c(1,3)])
+plot(sloughs.clp,col="grey90",border=NA,add=T)
+plot(canal,col="grey",add=T)
+plot(ENP,bg=NA,lwd=0.5,add=T)
+plot(subset(structures,NAME%in%c("S332","S332D","S332DX1","S328","G737","S18C","S175")),add=T,pch=21,bg="black")
+tmp=subset(wmd.mon,STATION%in%TS.stg.site&ACTIVITY_S=="Stage")
+tmp=tmp[order(match(tmp$STATION,TS.stg.site)),]
+plot(tmp,pch=21,bg=c(rep("indianred1",2),"forestgreen"),add=T,lwd=0.01)
+text(tmp,"SITE",pos=2,cex=0.5,halo=T)
+EDEN.R127=SpatialPointsDataFrame(data.frame(UTMX=c(539626.9),UTMY=c(2804113.2)),data=data.frame(SITE="R127"),proj4string=CRS(SRS_string="EPSG:26917"))
+text(EDEN.R127,"SITE",pos=2,cex=0.5,halo=T)
+plot(EDEN.R127,add=T,pch=21,bg="dodgerblue1",lwd=0.01)
+mapmisc::scaleBar(utm17,"bottomleft",bty="n",cex=1,seg.len=4)
+box(lwd=1)
+
+xlim.val=c(1996,2019);by.x=10;xmaj=seq(xlim.val[1],xlim.val[2],by.x);xmin=seq(xlim.val[1],xlim.val[2],by.x/by.x)
+ylim.val=c(0.5,1);by.y=0.1;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+par(family="serif",mar=c(3,4,0.5,0.5),xpd=F)
+plot(meanHP.f~WY,stg.dat.WY.HP.region,type="n",ylim=ylim.val,xlim=xlim.val,ann=F,axes=F)
+abline(h=ymaj,v=xmaj,lty=3,col="grey",lwd=0.5)
+with(subset(stg.dat.WY.HP.region,Region=="UpperTS"),pt_line(WY,meanHP.f,1,"indianred1",1,21,"indianred1"))
+with(subset(stg.dat.WY.HP.region,Region=="MidTS"),pt_line(WY,meanHP.f,1,"dodgerblue1",1,21,"dodgerblue1"))
+with(subset(stg.dat.WY.HP.region,Region=="LowTS"),pt_line(WY,meanHP.f,1,"forestgreen",1,21,"forestgreen"))
+axis_fun(1,xmaj,xmin,xmaj,line=-0.5)
+axis_fun(2,ymaj,ymin,format(ymaj));box(lwd=1)
+mtext(side=2,line=2.5,"Hydroperiod (Prop of WY)",cex=0.8)
+mtext(side=1,line=1.75,"Water Year",cex=0.8)
+
+ylim.val=c(0,1);by.y=0.2;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+plot(TFlow.km3~WY,ts.flow.da.xtab.WY,type="n",ylim=ylim.val,xlim=xlim.val,ann=F,axes=F)
+abline(h=ymaj,v=xmaj,lty=3,col="grey",lwd=0.5)
+with(ts.flow.da.xtab.WY,pt_line(WY,TFlow.km3,1,"black",1.25,21,"black"))
+axis_fun(1,xmaj,xmin,xmaj,line=-0.5)
+axis_fun(2,ymaj,ymin,format(ymaj));box(lwd=1)
+mtext(side=2,line=2.5,"Discharge (km\u00B3 WY\u207B\u00B9)",cex=0.8)
+mtext(side=1,line=1.75,"Water Year",cex=0.8)
+text(xlim.val[2]+2,ylim.val[2],"B",xpd=NA,cex=1.5)
+dev.off()
+# END ---------------------------------------------------------------------
