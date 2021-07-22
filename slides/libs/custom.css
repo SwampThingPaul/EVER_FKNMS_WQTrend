@@ -1,0 +1,128 @@
+/* Basic Blue and White SCCF ppt */
+
+/* div.my-footer {
+  background-color: #005D8E;
+    position: absolute;
+  bottom: 0px;
+  left: 0px;
+  height: 15px;
+  width: 100%;
+}
+*/
+
+div.my-footer {
+    background-color: #1a1917;
+      position: absolute;
+    bottom: 0px;
+    left: 0px;
+    height: 20px;
+    width: 100%;
+  }
+
+div.my-footer span {
+  font-size: 10pt;
+  color: #F7F8FA;
+    position: absolute;
+  left: 15px;
+  bottom: 2px;
+}
+
+  a,
+a:visited {
+  color: #1a1917;
+  border-bottom: 1px solid  #61acf0;
+  box-shadow: inset 0 -2px 0  #61acf0;
+}
+
+a:hover,
+a:focus {
+  color: #1a1917;
+  background: rgba(97, 172, 240, .5);
+  border-bottom: none;
+}
+
+a > code {
+  color: #61acf0;
+  text-decoration: none;
+}
+
+/* Fonts */
+
+@import url(https://fonts.googleapis.com/css?family=Lato);
+@import url(https://fonts.googleapis.com/css?family=Muli:600,700,800);
+@import url('https://fonts.googleapis.com/css?family=Inconsolata:400');
+@import url('https://fonts.googleapis.com/css?family=Cormorant+Upright:700');
+
+body {
+  font-family: serif;
+}
+
+h1, h2, h3 {
+  font-family: serif;
+  font-weight: 600;
+  color: #000000;
+}
+
+.inverse h1 {
+  font-family: 'Muli';
+  font-weight: 800;
+  font-size: 2.5em; 
+}
+
+.remark-code, .remark-inline-code {
+  font-family: 'Inconsolata', 'Lucida Console', Monaco, monospace;
+  font-size: 75%;
+}
+
+.fancy{
+  font-family: 'Cormorant Upright', serif;
+  font-weight: 700;
+}
+
+.remark-slide-number {
+  bottom: 18px;
+  opacity: 0.5;
+  position: absolute;
+  right: 20px;
+}
+
+.title-slide .remark-slide-number { 
+    display: none; 
+}
+
+
+.small { 
+  font-size: 70%;
+}
+
+.left-code{
+  color: #777;
+  width: 35%;
+  height: 92%;
+  float: left;
+}
+
+.right-plot{
+  width: 62%;
+  float: right;
+  padding-left: 1%;
+}
+
+/* https://stackoverflow.com/questions/50919104/horizontally-scrollable-output-on-xaringan-slides */
+  
+  pre {
+    background: #f8f8f8; /* match github highlightjs */
+      max-width: 100%;
+    overflow-x: auto;
+  }
+
+img.lil {
+  width: 15%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.red{
+  color: #E8412C;
+}
