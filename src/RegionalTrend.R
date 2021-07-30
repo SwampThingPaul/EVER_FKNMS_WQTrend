@@ -691,11 +691,13 @@ plot(lter.shp2,add=T,lwd=0.1,pch=24,bg="black",cex=0.75)
 mapmisc::scaleBar(utm17,"bottomright",bty="n",cex=1,seg.len=4)
 box(lwd=1)
 plot(0:1,0:1,ann=F,axes=F,type="n")
-legend(0.5,0.8,legend=c("SERC","SFWMD","FCE LTER"),
+legend(0.5,0.8,legend=c(paste0("SERC (",length(serc.shp2$STATION),")"),
+                        paste0("SFWMD (",length(wmd.shp2$STATION),")"),
+                        paste0("FCE LTER (",length(lter.shp2$STATION),")")),
        pch=c(21,22,24),lty=c(NA),lwd=c(0.1),
        col=c("black"),pt.bg=c("white","grey","black"),
        pt.cex=1.25,ncol=1,cex=0.8,bty="n",y.intersp=1,x.intersp=0.75,xpd=NA,xjust=0.5,yjust=1,
-       title.adj = 0,title="Monitoring")
+       title.adj = 0,title="Monitoring\n(Number of Sites)")
 legend(0.5,0.4,legend=c("ENP","Mangrove Fringe","Florida Bay","W. Florida Shelf","Keys"),
        pch=c(22),lty=c(NA),lwd=c(0.1),
        col=c("black"),pt.bg=c("white",adjustcolor(cols,0.5)),
@@ -898,11 +900,11 @@ plot(mean.PDO~WY,pdo.WY.dat)
 with(pdo.WY.dat,lines(WY,UCI))
 with(pdo.WY.dat,lines(WY,LCI))
 
-# png(filename=paste0(plot.path,"ClimateIndex.png"),width=6.5,height=5,units="in",res=200,type="windows",bg="white")
-par(family="serif",mar=c(1,3,1,1.5),oma=c(2,1,0.25,0.25),xpd=F);
+# png(filename=paste0(plot.path,"ClimateIndex.png"),width=6.5,height=4,units="in",res=200,type="windows",bg="white")
+par(family="serif",mar=c(1,3,0.5,1.5),oma=c(2,1,0.25,0.25),xpd=F);
 layout(matrix(c(1:2),2,1,byrow=T))
 
-xlim.val=date.fun(c("1870-01-01","2016-12-01"));xmaj=seq(xlim.val[1],xlim.val[2],"20 years");xmin=seq(xlim.val[1],xlim.val[2],"1 years")
+xlim.val=date.fun(c("1870-01-01","2021-12-01"));xmaj=seq(xlim.val[1],xlim.val[2],"20 years");xmin=seq(xlim.val[1],xlim.val[2],"1 years")
 ylim.val=c(-0.4,0.4);by.y=0.2;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
 plot(value~Date.mon,AMO.dat.melt,xlim=xlim.val,ylim=ylim.val,type="n",axes=F,ann=F)
 abline(h=ymaj,v=xmaj,lty=1,col=adjustcolor("grey",0.5))
@@ -928,6 +930,38 @@ abline(v=date.fun(c("1995-05-01","2019-05-01")),lty=2)
 mtext(side=2,line=2.5,"PDO Index")
 mtext(side=1,line=1.5,"Year")
 dev.off()
+
+# png(filename=paste0(plot.path,"ClimateIndex_v2.png"),width=6.5,height=4,units="in",res=200,type="windows",bg="white")
+par(family="serif",mar=c(1,3,0.5,1.5),oma=c(2,1,0.25,0.25),xpd=F);
+layout(matrix(c(1:2),2,1,byrow=T))
+
+xlim.val=date.fun(c("1995-01-01","2021-12-01"));xmaj=seq(xlim.val[1],xlim.val[2],"10 years");xmin=seq(xlim.val[1],xlim.val[2],"1 years")
+ylim.val=c(-0.2,0.2);by.y=0.1;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+plot(value~Date.mon,AMO.dat.melt,xlim=xlim.val,ylim=ylim.val,type="n",axes=F,ann=F)
+abline(h=ymaj,v=xmaj,lty=1,col=adjustcolor("grey",0.5))
+#with(AMO.dat.melt,lines(Date.mon,ma,col="red"))
+with(subset(AMO.dat.melt,is.na(value)==F),shaded.range(Date.mon,rep(0,length(Date.mon)),ifelse(value>0,value,0),"indianred1",lty=1))
+with(subset(AMO.dat.melt,is.na(value)==F),shaded.range(Date.mon,ifelse(value<0,value,0),rep(0,length(Date.mon)),"dodgerblue1",lty=1))
+abline(h=0)
+axis_fun(1,xmaj,xmin,NA)
+axis_fun(2,ymaj,ymin,format(ymaj,nsmall=1));box(lwd=1)
+abline(v=date.fun(c("1995-05-01","2019-05-01")),lty=2)
+text(date.fun(date.fun("1995-05-01")+lubridate::ddays(4383)),ylim.val[2],"Study Period",cex=0.75,font=3)
+mtext(side=2,line=2.5,"AMO Index")
+
+ylim.val=c(-4,4);by.y=2;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+plot(value~monCY.date,pdo,xlim=xlim.val,ylim=ylim.val,type="n",axes=F,ann=F)
+abline(h=ymaj,v=xmaj,lty=1,col=adjustcolor("grey",0.5))
+with(subset(pdo,is.na(value)==F),shaded.range(monCY.date,rep(0,length(monCY.date)),ifelse(value>0,value,0),"indianred1",lty=1))
+with(subset(pdo,is.na(value)==F),shaded.range(monCY.date,ifelse(value<0,value,0),rep(0,length(monCY.date)),"dodgerblue1",lty=1))
+abline(h=0)
+axis_fun(1,xmaj,xmin,format(xmaj,"%Y"),line=-0.5)
+axis_fun(2,ymaj,ymin,format(ymaj,nsmall=1));box(lwd=1)
+abline(v=date.fun(c("1995-05-01","2019-05-01")),lty=2)
+mtext(side=2,line=2.5,"PDO Index")
+mtext(side=1,line=1.5,"Year")
+dev.off()
+
 # GAM ---------------------------------------------------------------------
 # TN
 dat.all.TN.GM2=merge(dat.all.TN.GM,sites.shp,"STATION")
