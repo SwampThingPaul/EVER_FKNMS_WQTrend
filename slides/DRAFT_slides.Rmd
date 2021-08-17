@@ -183,7 +183,7 @@ name: Trend
 
 knitr::include_graphics("./plots/varianceMaps.png")
 ```
-<!-- .center[.small[**Left:** Annual rate of change for geometric mean total nitrogen (TN), dissolved inorganic nutrient (DIN), total phosphorous (TP), soluble reactive phosphorus (SRP) and chlorophyll-a (Chl-a) concentrations at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record. **Right:** Average annual geometric mean TN, DIN, TP, SRP and Chl-a concentrations  across the study area.]] -->
+
 ---
 
 name: TNGAM
