@@ -12,5 +12,6 @@
 /Export/
 README.Rmd
 
-
+*.RDataTmp
+*.RDataTmp*
 

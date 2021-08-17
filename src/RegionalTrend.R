@@ -567,7 +567,14 @@ TN.ann.trend=ddply(dat.all.TN.GM,"STATION",summarise,
                    sen.slope=as.numeric(zyp::zyp.sen(TN.GM~WY)$coefficients[2]),
                    N.WY=N.obs(WY))
 subset(TN.ann.trend,pval<0.05)
-TN.AGM.all=ddply(dat.all.TN.GM,"STATION",summarise,mean.TN.GM=mean(TN.GM,na.rm=T),N.val=N.obs(TN.GM),SE.val=SE(TN.GM))
+TN.AGM.all=ddply(dat.all.TN.GM,"STATION",summarise,
+                 mean.TN.GM=mean(TN.GM,na.rm=T),
+                 N.val=N.obs(TN.GM),
+                 SE.val=SE(TN.GM),
+                 var.val=var(TN.GM,na.rm=T),# sample variance s^2; use this one (variance within site)
+                 pop.var=var.val*((N.val-1)/N.val), # population variance sigma^2 
+                 sd.val=sd(TN.GM,na.rm=T),
+                 CV.val=cv.per(TN.GM)*100)
 
 DIN.ann.trend=ddply(dat.all.DIN.GM,"STATION",summarise,
                     est=as.numeric(cor.test(WY,DIN.GM,method="kendall")$estimate),
@@ -576,7 +583,13 @@ DIN.ann.trend=ddply(dat.all.DIN.GM,"STATION",summarise,
                     N.WY=N.obs(WY))
 # DIN.ann.trend$sen.slope
 subset(DIN.ann.trend,pval<0.05)
-DIN.AGM.all=ddply(dat.all.DIN.GM,"STATION",summarise,mean.DIN.GM=mean(DIN.GM,na.rm=T),N.val=N.obs(DIN.GM),SE.val=SE(DIN.GM))
+DIN.AGM.all=ddply(dat.all.DIN.GM,"STATION",summarise,
+                  mean.DIN.GM=mean(DIN.GM,na.rm=T),
+                  N.val=N.obs(DIN.GM),
+                  SE.val=SE(DIN.GM),
+                  var.val=var(DIN.GM,na.rm=T),
+                  sd.val=sd(DIN.GM,na.rm=T),
+                  CV.val=cv.per(DIN.GM)*100)
 
 TP.ann.trend=ddply(dat.all.TP.GM,"STATION",summarise,
                    est=as.numeric(cor.test(WY,TP.GM,method="kendall")$estimate),
@@ -584,7 +597,13 @@ TP.ann.trend=ddply(dat.all.TP.GM,"STATION",summarise,
                    sen.slope=as.numeric(zyp::zyp.sen(TP.GM~WY)$coefficients[2]),
                    N.WY=N.obs(WY))
 subset(TP.ann.trend,pval<0.05)
-TP.AGM.all=ddply(dat.all.TP.GM,"STATION",summarise,mean.TP.GM=mean(TP.GM,na.rm=T),N.val=N.obs(TP.GM),SE.val=SE(TP.GM))
+TP.AGM.all=ddply(dat.all.TP.GM,"STATION",summarise,
+                 mean.TP.GM=mean(TP.GM,na.rm=T),
+                 N.val=N.obs(TP.GM),
+                 SE.val=SE(TP.GM),
+                 var.val=var(TP.GM,na.rm=T),
+                 sd.val=sd(TP.GM,na.rm=T),
+                 CV.val=cv.per(TP.GM)*100)
 
 SRP.ann.trend=ddply(dat.all.SRP.GM,"STATION",summarise,
                     est=as.numeric(cor.test(WY,SRP.GM,method="kendall")$estimate),
@@ -593,7 +612,13 @@ SRP.ann.trend=ddply(dat.all.SRP.GM,"STATION",summarise,
                     N.WY=N.obs(WY))
 subset(SRP.ann.trend,pval<0.05)
 subset(SRP.ann.trend,is.na(pval))
-SRP.AGM.all=ddply(dat.all.SRP.GM,"STATION",summarise,mean.SRP.GM=mean(SRP.GM,na.rm=T),N.val=N.obs(SRP.GM),SE.val=SE(SRP.GM))
+SRP.AGM.all=ddply(dat.all.SRP.GM,"STATION",summarise,
+                  mean.SRP.GM=mean(SRP.GM,na.rm=T),
+                  N.val=N.obs(SRP.GM),
+                  SE.val=SE(SRP.GM),
+                  var.val=var(SRP.GM,na.rm=T),
+                  sd.val=sd(SRP.GM,na.rm=T),
+                  CV.val=cv.per(SRP.GM)*100)
 
 Chla.ann.trend=ddply(dat.all.Chla.GM,"STATION",summarise,
                      est=as.numeric(cor.test(WY,Chla.GM,method="kendall")$estimate),
@@ -601,7 +626,13 @@ Chla.ann.trend=ddply(dat.all.Chla.GM,"STATION",summarise,
                      sen.slope=as.numeric(zyp::zyp.sen(Chla.GM~WY)$coefficients[2]),
                      N.WY=N.obs(WY))
 subset(Chla.ann.trend,pval<0.05)
-Chla.AGM.all=ddply(dat.all.Chla.GM,"STATION",summarise,mean.Chla.GM=mean(Chla.GM,na.rm=T),N.val=N.obs(Chla.GM),SE.val=SE(Chla.GM))
+Chla.AGM.all=ddply(dat.all.Chla.GM,"STATION",summarise,
+                   mean.Chla.GM=mean(Chla.GM,na.rm=T),
+                   N.val=N.obs(Chla.GM),
+                   SE.val=SE(Chla.GM),
+                   var.val=var(Chla.GM,na.rm=T),
+                   sd.val=sd(Chla.GM,na.rm=T),
+                   CV.val=cv.per(Chla.GM)*100)
 
 # Spatial -----------------------------------------------------------------
 
@@ -762,15 +793,29 @@ m.GM=Tps(coordinates(sites.shp.TN.GM),sites.shp.TN.GM$mean.TN.GM)
 tps.GM=interpolate(region.buf.r,m.GM)
 tps.TN.GM=mask(tps.GM,region.mask)
 
-tm_shape(tps.TN.GM)+tm_raster(title="Average Annual GM TN (mg N L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
-  tm_shape(sites.shp.TN.GM)+tm_dots(col="white",alpha=0.5)
+# tm_shape(tps.TN.GM)+tm_raster(title="Average Annual GM TN (mg N L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
+#   tm_shape(sites.shp.TN.GM)+tm_dots(col="white",alpha=0.5)
 
 m.GM.SE=Tps(coordinates(sites.shp.TN.GM),sites.shp.TN.GM$SE.val)
 tps.GM.SE=interpolate(region.buf.r,m.GM.SE)
 tps.TN.GM.SE=mask(tps.GM.SE,region.mask)
 
-tm_shape(tps.TN.GM.SE)+tm_raster(title="SE of average GM TN (mg N L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
-  tm_shape(sites.shp.TN.GM)+tm_dots(col="white",alpha=0.5)
+# tm_shape(tps.TN.GM.SE)+tm_raster(title="SE of average GM TN (mg N L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
+#   tm_shape(sites.shp.TN.GM)+tm_dots(col="white",alpha=0.5)
+
+m.GM.var=Tps(coordinates(sites.shp.TN.GM),sites.shp.TN.GM$var.val)
+tps.GM.var=interpolate(region.buf.r,m.GM.var)
+tps.TN.GM.var=mask(tps.GM.var,region.mask)
+
+# tm_shape(tps.TN.GM.var)+tm_raster(title="var of average GM TN (mg N L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
+#   tm_shape(sites.shp.TN.GM)+tm_dots(col="white",alpha=0.5)
+
+m.GM.CV=Tps(coordinates(sites.shp.TN.GM),sites.shp.TN.GM$CV.val)
+tps.GM.CV=interpolate(region.buf.r,m.GM.CV)
+tps.TN.GM.CV=mask(tps.GM.CV,region.mask)
+
+# tm_shape(tps.TN.GM.CV)+tm_raster(title="CV of average GM TN (mg N L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
+#   tm_shape(sites.shp.TN.GM)+tm_dots(col="white",alpha=0.5)
 
 # DIN
 sites.shp.DIN.GM=merge(sites.shp,DIN.AGM.all,"STATION",all.y=T)
@@ -781,15 +826,24 @@ m.GM=Tps(coordinates(sites.shp.DIN.GM),sites.shp.DIN.GM$mean.DIN.GM)
 tps.GM=interpolate(region.buf.r,m.GM)
 tps.DIN.GM=mask(tps.GM,region.mask)
 
-tm_shape(tps.DIN.GM)+tm_raster(title="Average Annual GM DIN (mg N L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
-  tm_shape(sites.shp.DIN.GM)+tm_dots(col="white",alpha=0.5)
+# tm_shape(tps.DIN.GM)+tm_raster(title="Average Annual GM DIN (mg N L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
+#   tm_shape(sites.shp.DIN.GM)+tm_dots(col="white",alpha=0.5)
 
 m.GM.SE=Tps(coordinates(sites.shp.DIN.GM),sites.shp.DIN.GM$SE.val)
 tps.GM.SE=interpolate(region.buf.r,m.GM.SE)
 tps.DIN.GM.SE=mask(tps.GM.SE,region.mask)
 
-tm_shape(tps.DIN.GM.SE)+tm_raster(title="SE of average GM DIN (mg N L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
-  tm_shape(sites.shp.DIN.GM)+tm_dots(col="white",alpha=0.5)
+# tm_shape(tps.DIN.GM.SE)+tm_raster(title="SE of average GM DIN (mg N L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
+#   tm_shape(sites.shp.DIN.GM)+tm_dots(col="white",alpha=0.5)
+
+m.GM.var=Tps(coordinates(sites.shp.DIN.GM),sites.shp.DIN.GM$var.val)
+tps.GM.var=interpolate(region.buf.r,m.GM.var)
+tps.DIN.GM.var=mask(tps.GM.var,region.mask)
+
+m.GM.CV=Tps(coordinates(sites.shp.DIN.GM),sites.shp.DIN.GM$CV.val)
+tps.GM.CV=interpolate(region.buf.r,m.GM.CV)
+tps.DIN.GM.CV=mask(tps.GM.CV,region.mask)
+
 
 # TP
 sites.shp.TP.GM=merge(sites.shp,TP.AGM.all,"STATION",all.y=T)
@@ -800,16 +854,25 @@ m.GM=Tps(coordinates(sites.shp.TP.GM),sites.shp.TP.GM$mean.TP.GM,method="REML")
 tps.GM=interpolate(region.buf.r,m.GM)
 tps.TP.GM=mask(tps.GM,region.mask)
 
-tm_shape(tps.TP.GM)+tm_raster(title="Average Annual GM TP (ug P L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
-  tm_shape(sites.shp.TP.GM)+tm_dots(col="white",alpha=0.5)
+# tm_shape(tps.TP.GM)+tm_raster(title="Average Annual GM TP (ug P L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
+#   tm_shape(sites.shp.TP.GM)+tm_dots(col="white",alpha=0.5)
 
 m.GM.SE=Tps(coordinates(sites.shp.TP.GM),sites.shp.TP.GM$SE.val)
 tps.GM.SE=interpolate(region.buf.r,m.GM.SE)
 tps.TP.GM.SE=mask(tps.GM.SE,region.mask)
 
-tm_shape(tps.TP.GM.SE)+tm_raster(title="SE of average GM TP (ug P L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
-  tm_shape(sites.shp.TP.GM)+tm_dots(col="white",alpha=0.5)
+# tm_shape(tps.TP.GM.SE)+tm_raster(title="SE of average GM TP (ug P L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
+#   tm_shape(sites.shp.TP.GM)+tm_dots(col="white",alpha=0.5)
 
+m.GM.var=Tps(coordinates(sites.shp.TP.GM),sites.shp.TP.GM$var.val)
+tps.GM.var=interpolate(region.buf.r,m.GM.var)
+tps.TP.GM.var=mask(tps.GM.var,region.mask)
+plot(tps.TP.GM.var)
+
+m.GM.CV=Tps(coordinates(sites.shp.TP.GM),sites.shp.TP.GM$CV.val)
+tps.GM.CV=interpolate(region.buf.r,m.GM.CV)
+tps.TP.GM.CV=mask(tps.GM.CV,region.mask)
+plot(tps.TP.GM.CV)
 # SRP
 sites.shp.SRP.GM=merge(sites.shp,SRP.AGM.all,"STATION",all.y=T)
 sites.shp.SRP.GM=SpatialPointsDataFrame(sites.shp.SRP.GM[,c("UTMX","UTMY")],data=sites.shp.SRP.GM,proj4string=CRS(SRS_string ="EPSG:26917"))
@@ -819,15 +882,25 @@ m.GM=Tps(coordinates(sites.shp.SRP.GM),sites.shp.SRP.GM$mean.SRP.GM)
 tps.GM=interpolate(region.buf.r,m.GM)
 tps.SRP.GM=mask(tps.GM,region.mask)
 
-tm_shape(tps.SRP.GM)+tm_raster(title="Average Annual GM SRP (ug P L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
-  tm_shape(sites.shp.SRP.GM)+tm_dots(col="white",alpha=0.5)
+# tm_shape(tps.SRP.GM)+tm_raster(title="Average Annual GM SRP (ug P L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
+#   tm_shape(sites.shp.SRP.GM)+tm_dots(col="white",alpha=0.5)
 
 m.GM.SE=Tps(coordinates(sites.shp.SRP.GM),sites.shp.SRP.GM$SE.val)
 tps.GM.SE=interpolate(region.buf.r,m.GM.SE)
 tps.SRP.GM.SE=mask(tps.GM.SE,region.mask)
 
-tm_shape(tps.SRP.GM.SE)+tm_raster(title="SE of average GM SRP (ug P L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
-  tm_shape(sites.shp.TP.GM)+tm_dots(col="white",alpha=0.5)
+# tm_shape(tps.SRP.GM.SE)+tm_raster(title="SE of average GM SRP (ug P L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
+#   tm_shape(sites.shp.TP.GM)+tm_dots(col="white",alpha=0.5)
+
+m.GM.var=Tps(coordinates(sites.shp.SRP.GM),sites.shp.SRP.GM$var.val)
+tps.GM.var=interpolate(region.buf.r,m.GM.var)
+tps.SRP.GM.var=mask(tps.GM.var,region.mask)
+plot(tps.SRP.GM.var)
+
+m.GM.CV=Tps(coordinates(sites.shp.SRP.GM),sites.shp.SRP.GM$CV.val)
+tps.GM.CV=interpolate(region.buf.r,m.GM.CV)
+tps.SRP.GM.CV=mask(tps.GM.CV,region.mask)
+plot(tps.SRP.GM.CV)
 
 # Chla
 sites.shp.Chla.GM=merge(sites.shp,Chla.AGM.all,"STATION",all.y=T)
@@ -838,17 +911,27 @@ m.GM=Tps(coordinates(sites.shp.Chla.GM),sites.shp.Chla.GM$mean.Chla.GM)
 tps.GM=interpolate(region.buf.r,m.GM)
 tps.Chla.GM=mask(tps.GM,region.mask)
 
-tm_shape(tps.Chla.GM)+tm_raster(title="Average Annual GM Chla (ug L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
-  tm_shape(sites.shp.Chla.GM)+tm_dots(col="white",alpha=0.5)
+# tm_shape(tps.Chla.GM)+tm_raster(title="Average Annual GM Chla (ug L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
+#   tm_shape(sites.shp.Chla.GM)+tm_dots(col="white",alpha=0.5)
 
 m.GM.SE=Tps(coordinates(sites.shp.Chla.GM),sites.shp.Chla.GM$SE.val)
 tps.GM.SE=interpolate(region.buf.r,m.GM.SE)
 tps.Chla.GM.SE=mask(tps.GM.SE,region.mask)
 
-tm_shape(tps.Chla.GM.SE)+tm_raster(title="SE of average GM Chla (ug N L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
-  tm_shape(sites.shp.TN.GM)+tm_dots(col="white",alpha=0.5)
+# tm_shape(tps.Chla.GM.SE)+tm_raster(title="SE of average GM Chla (ug N L\u207B\u00B9)",alpha=0.5,palette = "viridis")+
+#   tm_shape(sites.shp.TN.GM)+tm_dots(col="white",alpha=0.5)
 
+m.GM.var=Tps(coordinates(sites.shp.Chla.GM),sites.shp.Chla.GM$var.val)
+tps.GM.var=interpolate(region.buf.r,m.GM.var)
+tps.Chla.GM.var=mask(tps.GM.var,region.mask)
+plot(tps.Chla.GM.var)
 
+m.GM.CV=Tps(coordinates(sites.shp.Chla.GM),sites.shp.Chla.GM$CV.val)
+tps.GM.CV=interpolate(region.buf.r,m.GM.CV)
+tps.Chla.GM.CV=mask(tps.GM.CV,region.mask)
+plot(tps.Chla.GM.CV)
+
+# variance is in units squared
 # Climate -----------------------------------------------------------------
 ## AMO
 vars=c('year',month.abb)
@@ -1038,6 +1121,28 @@ text(x=0.3, y = seq(0.25,0.75,length.out=3), labels = leg.labs,cex=1,pos=4)
 text(0.15,0.76,"Effect",pos=3,xpd=NA)
 dev.off()
 
+
+bbox.lims=bbox(regions2)
+tmp.ma=with(tmp[5][[1]],matrix(fit,nrow=length(y),ncol=length(x)))
+dat1=list()
+dat1$x=tmp[2][[1]]$x
+dat1$y=tmp[2][[1]]$y
+dat1$z=tmp.ma
+
+# https://cran.r-project.org/web/packages/itsadug/vignettes/inspect.html
+library(itsadug)
+gamtabs(m.TN,type="HTML")
+
+pvisgam(m.TN, select=3, view=c("UTMX","UTMY"), main="pvisgam", dec=1)
+fvisgam(m.TN,view=c("UTMX","UTMY"))
+
+plot_data(m.TN,view="WY")
+plot_modelfit(m.TN,view="WY")
+
+
+plot(m.TN,select=3)
+draw(m.TN)
+
 # TP
 dat.all.TP.GM2=merge(dat.all.TP.GM,sites.shp,"STATION")
 head(dat.all.TP.GM2)
@@ -1117,10 +1222,10 @@ dev.off()
 # Static Trend and GM maps ------------------------------------------------
 
 cols.val=c("white","red")
-# tiff(filename=paste0(plot.path,"TrendMaps_v1.tiff"),width=6.5,height=6,units="in",res=200,type="windows",compression=c("lzw"),bg="white")
+# tiff(filename=paste0(plot.path,"tiff/TrendMaps_v1.tiff"),width=6.5,height=6,units="in",res=200,type="windows",compression=c("lzw"),bg="white")
 # png(filename=paste0(plot.path,"TrendMaps.png"),width=6.5,height=6,units="in",res=200,type="windows",bg="white")
 par(family="serif",oma=c(0.25,0.25,0.25,0.25),mar=c(0.1,0.1,0.1,0.1),xpd=F)
-layout(matrix(c(1:20),5,4,byrow=T),widths = c(1,0.4,1,0.4))
+layout(matrix(c(1:20),5,4,byrow=T),widths = c(1,0.4,1,0.5))
 bbox.lims=bbox(region.mask)
 {
 # TN
@@ -1309,106 +1414,279 @@ text(x=0.15,y=0.95,"Average Annual GM Chl-a\n(\u03BCg L\u207B\u00B9)",adj=0,cex=
 }
 dev.off()
 
-## ggplot version
-library(ggplot2)
-library(ggmap)
-library(ggspatial)
-library(ggsn)
-library(cowplot)
 
-theme_map <- function(...) {
-  theme_minimal() +
-    theme(
-      text = element_text(family = "serif", color = "#22211d"),
-      axis.line = element_blank(),
-      axis.text.x = element_blank(),
-      axis.text.y = element_blank(),
-      axis.ticks = element_blank(),
-      axis.title.x = element_blank(),
-      axis.title.y = element_blank(),
-      # panel.grid.minor = element_line(color = "#ebebe5", size = 0.2),
-      # panel.grid.major = element_line(color = "#ebebe5", size = 0.2),
-      panel.grid.major = element_blank(),
-      panel.grid.minor = element_blank(),
-      # plot.background = element_rect(fill = "lightblue", color = NA),
-      panel.background = element_rect(fill = "lightblue", color = NA),
-      # legend.background = element_rect(fill = "#f5f5f2", color = NA),
-      plot.background = element_blank(),
-      # panel.background = element_blank(),
-      legend.background = element_blank(),
-      panel.border = element_blank(),
-      plot.title=element_text(size=12),
-      plot.subtitle = element_text(color = "grey50",size=8),
-      plot.caption = element_text(hjust = 0),
-      ...
-    )
+# tiff(filename=paste0(plot.path,"tiff/varianceMaps.tiff"),width=6.5,height=6,units="in",res=200,type="windows",compression=c("lzw"),bg="white")
+# png(filename=paste0(plot.path,"varianceMaps.png"),width=6.5,height=6,units="in",res=200,type="windows",bg="white")
+par(family="serif",oma=c(0.25,0.25,0.25,0.25),mar=c(0.1,0.1,0.1,0.1),xpd=F)
+layout(matrix(c(1:20),5,4,byrow=T),widths = c(1,0.5,1,0.5))
+bbox.lims=bbox(region.mask)
+n=10
+{
+  # TN
+  plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.05,xpd=F)
+  int=classIntervals(values(tps.TN.GM.var)[is.na(values(tps.TN.GM.var))==F],n=n,style="equal")
+  int.bks=int$brks
+  pal=hcl.colors(length(int$brks)-1, "Inferno", rev = F,alpha=0.7)
+  image(tps.TN.GM.var,add=T,breaks=int.bks,col = pal)
+  plot(ENP,add=T,bg=NA,lwd=0.5)
+  plot(regions2,lty=2,add=T,border="grey80",lwd=0.5)
+  box(lwd=1)
+  plot(0:1,0:1,ann=F,axes=F,type="n")
+  legend_image=as.raster(matrix(pal,ncol=1))
+  text(x=0.25, y = c(0.83,0.47), labels = c(format(min(int.bks),digits=2),format(max(int.bks),digits=2)),cex=0.6,adj=0,pos=4)
+  rasterImage(legend_image,0.15,0.45,0.25,0.85)
+  text(x=0.15,y=0.95,"Variance Annual GM TN\n(mg N L\u207B\u00B9)\u00B2",adj=0,cex=0.75)
+  
+  plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.05,xpd=F)
+  int=classIntervals(values(tps.TN.GM.CV)[is.na(values(tps.TN.GM.CV))==F],n=n,style="equal")
+  int.bks=seq(0,100,20)# c(0,25,50,75,100)# int$brks
+  pal=hcl.colors(length(int.bks)-1, "Plasma", rev = F,alpha=0.7)
+  image(tps.TN.GM.CV,add=T,breaks=int.bks,col = pal)
+  plot(ENP,add=T,bg=NA,lwd=0.5)
+  plot(regions2,lty=2,add=T,border="grey80",lwd=0.5)
+  box(lwd=1)
+  plot(0:1,0:1,ann=F,axes=F,type="n")
+  int.bks.vals=format(round(int.bks,1),nsmall=0)
+  n.bks=length(int.bks)
+  labs=c(paste(int.bks.vals[1:n.bks-1],int.bks.vals[2:n.bks],sep=" - "))
+  n.bks=n.bks-1
+  bx.val= seq(0.45,0.85,(0.85-0.45)/n.bks)
+  rect(0.15,bx.val[1:n.bks],0.25,bx.val[2:(n.bks+1)],col=rev(pal),lty=0)
+  text(x=0.25, y = bx.val[2:(n.bks+1)]-c(mean(diff(bx.val[2:(n.bks+1)]))/2), labels = rev(labs),cex=0.6,adj=0,pos=4)
+  text(x=0.15,y=0.95,"CV Annual GM TN\n(Percent)",adj=0,cex=0.75)
+  
+  # DIN
+  plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.05,xpd=F)
+  int=classIntervals(values(tps.DIN.GM.var)[is.na(values(tps.DIN.GM.var))==F],n=n,style="equal")
+  int.bks=int$brks
+  pal=hcl.colors(length(int$brks)-1, "Inferno", rev = F,alpha=0.7)
+  image(tps.DIN.GM.var,add=T,breaks=int.bks,col = pal)
+  plot(ENP,add=T,bg=NA,lwd=0.5)
+  plot(regions2,lty=2,add=T,border="grey80",lwd=0.5)
+  box(lwd=1)
+  plot(0:1,0:1,ann=F,axes=F,type="n")
+  legend_image=as.raster(matrix(pal,ncol=1))
+  text(x=0.25, y = c(0.83,0.47), labels = c(format(min(int.bks),digits=2),format(max(int.bks),digits=2)),cex=0.6,adj=0,pos=4)
+  rasterImage(legend_image,0.15,0.45,0.25,0.85)
+  text(x=0.15,y=0.95,"Variance Annual GM DIN\n(mg N L\u207B\u00B9)\u00B2",adj=0,cex=0.75)
+  
+  plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.05,xpd=F)
+  int=classIntervals(values(tps.DIN.GM.CV)[is.na(values(tps.DIN.GM.CV))==F],n=n,style="equal")
+  int.bks=seq(0,100,20)# c(0,25,50,75,100)# int$brks
+  pal=hcl.colors(length(int.bks)-1, "Plasma", rev = F,alpha=0.7)
+  image(tps.DIN.GM.CV,add=T,breaks=int.bks,col = pal)
+  plot(ENP,add=T,bg=NA,lwd=0.5)
+  plot(regions2,lty=2,add=T,border="grey80",lwd=0.5)
+  box(lwd=1)
+  plot(0:1,0:1,ann=F,axes=F,type="n")
+  int.bks.vals=format(round(int.bks,1),nsmall=0)
+  labs=c(paste(int.bks.vals[1:5],int.bks.vals[2:6],sep=" - "))
+  n.bks=length(int.bks)-1
+  bx.val= seq(0.45,0.85,(0.85-0.45)/n.bks)
+  rect(0.15,bx.val[1:n.bks],0.25,bx.val[2:(n.bks+1)],col=rev(pal),lty=0)
+  text(x=0.25, y = bx.val[2:(n.bks+1)]-c(mean(diff(bx.val[2:(n.bks+1)]))/2), labels = rev(labs),cex=0.6,adj=0,pos=4)
+  text(x=0.15,y=0.95,"CV Annual GM DIN\n(Percent)",adj=0,cex=0.75)
+  
+  # TP
+  plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.05,xpd=F)
+  int=classIntervals(values(tps.TP.GM.var)[is.na(values(tps.TP.GM.var))==F],n=n,style="equal")
+  int.bks=int$brks
+  pal=hcl.colors(length(int$brks)-1, "Inferno", rev = F,alpha=0.7)
+  image(tps.TP.GM.var,add=T,breaks=int.bks,col = pal)
+  plot(ENP,add=T,bg=NA,lwd=0.5)
+  plot(regions2,lty=2,add=T,border="grey80",lwd=0.5)
+  box(lwd=1)
+  plot(0:1,0:1,ann=F,axes=F,type="n")
+  legend_image=as.raster(matrix(pal,ncol=1))
+  text(x=0.25, y = c(0.83,0.47), labels = c(format(min(int.bks),digits=2),format(max(int.bks),digits=2)),cex=0.6,adj=0,pos=4)
+  rasterImage(legend_image,0.15,0.45,0.25,0.85)
+  text(x=0.15,y=0.95,"Variance Annual GM TP\n(\u03BCg N L\u207B\u00B9)\u00B2",adj=0,cex=0.75)
+  
+  plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.05,xpd=F)
+  int=classIntervals(values(tps.TP.GM.CV)[is.na(values(tps.TP.GM.CV))==F],n=n,style="equal")
+  int.bks=seq(0,100,20)# c(0,25,50,75,100)# int$brks
+  pal=hcl.colors(length(int.bks)-1, "Plasma", rev = F,alpha=0.7)
+  image(tps.TP.GM.CV,add=T,breaks=int.bks,col = pal)
+  plot(ENP,add=T,bg=NA,lwd=0.5)
+  plot(regions2,lty=2,add=T,border="grey80",lwd=0.5)
+  box(lwd=1)
+  plot(0:1,0:1,ann=F,axes=F,type="n")
+  int.bks.vals=format(round(int.bks,1),nsmall=0)
+  labs=c(paste(int.bks.vals[1:5],int.bks.vals[2:6],sep=" - "))
+  n.bks=length(int.bks)-1
+  bx.val= seq(0.45,0.85,(0.85-0.45)/n.bks)
+  rect(0.15,bx.val[1:n.bks],0.25,bx.val[2:(n.bks+1)],col=rev(pal),lty=0)
+  text(x=0.25, y = bx.val[2:(n.bks+1)]-c(mean(diff(bx.val[2:(n.bks+1)]))/2), labels = rev(labs),cex=0.6,adj=0,pos=4)
+  text(x=0.15,y=0.95,"CV Annual GM TP\n(Percent)",adj=0,cex=0.75)
+  
+  # SRP
+  plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.05,xpd=F)
+  int=classIntervals(values(tps.SRP.GM.var)[is.na(values(tps.SRP.GM.var))==F],n=n,style="equal")
+  int.bks=int$brks
+  pal=hcl.colors(length(int$brks)-1, "Inferno", rev = F,alpha=0.7)
+  image(tps.SRP.GM.var,add=T,breaks=int.bks,col = pal)
+  plot(ENP,add=T,bg=NA,lwd=0.5)
+  plot(regions2,lty=2,add=T,border="grey80",lwd=0.5)
+  box(lwd=1)
+  plot(0:1,0:1,ann=F,axes=F,type="n")
+  legend_image=as.raster(matrix(pal,ncol=1))
+  text(x=0.25, y = c(0.83,0.47), labels = c(format(min(int.bks),digits=2),format(max(int.bks),digits=2)),cex=0.6,adj=0,pos=4)
+  rasterImage(legend_image,0.15,0.45,0.25,0.85)
+  text(x=0.15,y=0.95,"Variance Annual GM SRP\n(\u03BCg N L\u207B\u00B9)\u00B2",adj=0,cex=0.75)
+  
+  plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.05,xpd=F)
+  int=classIntervals(values(tps.SRP.GM.CV)[is.na(values(tps.SRP.GM.CV))==F],n=n,style="equal")
+  int.bks=seq(0,100,20)# c(0,25,50,75,100)# int$brks
+  pal=hcl.colors(length(int.bks)-1, "Plasma", rev = F,alpha=0.7)
+  image(tps.SRP.GM.CV,add=T,breaks=int.bks,col = pal)
+  plot(ENP,add=T,bg=NA,lwd=0.5)
+  plot(regions2,lty=2,add=T,border="grey80",lwd=0.5)
+  box(lwd=1)
+  plot(0:1,0:1,ann=F,axes=F,type="n")
+  int.bks.vals=format(round(int.bks,1),nsmall=0)
+  labs=c(paste(int.bks.vals[1:5],int.bks.vals[2:6],sep=" - "))
+  n.bks=length(int.bks)-1
+  bx.val= seq(0.45,0.85,(0.85-0.45)/n.bks)
+  rect(0.15,bx.val[1:n.bks],0.25,bx.val[2:(n.bks+1)],col=rev(pal),lty=0)
+  text(x=0.25, y = bx.val[2:(n.bks+1)]-c(mean(diff(bx.val[2:(n.bks+1)]))/2), labels = rev(labs),cex=0.6,adj=0,pos=4)
+  text(x=0.15,y=0.95,"CV Annual GM SRP\n(Percent)",adj=0,cex=0.75)
+  
+  
+  # Chla
+  plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.05,xpd=F)
+  int=classIntervals(values(tps.Chla.GM.var)[is.na(values(tps.Chla.GM.var))==F],n=n,style="equal")
+  int.bks=int$brks
+  pal=hcl.colors(length(int$brks)-1, "Inferno", rev = F,alpha=0.7)
+  image(tps.Chla.GM.var,add=T,breaks=int.bks,col = pal)
+  plot(ENP,add=T,bg=NA,lwd=0.5)
+  plot(regions2,lty=2,add=T,border="grey80",lwd=0.5)
+  box(lwd=1)
+  plot(0:1,0:1,ann=F,axes=F,type="n")
+  legend_image=as.raster(matrix(pal,ncol=1))
+  text(x=0.25, y = c(0.83,0.47), labels = c(format(min(int.bks),digits=2),format(max(int.bks),digits=2)),cex=0.6,adj=0,pos=4)
+  rasterImage(legend_image,0.15,0.45,0.25,0.85)
+  text(x=0.15,y=0.95,"Variance Annual GM Chla\n(\u03BCg N L\u207B\u00B9)\u00B2",adj=0,cex=0.75)
+  
+  plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.05,xpd=F)
+  int=classIntervals(values(tps.Chla.GM.CV)[is.na(values(tps.Chla.GM.CV))==F],n=n,style="equal")
+  int.bks=seq(0,100,20)# c(0,25,50,75,100)# int$brks
+  pal=hcl.colors(length(int.bks)-1, "Plasma", rev = F,alpha=0.7)
+  image(tps.Chla.GM.CV,add=T,breaks=int.bks,col = pal)
+  plot(ENP,add=T,bg=NA,lwd=0.5)
+  plot(regions2,lty=2,add=T,border="grey80",lwd=0.5)
+  box(lwd=1)
+  plot(0:1,0:1,ann=F,axes=F,type="n")
+  int.bks.vals=format(round(int.bks,1),nsmall=0)
+  labs=c(paste(int.bks.vals[1:5],int.bks.vals[2:6],sep=" - "))
+  n.bks=length(int.bks)-1
+  bx.val= seq(0.45,0.85,(0.85-0.45)/n.bks)
+  rect(0.15,bx.val[1:n.bks],0.25,bx.val[2:(n.bks+1)],col=rev(pal),lty=0)
+  text(x=0.25, y = bx.val[2:(n.bks+1)]-c(mean(diff(bx.val[2:(n.bks+1)]))/2), labels = rev(labs),cex=0.6,adj=0,pos=4)
+  text(x=0.15,y=0.95,"CV Annual GM SRP\n(Percent)",adj=0,cex=0.75)
+  
 }
+dev.off()
+
+## ggplot version
+# library(ggplot2)
+# library(ggmap)
+# library(ggspatial)
+# library(ggsn)
+# library(cowplot)
+# 
+# theme_map <- function(...) {
+#   theme_minimal() +
+#     theme(
+#       text = element_text(family = "serif", color = "#22211d"),
+#       axis.line = element_blank(),
+#       axis.text.x = element_blank(),
+#       axis.text.y = element_blank(),
+#       axis.ticks = element_blank(),
+#       axis.title.x = element_blank(),
+#       axis.title.y = element_blank(),
+#       # panel.grid.minor = element_line(color = "#ebebe5", size = 0.2),
+#       # panel.grid.major = element_line(color = "#ebebe5", size = 0.2),
+#       panel.grid.major = element_blank(),
+#       panel.grid.minor = element_blank(),
+#       # plot.background = element_rect(fill = "lightblue", color = NA),
+#       panel.background = element_rect(fill = "lightblue", color = NA),
+#       # legend.background = element_rect(fill = "#f5f5f2", color = NA),
+#       plot.background = element_blank(),
+#       # panel.background = element_blank(),
+#       legend.background = element_blank(),
+#       panel.border = element_blank(),
+#       plot.title=element_text(size=12),
+#       plot.subtitle = element_text(color = "grey50",size=8),
+#       plot.caption = element_text(hjust = 0),
+#       ...
+#     )
+# }
 
 ##
-shore2=sf::st_as_sf(shore)
-ENP2=sf::st_as_sf(ENP)
-regions2_gg=sf::st_as_sf(regions2)
-sites.shp2_gg=sf::st_as_sf(sites.shp2)
-sites.shp.TN.trend_gg=sf::st_as_sf(sites.shp.TN.trend)
-
-bbox.lims=bbox(region.mask)
-
-TN.trend.gg=ggplot()+
-  geom_sf(data=shore2,fill="cornsilk",colour="grey",size=0.1)+
-  layer_spatial(tps.TN.trend,alpha=0.75)+scale_fill_viridis(na.value=NA)+
-  geom_sf(data=ENP2,fill=NA,colour="black")+
-  geom_sf(data=regions2_gg,fill=NA,colour="grey80")+
-  geom_sf(data=sites.shp.TN.trend_gg,aes(colour=stat.sig),size=2,shape=19,alpha=0.5)+
-  scale_colour_manual(name = "Kendall's trend \u03C1-value",
-                      labels=c("not-sig"="\u03C1 > 0.05","sig"="\u03C1 < 0.05"),
-                      values = c("not-sig" = "grey","sig"="red"))+
-  theme_map()+
-  coord_sf(xlim=c(bbox.lims[1,1],bbox.lims[1,2]),ylim=c(bbox.lims[2,1],bbox.lims[2,2]))+
-  labs(fill="TN Thiel-Sen Slope\n(mg N L\u207B\u00B9 Yr\u207B\u00B9)")
-
-TN.conc.gg=ggplot()+
-  geom_sf(data=shore2,fill="cornsilk",colour="grey",size=0.1)+
-  layer_spatial(tps.TN.GM,alpha=0.75)+scale_fill_viridis(na.value=NA,option="A")+
-  geom_sf(data=ENP2,fill=NA,colour="black")+
-  geom_sf(data=regions2_gg,fill=NA,colour="grey80")+
-  geom_sf(data=sf::st_as_sf(sites.shp.TN.GM),colour="white",size=1,alpha=0.5,shape=19)+
-  theme_map()+
-  coord_sf(xlim=c(bbox.lims[1,1],bbox.lims[1,2]),ylim=c(bbox.lims[2,1],bbox.lims[2,2]))+
-  labs(fill="Average Annual GM TN\n(mg N L\u207B\u00B9)")
-
-DIN.trend.gg=ggplot()+
-  geom_sf(data=shore2,fill="cornsilk",colour="grey",size=0.1)+
-  layer_spatial(tps.DIN.trend,alpha=0.75)+scale_fill_viridis(na.value=NA)+
-  geom_sf(data=ENP2,fill=NA,colour="black")+
-  geom_sf(data=regions2_gg,fill=NA,colour="grey80")+
-  geom_sf(data=sf::st_as_sf(sites.shp.DIN.trend),aes(colour=stat.sig),size=2,shape=19,alpha=0.5)+
-  scale_colour_manual(name = "Kendall's trend \u03C1-value",
-                      values = c("not-sig" = "grey","sig"="red"),guide=F)+
-  theme_map()+
-  coord_sf(xlim=c(bbox.lims[1,1],bbox.lims[1,2]),ylim=c(bbox.lims[2,1],bbox.lims[2,2]))+
-  labs(fill="DIN Thiel-Sen Slope\n(mg N L\u207B\u00B9 Yr\u207B\u00B9)")
-
-DIN.conc.gg=ggplot()+
-  geom_sf(data=shore2,fill="cornsilk",colour="grey",size=0.1)+
-  layer_spatial(tps.DIN.GM,alpha=0.75)+scale_fill_viridis(na.value=NA,option="A")+
-  geom_sf(data=ENP2,fill=NA,colour="black")+
-  geom_sf(data=regions2_gg,fill=NA,colour="grey80")+
-  geom_sf(data=sf::st_as_sf(sites.shp.DIN.GM),colour="white",size=1,alpha=0.5,shape=19)+
-  theme_map()+
-  coord_sf(xlim=c(bbox.lims[1,1],bbox.lims[1,2]),ylim=c(bbox.lims[2,1],bbox.lims[2,2]))+
-  labs(fill="Average Annual GM DIN\n(mg N L\u207B\u00B9)")
-
-
-comboplot=plot_grid(
-  TN.trend.gg,TN.conc.gg,
-  DIN.trend.gg,
-  DIN.conc.gg,
-  ncol=2,
-  nrow=2)
-comboplot
-TN.trend.gg
-ggsave(paste0(plot.path,"TrendMaps_vgg.tiff"),comboplot,device="tiff",height =7,width=6.5,units="in")
-ggsave(paste0(plot.path,"TNtrendgg_vgg.tiff"),TN.trend.gg,device="tiff",height =4,width=6.5,units="in")
+# shore2=sf::st_as_sf(shore)
+# ENP2=sf::st_as_sf(ENP)
+# regions2_gg=sf::st_as_sf(regions2)
+# sites.shp2_gg=sf::st_as_sf(sites.shp2)
+# sites.shp.TN.trend_gg=sf::st_as_sf(sites.shp.TN.trend)
+# 
+# bbox.lims=bbox(region.mask)
+# 
+# TN.trend.gg=ggplot()+
+#   geom_sf(data=shore2,fill="cornsilk",colour="grey",size=0.1)+
+#   layer_spatial(tps.TN.trend,alpha=0.75)+scale_fill_viridis(na.value=NA)+
+#   geom_sf(data=ENP2,fill=NA,colour="black")+
+#   geom_sf(data=regions2_gg,fill=NA,colour="grey80")+
+#   geom_sf(data=sites.shp.TN.trend_gg,aes(colour=stat.sig),size=2,shape=19,alpha=0.5)+
+#   scale_colour_manual(name = "Kendall's trend \u03C1-value",
+#                       labels=c("not-sig"="\u03C1 > 0.05","sig"="\u03C1 < 0.05"),
+#                       values = c("not-sig" = "grey","sig"="red"))+
+#   theme_map()+
+#   coord_sf(xlim=c(bbox.lims[1,1],bbox.lims[1,2]),ylim=c(bbox.lims[2,1],bbox.lims[2,2]))+
+#   labs(fill="TN Thiel-Sen Slope\n(mg N L\u207B\u00B9 Yr\u207B\u00B9)")
+# 
+# TN.conc.gg=ggplot()+
+#   geom_sf(data=shore2,fill="cornsilk",colour="grey",size=0.1)+
+#   layer_spatial(tps.TN.GM,alpha=0.75)+scale_fill_viridis(na.value=NA,option="A")+
+#   geom_sf(data=ENP2,fill=NA,colour="black")+
+#   geom_sf(data=regions2_gg,fill=NA,colour="grey80")+
+#   geom_sf(data=sf::st_as_sf(sites.shp.TN.GM),colour="white",size=1,alpha=0.5,shape=19)+
+#   theme_map()+
+#   coord_sf(xlim=c(bbox.lims[1,1],bbox.lims[1,2]),ylim=c(bbox.lims[2,1],bbox.lims[2,2]))+
+#   labs(fill="Average Annual GM TN\n(mg N L\u207B\u00B9)")
+# 
+# DIN.trend.gg=ggplot()+
+#   geom_sf(data=shore2,fill="cornsilk",colour="grey",size=0.1)+
+#   layer_spatial(tps.DIN.trend,alpha=0.75)+scale_fill_viridis(na.value=NA)+
+#   geom_sf(data=ENP2,fill=NA,colour="black")+
+#   geom_sf(data=regions2_gg,fill=NA,colour="grey80")+
+#   geom_sf(data=sf::st_as_sf(sites.shp.DIN.trend),aes(colour=stat.sig),size=2,shape=19,alpha=0.5)+
+#   scale_colour_manual(name = "Kendall's trend \u03C1-value",
+#                       values = c("not-sig" = "grey","sig"="red"),guide=F)+
+#   theme_map()+
+#   coord_sf(xlim=c(bbox.lims[1,1],bbox.lims[1,2]),ylim=c(bbox.lims[2,1],bbox.lims[2,2]))+
+#   labs(fill="DIN Thiel-Sen Slope\n(mg N L\u207B\u00B9 Yr\u207B\u00B9)")
+# 
+# DIN.conc.gg=ggplot()+
+#   geom_sf(data=shore2,fill="cornsilk",colour="grey",size=0.1)+
+#   layer_spatial(tps.DIN.GM,alpha=0.75)+scale_fill_viridis(na.value=NA,option="A")+
+#   geom_sf(data=ENP2,fill=NA,colour="black")+
+#   geom_sf(data=regions2_gg,fill=NA,colour="grey80")+
+#   geom_sf(data=sf::st_as_sf(sites.shp.DIN.GM),colour="white",size=1,alpha=0.5,shape=19)+
+#   theme_map()+
+#   coord_sf(xlim=c(bbox.lims[1,1],bbox.lims[1,2]),ylim=c(bbox.lims[2,1],bbox.lims[2,2]))+
+#   labs(fill="Average Annual GM DIN\n(mg N L\u207B\u00B9)")
+# 
+# 
+# comboplot=plot_grid(
+#   TN.trend.gg,TN.conc.gg,
+#   DIN.trend.gg,
+#   DIN.conc.gg,
+#   ncol=2,
+#   nrow=2)
+# comboplot
+# TN.trend.gg
+# ggsave(paste0(plot.path,"TrendMaps_vgg.tiff"),comboplot,device="tiff",height =7,width=6.5,units="in")
+# ggsave(paste0(plot.path,"TNtrendgg_vgg.tiff"),TN.trend.gg,device="tiff",height =4,width=6.5,units="in")
 
 
 # Regional Summaries ------------------------------------------------------

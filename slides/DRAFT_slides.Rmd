@@ -33,6 +33,7 @@ plot.path="C:/Julian_LaCie/_GitHub/EVER_FKNMS_WQTrend/Plots/"
 export.path="C:/Julian_LaCie/_GitHub/EVER_FKNMS_WQTrend/Export/"
 
 plot.figs=list.files(plot.path,full.names=T)
+plot.figs=plot.figs[plot.figs!="C:/Julian_LaCie/_GitHub/EVER_FKNMS_WQTrend/Plots/tiff"]
 slides.figs="C:/Julian_LaCie/_GitHub/EVER_FKNMS_WQTrend/slides/plots"
 file.copy(plot.figs,slides.figs,overwrite=T,recursive=T)
 
@@ -80,7 +81,7 @@ class: left, middle
 
 **Working Title:**<br>Fighting the Tides: Long term spatial and temporal trends of a tropical Freshwater-Estuary-Marine ecosystem.
 
-**DRAFT** - `r paste(format(as.Date("2021-07-22"),"%B %d, %Y"))#,"<br>(Updated:", format(as.Date(Sys.Date()),"%B %d, %Y"),")")`
+**DRAFT** - `r paste(format(as.Date("2021-07-22"),"%B %d, %Y"),"<br>(Updated:", format(as.Date(Sys.Date()),"%B %d, %Y"),")")`
 
 
 <!-- this ends up being the title slide since seal = FALSE-->
@@ -167,6 +168,24 @@ knitr::include_graphics("./plots/TrendMaps.png")
 ```
 <!-- .center[.small[**Left:** Annual rate of change for geometric mean total nitrogen (TN), dissolved inorganic nutrient (DIN), total phosphorous (TP), soluble reactive phosphorus (SRP) and chlorophyll-a (Chl-a) concentrations at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record. **Right:** Average annual geometric mean TN, DIN, TP, SRP and Chl-a concentrations  across the study area.]] -->
 ---
+name: Trend2
+
+### Variance
+
+Figure caption
+
+**Left:** Variance of annual geometric mean concentrations of total nitrogen (TN), dissolved inorganic nutrient (DIN), total phosphorous (TP), soluble reactive phosphorus (SRP) and chlorophyll-a (Chl-a) concentrations at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record. **Right:** Coefficients of Variation of annual geometric mean TN, DIN, TP, SRP and Chl-a concentrations  across the study area.
+
+Plot is on the next slide.
+---
+name: Trend
+```{r,out.width="90%",fig.align="center"}
+
+knitr::include_graphics("./plots/varianceMaps.png")
+```
+<!-- .center[.small[**Left:** Annual rate of change for geometric mean total nitrogen (TN), dissolved inorganic nutrient (DIN), total phosphorous (TP), soluble reactive phosphorus (SRP) and chlorophyll-a (Chl-a) concentrations at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record. **Right:** Average annual geometric mean TN, DIN, TP, SRP and Chl-a concentrations  across the study area.]] -->
+---
+
 name: TNGAM
 
 ### TN Spatio-temporal Model
