@@ -129,8 +129,8 @@ img.lil {
 
 
 /* progress bar instead of slide numbers */
-
-.remark-slide-number {
+/* https://github.com/yihui/xaringan/issues/109#issuecomment-403148497 */ 
+/*.remark-slide-number {
   position: inherit;
 }
 
@@ -148,7 +148,7 @@ img.lil {
   background-color: red;
 }
 
-
+*/
 
 /* Coloured content boxes */
 
@@ -217,3 +217,4 @@ img.lil {
     width: 100%;
     flex: 1 1 auto;
 }
+

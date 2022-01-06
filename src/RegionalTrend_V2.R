@@ -1017,6 +1017,7 @@ pal=viridis::plasma(length(b)-1,alpha = 0.5)# hcl.colors(length(b)-1, "Spectral"
 image(grd.hur,add=T,breaks=b,col=pal)
 plot(grd,add=T,col=adjustcolor("grey",0.5),lwd=0.5)
 plot(EVER_FKNMS,add=T,lwd=0.5)
+box(lwd=1)
 mapmisc::scaleBar(utm17,"bottomright",bty="n",cex=1,seg.len=4)
 
 plot(0:1,0:1,ann=F,axes=F,type="n")
@@ -1115,7 +1116,7 @@ grd.fire <- mask(grd.fire, ENP)
 # png(filename=paste0(plot.path,"FireFreq.png"),width=6.5,height=4,units="in",res=200,type="windows",bg="white")
 par(family="serif",oma=c(0.25,0.25,0.25,0.25),mar=c(0.1,0.1,0.1,0.1),xpd=F)
 layout(matrix(1:2,1,2,byrow=F),widths=c(1,0.3))
-bbox.lims=bbox(bind(ENP))
+bbox.lims=bbox(ENP)
 
 plot(shore2,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.01)
 plot(wca,add=T,col="grey90",border=NA)
@@ -1126,6 +1127,7 @@ pal=viridis::plasma(length(b)-1,alpha = 0.5)# hcl.colors(length(b)-1, "Spectral"
 image(grd.fire,add=T,breaks=b,col=pal)
 # plot(grd,add=T,col=adjustcolor("grey",0.5),lwd=0.5)
 plot(EVER_FKNMS,add=T,lwd=0.5)
+box(lwd=1)
 mapmisc::scaleBar(utm17,"bottomright",bty="n",cex=1,seg.len=4)
 
 plot(0:1,0:1,ann=F,axes=F,type="n")
@@ -1961,6 +1963,227 @@ legend("topleft",legend=c("Fitted \u00B1 (WY)","Predicted (ti(UTMX,UTMY,WY))"),
        pt.cex=1,ncol=1,cex=0.6,bty="n",y.intersp=1,x.intersp=0.75,xpd=NA,xjust=0.5,yjust=1)
 mtext(side=3,line=0.5,outer=T,"E(y)=\u03B1 + s(WY)+s(UTMX,UTMY)+ti(UTMX,UTMY,WY)")
 dev.off()
+
+layout(matrix(1:3,1,3))
+tmp.TN=plot(m.TN,residuals=T)
+tmp.TP=plot(m.TP,residuals=T)
+# png(filename=paste0(plot.path,"GAM_draw_base_both.png"),width=6.5,height=4.25,units="in",res=200,type="windows",bg="white")
+par(family="serif",mar=c(2,1,1,0.5),oma=c(2,3,0.25,0.25),xpd=F);
+layout(matrix(1:6,2,3,byrow = T),widths=c(1,1,0.4))
+# TN GAM
+crit=qnorm((1 - 0.95) / 2, lower.tail = FALSE)
+ylim.val=c(-1.25,1);by.y=0.5;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+xlim.val=c(1996,2019);by.x=5;xmaj=seq(xlim.val[1],xlim.val[2],by.x);xmin=seq(xlim.val[1],xlim.val[2],by.x/by.x)
+plot(tmp.TN[1][[1]]$fit~tmp.TN[1][[1]]$x,ylim=ylim.val,xlim=xlim.val,ann=F,axes=F,type="n")
+abline(h=ymaj,v=xmaj,lty=3,col="grey")
+with(tmp.TN[1][[1]],points(jitter(raw,0.5),p.resid,pch=19,col=adjustcolor("dodgerblue1",0.10)))
+with(tmp.TN[1][[1]],shaded.range(x,fit-(crit*se),fit+(crit*se),"grey",lty=1))
+with(tmp.TN[1][[1]],lines(x,fit,lwd=2))
+abline(h=0)
+axis_fun(1,xmaj,xmin,xmaj,line=-0.5);axis_fun(2,ymaj,ymin,format(ymaj));box(lwd=1)
+mtext(side=3,adj=0,"Total Nitrogen")
+mtext(side=3,adj=1,"s(WY)")
+# mtext(side=1,line=2,"WY")
+mtext(side=2,line=2.75,"Effect")
+
+bbox.lims=bbox(regions2)
+tmp.TN.ma=with(tmp.TN[2][[1]],matrix(fit,nrow=length(y),ncol=length(x)))
+dat1=list()
+dat1$x=tmp.TN[2][[1]]$x
+dat1$y=tmp.TN[2][[1]]$y
+dat1$z=tmp.TN.ma
+r=raster(dat1)
+
+brk=20
+breaks.val=classInt::classIntervals(tmp.TN[2][[1]]$fit[is.na(tmp.TN[2][[1]]$fit)==F],style="equal",n=brk)
+pal=hcl.colors(n=brk,alpha=0.75)
+plot(ENP,ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],border=NA)
+image(r,add=T,breaks=breaks.val$brks,col = pal)
+plot(shore,add=T,lwd=0.1)
+plot(ENP,add=T)
+plot(sites.shp2,add=T,cex=0.5,pch=19,col=adjustcolor("red",0.25))
+plot(rasterToContour(r),col=adjustcolor("white",0.5),add=T)
+box(lwd=1)
+mtext(side=3,adj=0,"ti(UTMX,UTMY)")
+
+legend_image=as.raster(matrix(rev(pal),ncol=1))
+par(xpd=NA,mar=c(2,1,1,0))
+plot(c(0,1),c(0,1),type = 'n', axes = F,ann=F)
+rasterImage(legend_image, 0, 0.25, 0.3,0.75)
+leg.labs=with(breaks.val,c(format(round(min(brks),1),nsmall=1),"0.0",format(round(max(brks),1),nsmall=1)))
+text(x=0.3, y = seq(0.25,0.75,length.out=3), labels = leg.labs,cex=1,pos=4)
+text(0.15,0.76,"Effect",pos=3,xpd=NA)
+
+# TP GAM
+par(mar=c(2,1,1,0.5),xpd=F)
+crit=qnorm((1 - 0.95) / 2, lower.tail = FALSE)
+ylim.val=c(-1.25,1);by.y=0.5;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+xlim.val=c(1996,2019);by.x=5;xmaj=seq(xlim.val[1],xlim.val[2],by.x);xmin=seq(xlim.val[1],xlim.val[2],by.x/by.x)
+plot(tmp.TP[1][[1]]$fit~tmp.TP[1][[1]]$x,ylim=ylim.val,xlim=xlim.val,ann=F,axes=F,type="n")
+abline(h=ymaj,v=xmaj,lty=3,col="grey")
+with(tmp.TP[1][[1]],points(jitter(raw,0.5),p.resid,pch=19,col=adjustcolor("dodgerblue1",0.10)))
+with(tmp.TP[1][[1]],shaded.range(x,fit-(crit*se),fit+(crit*se),"grey",lty=1))
+with(tmp.TP[1][[1]],lines(x,fit,lwd=2))
+abline(h=0)
+axis_fun(1,xmaj,xmin,xmaj,line=-0.5);axis_fun(2,ymaj,ymin,format(ymaj));box(lwd=1)
+mtext(side=3,adj=0,"Total Phosphorus")
+mtext(side=3,adj=1,"s(WY)")
+mtext(side=1,line=2,"WY")
+mtext(side=2,line=2.75,"Effect")
+
+bbox.lims=bbox(regions2)
+tmp.TP.ma=with(tmp.TP[2][[1]],matrix(fit,nrow=length(y),ncol=length(x)))
+dat1=list()
+dat1$x=tmp.TP[2][[1]]$x
+dat1$y=tmp.TP[2][[1]]$y
+dat1$z=tmp.TP.ma
+r=raster(dat1)
+
+brk=20
+breaks.val=classInt::classIntervals(tmp.TP[2][[1]]$fit[is.na(tmp.TP[2][[1]]$fit)==F],style="equal",n=brk)
+pal=hcl.colors(n=brk,alpha=0.75)
+plot(ENP,ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],border=NA)
+image(r,add=T,breaks=breaks.val$brks,col = pal)
+plot(shore,add=T,lwd=0.1)
+plot(ENP,add=T)
+plot(sites.shp2,add=T,cex=0.5,pch=19,col=adjustcolor("red",0.25))
+plot(rasterToContour(r),col=adjustcolor("white",0.5),add=T)
+box(lwd=1)
+mtext(side=3,adj=0,"ti(UTMX,UTMY)")
+
+legend_image=as.raster(matrix(rev(pal),ncol=1))
+par(xpd=NA,mar=c(2,1,1,0))
+plot(c(0,1),c(0,1),type = 'n', axes = F,ann=F)
+rasterImage(legend_image, 0, 0.25, 0.3,0.75)
+leg.labs=with(breaks.val,c(format(round(min(brks),1),nsmall=1),"0.0",format(round(max(brks),1),nsmall=1)))
+text(x=0.3, y = seq(0.25,0.75,length.out=3), labels = leg.labs,cex=1,pos=4)
+text(0.15,0.76,"Effect",pos=3,xpd=NA)
+dev.off()
+
+
+## GAM animation
+reg.ext=extent(region.mask)
+pdat.sp<-with(sites.shp,
+            expand.grid(
+              WY=seq(1996,2019,1),
+              UTMX=seq(reg.ext[1],reg.ext[2],length.out=500),
+              UTMY=seq(reg.ext[3],reg.ext[4],length.out=500)
+            ))
+fit.TP <- predict(m.TP, pdat.sp)
+pred.TP <- cbind(pdat.sp, Fitted = exp(fit.TP))
+
+yrs=1996:2019
+for(i in 1:length(yrs)){
+  tmp=subset(pred.TP,WY==yrs[i])[,c("Fitted","UTMX","UTMY")]
+  coordinates(tmp)<-~UTMX + UTMY
+  gridded(tmp)<-TRUE
+  # rasterDF<-raster::raster(tmp,layer=1,values=T)
+  tmp=as(tmp,"RasterLayer")
+  proj4string(tmp)<-utm17
+  tmp.m=raster::mask(tmp,region.mask)
+  assign(paste0("GAM.TP.",yrs[i]),tmp.m)
+  print(i)
+}
+
+GAM.TP.stack2=stack(GAM.TP.1996,
+                    GAM.TP.1997,
+                    GAM.TP.1998,
+                    GAM.TP.1999,
+                    GAM.TP.2000,
+                    GAM.TP.2001,
+                    GAM.TP.2002,
+                    GAM.TP.2003,
+                    GAM.TP.2004,
+                    GAM.TP.2005,
+                    GAM.TP.2006,
+                    GAM.TP.2007,
+                    GAM.TP.2008,
+                    GAM.TP.2009,
+                    GAM.TP.2010,
+                    GAM.TP.2011,
+                    GAM.TP.2012,
+                    GAM.TP.2013,
+                    GAM.TP.2014,
+                    GAM.TP.2015,
+                    GAM.TP.2016,
+                    GAM.TP.2017,
+                    GAM.TP.2018,
+                    GAM.TP.2019)
+plot(GAM.TP.stack2)
+bbox.lims=bbox(region.mask)
+GAM.TP.map=tm_shape(shore2,bbox=bbox.lims)+tm_fill(col="cornsilk")+
+  tm_shape(GAM.TP.stack2)+
+  tm_raster(title="",palette="-viridis",
+            breaks=c(0,5,10,15,20,30,40,50,60),
+            labels=c("< 5","5 - 10","10 - 15","15 - 20","20 - 30","30 - 40","40 - 50","50 - 60"))+
+  #tm_raster(title="",palette="-cividis",alpha=0.75,style="cont")+
+  tm_shape(shore2)+
+  tm_borders(col="grey30",lwd=0.1)+
+  # tm_polygons(col="cornsilk",border.col="grey")+
+  tm_facets(free.scales=FALSE,nrow=1,ncol=1)+
+  tm_layout(panel.labels=paste0("WY",c(1996:2019)),fontfamily = "serif",bg.color="lightblue")+
+  tm_legend(title="Annual GM TP\n(\u03BCg L\u207B\u00B9)",legend.outside=T)
+  GAM.TP.map
+tmap_animation(GAM.TP.map,filename="./Plots/TP_GAM.gif",delay=80,width=450,height=250,loop=T)
+
+fit.TN <- predict(m.TN, pdat.sp)
+pred.TN <- cbind(pdat.sp, Fitted = exp(fit.TN))
+
+yrs=1996:2019
+for(i in 1:length(yrs)){
+  tmp=subset(pred.TN,WY==yrs[i])[,c("Fitted","UTMX","UTMY")]
+  coordinates(tmp)<-~UTMX + UTMY
+  gridded(tmp)<-TRUE
+  # rasterDF<-raster::raster(tmp,layer=1,values=T)
+  tmp=as(tmp,"RasterLayer")
+  proj4string(tmp)<-utm17
+  tmp.m=raster::mask(tmp,region.mask)
+  assign(paste0("GAM.TN.",yrs[i]),tmp.m)
+  print(i)
+}
+
+GAM.TN.stack2=stack(GAM.TN.1996,
+                    GAM.TN.1997,
+                    GAM.TN.1998,
+                    GAM.TN.1999,
+                    GAM.TN.2000,
+                    GAM.TN.2001,
+                    GAM.TN.2002,
+                    GAM.TN.2003,
+                    GAM.TN.2004,
+                    GAM.TN.2005,
+                    GAM.TN.2006,
+                    GAM.TN.2007,
+                    GAM.TN.2008,
+                    GAM.TN.2009,
+                    GAM.TN.2010,
+                    GAM.TN.2011,
+                    GAM.TN.2012,
+                    GAM.TN.2013,
+                    GAM.TN.2014,
+                    GAM.TN.2015,
+                    GAM.TN.2016,
+                    GAM.TN.2017,
+                    GAM.TN.2018,
+                    GAM.TN.2019)
+plot(GAM.TN.stack2)
+
+bbox.lims=bbox(region.mask)
+GAM.TN.map=tm_shape(shore2,bbox=bbox.lims)+tm_fill(col="cornsilk")+
+  tm_shape(GAM.TN.stack2)+
+  tm_raster(title="",palette="-viridis",
+            breaks=c(0,0.1,0.2,0.4,0.6,1,2),
+            labels=c("< 0.1","0.1 - 0.2","0.2 - 0.4","0.4 - 0.6","0.6 - 1.0","1.0 - 2.0"))+
+  #tm_raster(title="",palette="-cividis",alpha=0.75,style="cont")+
+  tm_shape(shore2)+
+  tm_borders(col="grey30",lwd=0.1)+
+  # tm_polygons(col="cornsilk",border.col="grey")+
+  tm_facets(free.scales=FALSE,nrow=1,ncol=1)+
+  tm_layout(panel.labels=paste0("WY",c(1996:2019)),fontfamily = "serif",bg.color="lightblue")+
+  tm_legend(title="Annual GM TN\n(mg L\u207B\u00B9)",legend.outside=T)
+GAM.TN.map
+tmap_animation(GAM.TN.map,filename="./Plots/TN_GAM.gif",delay=80,width=450,height=250,loop=T)
+
 
 ### TN TP stoich
 tmp.xtab2
