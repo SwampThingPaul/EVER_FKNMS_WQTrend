@@ -9,7 +9,7 @@
 /Data/
 /GIS/
 /_manuscript/
-/Export/
+/Export/*
 README.Rmd
 
 *.RDataTmp

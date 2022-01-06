@@ -5,5 +5,5 @@ Southern Everglades and Keys Trend analysis
 
 Contact: Paul Julian ([email](mailto:pjulian@sccf.org))
 
--   Draft Slides
-    [link](https://swampthingecology.org/EVER_FKNMS_WQTrend/slides/DRAFT_slides)
+-   FCE Brownbag seminar (2022-01-14)
+    [link](https://swampthingecology.org/EVER_FKNMS_WQTrend/slides/20220114_FCEBrownBag)

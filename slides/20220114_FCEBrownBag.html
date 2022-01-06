@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>FCE Brown Bag</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Paul Julian" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="libs/tile-view/tile-view.js"></script>
+    <link href="libs/tabwid/tabwid.css" rel="stylesheet" />
+    <link rel="stylesheet" href="libs/custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+layout: true
+
+---
+name: title
+class: left, middle
+
+### Fighting the Tides: Long term spatial and temporal trends of a tropical Freshwater-Estuary-Marine ecosystem.
+
+January 14, 2022
+
+
+&lt;!-- this ends up being the title slide since seal = FALSE--&gt;
+
+
+.footnote[
+Paul Julian PhD [<svg aria-hidden="true" role="img" viewBox="0 0 512 512" style="height:1em;width:1em;vertical-align:-0.125em;margin-right:0.2em;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"/></svg>](mailto: pjulian@sccf.org) .small[pjulian@sccf.org]
+
+.small[Use cursor keys for navigation, press .red["O"] for a slide .red[O]verview]
+
+<a href="https://swampthingecology.org/EVER_FKNMS_WQTrend/slides/20220114_FCEBrownBag.pdf">
+<button class="btn btn-primary btn-sm">Download PDF Version</button>
+</a>
+]
+
+---
+name: acknowledgements
+
+### Co-authors
+Jim Fourqurean, Stephen Davis, Donatto Surratt, Evelyn E. Gaiser, John S Kominoski, Joseph N. Boyer, Serge Thomas &amp; Chris Madden
+
+### Land Acknowledgment
+I'm presenting to you from the former lands of the Calusa. The Everglades, as we know it today, is rich in the history and modern traditions of First Nations including the Calusa, Taino, Tequesta, Mayaimi, Guacata, Jeaga, Miccosukee and Seminole. We pay respect to their Elders past, present and future as we learn from this land.
+
+### Ecosystem Acknowledgment
+We acknowledge the diversity of the ecosystems discussed in this system from the iconic Ridge and Slough to the barrier islands and reefs. The south Florida ecosystem are valuable beyond the vast array of ecosystem services it provides. 
+
+---
+name: disturb101
+
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./plots/background/Grimmetal_2017_Fig1.jpg" alt="A general model of disturbance by Peters et al 2011 adapted by Grimm et al (2017)" width="50%" /&gt;
+&lt;p class="caption"&gt;A general model of disturbance by Peters et al 2011 adapted by Grimm et al (2017)&lt;/p&gt;
+&lt;/div&gt;
+
+* Disturbances are crucial drivers of ecological processes
+  * Some level of stress leads to disruptions
+
+* Applied to exogenic and and endogenic disturbances.
+
+.footnote[
+.small[
+* Grimm et al (2017) Does the ecological concept of disturbance have utility in urban social–ecological–technological systems? [Ecosystem Health and Sustainability](https://esajournals.onlinelibrary.wiley.com/doi/abs/10.1002/ehs2.1255)
+
+* Peters et al (2011) Cross-system comparisons elucidate disturbance complexities and generalities. [Ecosphere](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/ES11-00115.1)
+*Grim
+]
+]
+
+---
+name: disturb102
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./plots/background/Gaiseretal_2020_Fig2.jpg" alt="Modified coneptual framework on disturbance ecology and links to events, effects and trajectories by Gaiser et al (2020)" width="50%" /&gt;
+&lt;p class="caption"&gt;Modified coneptual framework on disturbance ecology and links to events, effects and trajectories by Gaiser et al (2020)&lt;/p&gt;
+&lt;/div&gt;
+.pull-left[
+* Slightly modified from Peters et al and Grimm et al
+  * Human dimension of disturbance, feedback loops and effects (intended and unintended)
+]
+
+.pull-right[
+* Understanding the role of disturbances in regulating ecosystems is complicated 
+  * Type (press vs pulse), magnitude (episodic vs constant/gradual), duration, frequency, spatial scale, disturbance legacies
+]
+
+.small[
+Gaiser et al (2020) Long-Term Ecological Research and Evolving Frameworks of Disturbance Ecology. [BioScience 70:141–156.](https://doi.org/10.1093/biosci/biz162)
+]
+
+
+---
+name: disturb103
+
+### Pulse
+.pull-left[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./plots/background/JentschWhite_2019_Fig1.jpg" alt="Quantifying the dimensions of pulse events from Jentsch and White (2019)." width="100%" /&gt;
+&lt;p class="caption"&gt;Quantifying the dimensions of pulse events from Jentsch and White (2019).&lt;/p&gt;
+&lt;/div&gt;
+
+
+]
+
+.pull-right[
+Pulse events can be characterized by: 
+1. fluctuation in physical environmental conditions .small[(i.e. heat waves, droughts)]
+2. abiotic changes in resource supplies .small[(i.e. upwelling, lake turnover)]
+3. change in biotic resources through sudden demographic events .small[(i.e. mortality events)]
+4. changes through abrupt alteration of biotic structure .small[(i.e. biomass altering process)]
+5. Spatial subsidies (transfer resources across space)
+]
+
+
+.footnote[
+.small[
+Jentsch A, White P (2019) A theory of pulse dynamics and disturbance in ecology. [Ecology](https://esajournals.onlinelibrary.wiley.com/doi/abs/10.1002/ecy.2734)
+
+]
+]
+---
+name: disturb104
+
+### Pulse-Press-Ramp
+.pull-left[
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./plots/background/Lake2000_Fig1.jpg" alt="Generalized examples of disturbance from Lake (2000)." width="50%" /&gt;
+&lt;p class="caption"&gt;Generalized examples of disturbance from Lake (2000).&lt;/p&gt;
+&lt;/div&gt;
+
+
+]
+
+.pull-right[
+
+**A)** Pulse events - short term and sharply delineated disturbances
+
+**B)** Press events - arise sharply then reach a constant level (i.e. sedimentation post-landslide)
+
+**C)** Ramp events - strength of a disturbance steadily increases over time (i.e. SLR)
+  * nuanced press event or press with pulse events intermixed (maybe an integrated disturbance?)
+
+]
+
+
+
+.footnote[
+.small[
+Lake (2000) Disturbance, patchiness, and diversity in streams. [Journal of the North American Benthological Society 19:573–592](https://www.journals.uchicago.edu/doi/full/10.2307/1468118).
+
+]
+]
+
+---
+name: disturb104
+
+### Stable States
+.pull-left[
+&lt;img src="./plots/background/Beisneretal_Fig1.jpg" width="100%" style="display: block; margin: auto;" /&gt;
+
+.small[
+Beisner B, Haydon D, Cuddington K (2003) Alternative stable states in ecology. [Frontiers in Ecology and the Environment](https://onlinelibrary.wiley.com/doi/abs/10.1890/1540-9295%282003%29001%5B0376%3AASSIE%5D2.0.CO%3B2)
+]
+
+]
+
+.pull-left[
+&lt;img src="./plots/background/Hobbsetal_Fig1.jpg" width="50%" style="display: block; margin: auto;" /&gt;
+
+.small[
+Hobbs WO, Hobbs JMR, LaFrançois T, et al (2012) A 200-year perspective on alternative stable state theory and lake management from a biomanipulated shallow lake. [Ecological Applications](https://onlinelibrary.wiley.com/doi/abs/10.1890/11-1485.1)
+
+]
+
+]
+
+---
+name: legacy
+
+### Disturbance Legacy - FCE Edition
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./plots/background/Kominoskietal_Fig2.jpg" alt="Disturbance history of ecologically important events that occurred within the Florida Coastal Everglades from Kominoski et al (2020)" width="70%" /&gt;
+&lt;p class="caption"&gt;Disturbance history of ecologically important events that occurred within the Florida Coastal Everglades from Kominoski et al (2020)&lt;/p&gt;
+&lt;/div&gt;
+
+Subtropical coastal systems are exposed to multiple disturbances operating at many spatiotemporal scales that influence biogeochemistry, including long-term presses (i.e., sea-level rise, freshwater restoration), episodic regional pulses (i.e., hurricanes, droughts, temperature extremes, fires), and localized ecosystem legacies of both presses and pulses (i.e., seagrass die-off, peat collapse). 
+
+.footnote[
+.small[
+Kominoski JS, Gaiser EE, Castaneda‐Moya E, et al (2020) Disturbance legacies increase and synchronize nutrient concentrations and bacterial productivity in coastal ecosystems. [Ecology](https://esajournals.onlinelibrary.wiley.com/doi/10.1002/ecy.2988)
+
+]
+]
+
+---
+name: hurricane
+
+### Here's the story of the Hurricane(s) ...
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./plots/HurricaneHist.png" alt="History of hurricane and tropical storms across South Florida." width="100%" /&gt;
+&lt;p class="caption"&gt;History of hurricane and tropical storms across South Florida.&lt;/p&gt;
+&lt;/div&gt;
+
+---
+name: hurricane
+
+### Here's the story of the Hurricane(s) ... past 2
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./plots/HurricaneFreq.png" alt="Hurricane and tropical storms (centerline) frequency analysis across South Florida." width="100%" /&gt;
+&lt;p class="caption"&gt;Hurricane and tropical storms (centerline) frequency analysis across South Florida.&lt;/p&gt;
+&lt;/div&gt;
+
+---
+name: hurricane
+
+### ...we didn't light it, but we tried to fight it...
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./plots/FireFreq.png" alt="Fire occurance frequency analysis across Everglades National Park." width="100%" /&gt;
+&lt;p class="caption"&gt;Fire occurance frequency analysis across Everglades National Park.&lt;/p&gt;
+&lt;/div&gt;
+
+---
+name: objectives
+
+### Objective
+
+* Compile a robust multi-decadal dataset on total and dissolved nutrient concentrations and chlorophyll-a across a coastal wetland-estuary-marine continuum to evaluate biogeochemical signals of disturbance at an unprecedented landscape scale
+
+### Questions
+
+This study was used to address two specifc questions related to temporal and spatial trends in water quality: 
+1. Where is the greatest rate of direction change in biogeochemical constituents? 
+
+2. Do spatial patterns of biogeochemical change and disturbance interact?
+
+---
+name: data
+
+### Data
+
+* Water Quality Data collected between May 1995 and May 2019
+
+**Data Sets**
+* Southeast Environmental Research Center of Florida International University (SERC)
+* Florida Coastal Long-Term Ecological Research (FCE LTER)
+* South Florida Water Management District (SFWMD)
+
+**Parameters**
+* Total phosphorus (TP)
+* Ortho-phosphate/soluable-reactive phosphorus (SRP)
+* Total nitrogen (TN)
+* Dissolved inorganic nitrogen (DIN; calculated as nitrate + nitrite + ammonia)
+* Chlorophyll-a (Chl-a)
+* Total Dissolved Carbon (TOC)
+* TN:TP molar ratio
+
+**Analyses**
+* Kruskal-Wallis (and Dunn's multiple comparison test) between regions
+* Annual Kendall trend (and Thiel-Sen slope) test
+* Spatio-temporal Generalized Additive Model
+
+---
+name: map
+
+### Sampling Map
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./plots/SamplingMap.png" alt="Long-term monitoring locations sampled by SERC, FCE and SFWMD." width="100%" /&gt;
+&lt;p class="caption"&gt;Long-term monitoring locations sampled by SERC, FCE and SFWMD.&lt;/p&gt;
+&lt;/div&gt;
+
+---
+name: RegionalComp
+
+### Regional Comparison
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./plots/RegionComp.png" alt="Comparison of annual geometric mean total nitrogen (TN), dissolved inorganic nutrient (DIN), total phosphorous (TP), soluble reactive phosphorus (SRP), chlorophyll-a (Chl-a), and total organic carbon (TOC) concentrations across the five regions across the study area. Letters above boxplots indicate pairwise comparisons between regions using Dunn’s test of multiple comparisons." width="70%" /&gt;
+&lt;p class="caption"&gt;Comparison of annual geometric mean total nitrogen (TN), dissolved inorganic nutrient (DIN), total phosphorous (TP), soluble reactive phosphorus (SRP), chlorophyll-a (Chl-a), and total organic carbon (TOC) concentrations across the five regions across the study area. Letters above boxplots indicate pairwise comparisons between regions using Dunn’s test of multiple comparisons.&lt;/p&gt;
+&lt;/div&gt;
+
+---
+name: TPTrend
+
+### Total Phosphorus Trend
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./plots/TrendMaps_TP.png" alt="Annual rate of change for geometric mean total phosphorus (TP) concentrations and average annual geometric mean TP concentrations at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record." width="120%" /&gt;
+&lt;p class="caption"&gt;Annual rate of change for geometric mean total phosphorus (TP) concentrations and average annual geometric mean TP concentrations at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record.&lt;/p&gt;
+&lt;/div&gt;
+
+* Significant decreases in Freshwater Everglades (Restoration...Thank You!).
+
+* Significant increases in coastal mangrove fringes (TP highest in this region).
+  * Ecotone effect?
+  * Biomass turnover?
+  * Press/Pulse Disturbance?
+ 
+---
+name: TNTrend
+
+### Total Nitrogen Trend
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./plots/TrendMaps_TN.png" alt="Annual rate of change for geometric mean total nitrogen (TN) concentrations and average annual geometric mean TN concentrations at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record." width="120%" /&gt;
+&lt;p class="caption"&gt;Annual rate of change for geometric mean total nitrogen (TN) concentrations and average annual geometric mean TN concentrations at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record.&lt;/p&gt;
+&lt;/div&gt;
+
+* Significant increases lower Shark River, Coastal fringe and Florida Bay.
+  * Ecotone effect?
+  * Biomass turnover? (fringe = Mangrove; Florida Bay = Seagrass)
+  * Press/Pulse Disturbance?
+
+* Florida Bay average concentrations lower than freshwater Everglades.
+---
+name: NPTrend
+
+### N:P Trend
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./plots/TrendMaps_NP.png" alt="Annual rate of change for geometric mean total nitrogen to total phosphorus (TN:TP) molar ratio and average annual geometric mean TN:TP at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record." width="120%" /&gt;
+&lt;p class="caption"&gt;Annual rate of change for geometric mean total nitrogen to total phosphorus (TN:TP) molar ratio and average annual geometric mean TN:TP at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record.&lt;/p&gt;
+&lt;/div&gt;
+
+* Increases in P limitation in eastern Florida Bay.
+
+* Reef track and Shelf co-limited or N-limited.
+
+---
+name: NPTrend
+
+### N:P Variability
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./plots/varianceMap_TNTP.png" alt="Coefficients of Variation of annual geometric mean TN:TP at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record." width="120%" /&gt;
+&lt;p class="caption"&gt;Coefficients of Variation of annual geometric mean TN:TP at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record.&lt;/p&gt;
+&lt;/div&gt;
+
+---
+name: NPTrend
+
+### N:P Variability
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./plots/RegionComp_NP.png" alt="Comparison of annual geometric mean total nitrogen to total phosphoprus (TN:TP) ratio across the five regions across the study area. Letters above boxplots indicate pairwise comparisons between regions using Dunn’s test of multiple comparisons." width="80%" /&gt;
+&lt;p class="caption"&gt;Comparison of annual geometric mean total nitrogen to total phosphoprus (TN:TP) ratio across the five regions across the study area. Letters above boxplots indicate pairwise comparisons between regions using Dunn’s test of multiple comparisons.&lt;/p&gt;
+&lt;/div&gt;
+
+
+---
+name: TOCTrend
+
+### Organic Carbon Trend
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./plots/TrendMaps_TOC.png" alt="Annual rate of change for geometric mean total organic carbon (TOC) concentrations and average annual geometric mean TOC concentration at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record." width="120%" /&gt;
+&lt;p class="caption"&gt;Annual rate of change for geometric mean total organic carbon (TOC) concentrations and average annual geometric mean TOC concentration at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record.&lt;/p&gt;
+&lt;/div&gt;
+
+* Increases in TOC concentration Taylor River/Florida Bay Mangrove Fringe (browning?).
+
+* Declines in TOC freshwater Everglades (Not significant) and coastal Fringe/coastal lakes (Gulf side).
+
+* Have we seen changes in productivity in these regions?
+
+---
+name: ChlTrend
+
+### Chlorophyll Trend
+
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./plots/TrendMaps_Chla.png" alt="Annual rate of change for geometric mean chlorophyll-a (Chl-a) concentrations and average annual geometric mean Chl-a concentration at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record." width="120%" /&gt;
+&lt;p class="caption"&gt;Annual rate of change for geometric mean chlorophyll-a (Chl-a) concentrations and average annual geometric mean Chl-a concentration at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record.&lt;/p&gt;
+&lt;/div&gt;
+
+* Increases in Florida bay
+
+* Higher concentrations in WFS relative to other regions
+
+---
+name: GAM
+
+### Spatio-Temporal Model description
+
+$$
+`\begin{align}
+  \Large \begin{split}
+      \mathrm{E}(y_i) &amp; = \alpha + f_1(\text{WY}_i) + f_2(\text{x}_i, \text{y}_i) + f_3(\text{x}_i, \text{y}_i, \text{WY}_i)
+  \end{split}
+\end{align}`
+$$
+`\(\mathrm{E}(y_i)\)` = Either TN or TP Annual Geometric Mean
+
+`\(f_1(\text{WY}_i)\)` = Water Year Term
+
+`\(f_2(\text{x}_i, \text{y}_i)\)` = Spatial Term (i.e. Lat/Long)
+
+*** 
+--
+
+Effectively, the first two smooths are the main effects of
+
+1. long-term trend,
+2. spatial variation
+
+The remaining tensor product is the interaction terms which models how the long-term trend varies spatially
+
+***
+
+.footnote[
+.small[
+For more GAM goodness please see 
+
+- [Dr Gavin Simpson Intro to GAMS](https://youtu.be/sgw4cu8hrZM)
+- [GAMs in R by Noam Ross](https://noamross.github.io/gams-in-r-course/)
+- Simpson (2018) Frontiers in Ecology and Evolution 6:149. doi: [10.3389/fevo.2018.00149](https://www.frontiersin.org/article/10.3389/fevo.2018.00149/full)
+]
+]
+
+---
+name: TNGAM
+
+### TN and TP Spatio-temporal Model
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./plots/GAM_draw_base_both.png" alt="Total Nitrogen and Total Phosphorus spatial and temporal generalized additive model effects plot. " width="90%" /&gt;
+&lt;p class="caption"&gt;Total Nitrogen and Total Phosphorus spatial and temporal generalized additive model effects plot. &lt;/p&gt;
+&lt;/div&gt;
+
+---
+name: TNGAM_tab
+
+### TN Spatio-temporal Model
+
+
+&lt;template id="f1db12f8-971c-49a0-a944-748e128da857"&gt;&lt;style&gt;
+.tabwid table{
+  border-collapse:collapse;
+  line-height:1;
+  margin-left:auto;
+  margin-right:auto;
+  border-width: 0;
+  display: table;
+  margin-top: 1.275em;
+  margin-bottom: 1.275em;
+  border-spacing: 0;
+  border-color: transparent;
+}
+.tabwid_left table{
+  margin-left:0;
+}
+.tabwid_right table{
+  margin-right:0;
+}
+.tabwid td {
+    padding: 0;
+}
+.tabwid a {
+  text-decoration: none;
+}
+.tabwid thead {
+    background-color: transparent;
+}
+.tabwid tfoot {
+    background-color: transparent;
+}
+.tabwid table tr {
+background-color: transparent;
+}
+&lt;/style&gt;&lt;div class="tabwid"&gt;&lt;style&gt;.cl-cab773d6{border-collapse:collapse;}.cl-cab02496{font-family:'Arial';font-size:11pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-cab02497{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-cab02498{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-cab02499{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-cab07284{width:144pt;background-color:transparent;vertical-align: top;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab07285{width:119.5pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab07286{width:68.2pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab07287{width:59pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab07288{width:66.4pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab07289{width:68.2pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab0728a{width:144pt;background-color:transparent;vertical-align: top;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab0728b{width:59pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab0728c{width:66.4pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab0728d{width:119.5pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab0728e{width:59pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab09980{width:68.2pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab09981{width:66.4pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab09982{width:119.5pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab09983{width:59pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab09984{width:144pt;background-color:transparent;vertical-align: top;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab09985{width:68.2pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab09986{width:66.4pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab09987{width:119.5pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab09988{width:66.4pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab09989{width:59pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab0998a{width:68.2pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab0c072{width:144pt;background-color:transparent;vertical-align: top;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab0c073{width:119.5pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab0c074{width:59pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab0c075{width:66.4pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab0c076{width:144pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab0c077{width:119.5pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cab0c078{width:68.2pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}&lt;/style&gt;&lt;table class='cl-cab773d6'&gt;&lt;tbody&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-cab07284"&gt;&lt;p class="cl-cab02498"&gt;&lt;span class="cl-cab02496"&gt;Component&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab07285"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02496"&gt;Term&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab07288"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02496"&gt;Estimate&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab07286"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02496"&gt;Std Error&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab07287"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02496"&gt;t-value&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab07287"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02496"&gt;p-value&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-cab0728a"&gt;&lt;p class="cl-cab02498"&gt;&lt;span class="cl-cab02497"&gt;A. parametric coefficients&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab0728d"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt;(Intercept)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab0728c"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt;-1.51&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab07289"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt;0.03&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab0728b"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt;-49.76&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab0728b"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt;&amp;lt;0.01&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-cab07284"&gt;&lt;p class="cl-cab02498"&gt;&lt;span class="cl-cab02496"&gt;Component&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab07285"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02496"&gt;Term&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab07288"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02496"&gt;edf&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab07286"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02496"&gt;Ref. df&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab07287"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02496"&gt;F-value&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab07287"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02496"&gt;p-value&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td  rowspan="3"class="cl-cab0728a"&gt;&lt;p class="cl-cab02498"&gt;&lt;span class="cl-cab02497"&gt;B. smooth terms&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab09982"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt;s(WY)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab09981"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt; 18.00&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab09980"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt; 18.46&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab0728e"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt; 38.20&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab0728e"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt;&amp;lt;0.01&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-cab09987"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt;s(UTMX,UTMY)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab09986"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt;141.05&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab09985"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt;199.00&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab09983"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt;155.19&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab09983"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt;&amp;lt;0.01&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-cab0c073"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt;ti(WY,UTMX,UTMY)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab09988"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt;529.49&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab0998a"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt;704.07&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab09989"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt;  9.08&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cab09989"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt;&amp;lt;0.01&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;tfoot&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td  colspan="6"class="cl-cab0c076"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt;Adjusted R-squared: 0.96, Deviance explained 0.97&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td  colspan="6"class="cl-cab0c076"&gt;&lt;p class="cl-cab02499"&gt;&lt;span class="cl-cab02497"&gt;fREML: -760.87, Scale est.: 0.03, N: 4206&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tfoot&gt;&lt;/table&gt;&lt;/div&gt;&lt;/template&gt;
+&lt;div class="flextable-shadow-host" id="9ef4c323-43e7-4abf-8dc2-c6ae1551c89d"&gt;&lt;/div&gt;
+&lt;script&gt;
+var dest = document.getElementById("9ef4c323-43e7-4abf-8dc2-c6ae1551c89d");
+var template = document.getElementById("f1db12f8-971c-49a0-a944-748e128da857");
+var caption = template.content.querySelector("caption");
+if(caption) {
+  caption.style.cssText = "display:block;text-align:center;";
+  var newcapt = document.createElement("p");
+  newcapt.appendChild(caption)
+  dest.parentNode.insertBefore(newcapt, dest.previousSibling);
+}
+var fantome = dest.attachShadow({mode: 'open'});
+var templateContent = template.content;
+fantome.appendChild(templateContent);
+&lt;/script&gt;
+
+---
+name: TPGAM_tab
+
+### TP Spatio-temporal Model
+
+
+&lt;template id="b5ca560c-7d66-443a-9876-7c3af7d64ac0"&gt;&lt;style&gt;
+.tabwid table{
+  border-collapse:collapse;
+  line-height:1;
+  margin-left:auto;
+  margin-right:auto;
+  border-width: 0;
+  display: table;
+  margin-top: 1.275em;
+  margin-bottom: 1.275em;
+  border-spacing: 0;
+  border-color: transparent;
+}
+.tabwid_left table{
+  margin-left:0;
+}
+.tabwid_right table{
+  margin-right:0;
+}
+.tabwid td {
+    padding: 0;
+}
+.tabwid a {
+  text-decoration: none;
+}
+.tabwid thead {
+    background-color: transparent;
+}
+.tabwid tfoot {
+    background-color: transparent;
+}
+.tabwid table tr {
+background-color: transparent;
+}
+&lt;/style&gt;&lt;div class="tabwid"&gt;&lt;style&gt;.cl-cad45e42{border-collapse:collapse;}.cl-cacd36a8{font-family:'Arial';font-size:11pt;font-weight:bold;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-cacd36a9{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-cacd36aa{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-cacd36ab{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-cacd5d9a{width:144pt;background-color:transparent;vertical-align: top;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd5d9b{width:119.5pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd5d9c{width:68.2pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd5d9d{width:59pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd5d9e{width:66.4pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd5d9f{width:68.2pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd5da0{width:144pt;background-color:transparent;vertical-align: top;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd5da1{width:59pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd5da2{width:66.4pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd5da3{width:119.5pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd5da4{width:59pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd8496{width:68.2pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd8497{width:66.4pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd8498{width:119.5pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 2pt solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd8499{width:59pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd849a{width:144pt;background-color:transparent;vertical-align: top;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd849b{width:68.2pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd849c{width:66.4pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd849d{width:119.5pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd849e{width:66.4pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd849f{width:59pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacd84a0{width:68.2pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacdabe2{width:144pt;background-color:transparent;vertical-align: top;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacdabe3{width:119.5pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacdabe4{width:59pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacdabe5{width:66.4pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacdabe6{width:144pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacdabe7{width:119.5pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-cacdabe8{width:68.2pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(255, 255, 255, 0.00);border-top: 0 solid rgba(255, 255, 255, 0.00);border-left: 0 solid rgba(255, 255, 255, 0.00);border-right: 0 solid rgba(255, 255, 255, 0.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}&lt;/style&gt;&lt;table class='cl-cad45e42'&gt;&lt;tbody&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-cacd5d9a"&gt;&lt;p class="cl-cacd36aa"&gt;&lt;span class="cl-cacd36a8"&gt;Component&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd5d9b"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a8"&gt;Term&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd5d9e"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a8"&gt;Estimate&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd5d9c"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a8"&gt;Std Error&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd5d9d"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a8"&gt;t-value&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd5d9d"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a8"&gt;p-value&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-cacd5da0"&gt;&lt;p class="cl-cacd36aa"&gt;&lt;span class="cl-cacd36a9"&gt;A. parametric coefficients&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd5da3"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt;(Intercept)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd5da2"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt;2.06&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd5d9f"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt;0.03&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd5da1"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt;74.33&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd5da1"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt;&amp;lt;0.01&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-cacd5d9a"&gt;&lt;p class="cl-cacd36aa"&gt;&lt;span class="cl-cacd36a8"&gt;Component&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd5d9b"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a8"&gt;Term&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd5d9e"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a8"&gt;edf&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd5d9c"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a8"&gt;Ref. df&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd5d9d"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a8"&gt;F-value&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd5d9d"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a8"&gt;p-value&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td  rowspan="3"class="cl-cacd5da0"&gt;&lt;p class="cl-cacd36aa"&gt;&lt;span class="cl-cacd36a9"&gt;B. smooth terms&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd8498"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt;s(WY)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd8497"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt; 19.95&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd8496"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt;  20.37&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd5da4"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt;25.23&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd5da4"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt;&amp;lt;0.01&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-cacd849d"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt;s(UTMX,UTMY)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd849c"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt;239.70&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd849b"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt; 303.00&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd8499"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt;66.71&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd8499"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt;&amp;lt;0.01&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td class="cl-cacdabe3"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt;ti(WY,UTMX,UTMY)&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd849e"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt;569.63&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd84a0"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt;1914.00&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd849f"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt; 2.01&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;td class="cl-cacd849f"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt;&amp;lt;0.01&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tbody&gt;&lt;tfoot&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td  colspan="6"class="cl-cacdabe6"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt;Adjusted R-squared: 0.91, Deviance explained 0.93&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr style="overflow-wrap:break-word;"&gt;&lt;td  colspan="6"class="cl-cacdabe6"&gt;&lt;p class="cl-cacd36ab"&gt;&lt;span class="cl-cacd36a9"&gt;fREML: -701.98, Scale est.: 0.03, N: 4575&lt;/span&gt;&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/tfoot&gt;&lt;/table&gt;&lt;/div&gt;&lt;/template&gt;
+&lt;div class="flextable-shadow-host" id="56a0b223-cc06-4ddd-a386-c1c38af7a833"&gt;&lt;/div&gt;
+&lt;script&gt;
+var dest = document.getElementById("56a0b223-cc06-4ddd-a386-c1c38af7a833");
+var template = document.getElementById("b5ca560c-7d66-443a-9876-7c3af7d64ac0");
+var caption = template.content.querySelector("caption");
+if(caption) {
+  caption.style.cssText = "display:block;text-align:center;";
+  var newcapt = document.createElement("p");
+  newcapt.appendChild(caption)
+  dest.parentNode.insertBefore(newcapt, dest.previousSibling);
+}
+var fantome = dest.attachShadow({mode: 'open'});
+var templateContent = template.content;
+fantome.appendChild(templateContent);
+&lt;/script&gt;
+
+---
+name: GAM effect
+
+&lt;img src="./plots/GAM_sigchange.png" width="70%" style="display: block; margin: auto;" /&gt;
+
+---
+name: Hydro
+
+&lt;br&gt;
+&lt;div class="figure" style="text-align: center"&gt;
+&lt;img src="./plots/Hydro_Trend.png" alt="Annual hydroperiod and discharge volumes for Shark River Slough (SRS; top) and Taylor Slough and Coastal Basins (TSCB; bottom) between May 1, 1995 and Apirl 30, 2019 (WY1996 – 2019). " width="100%" /&gt;
+&lt;p class="caption"&gt;Annual hydroperiod and discharge volumes for Shark River Slough (SRS; top) and Taylor Slough and Coastal Basins (TSCB; bottom) between May 1, 1995 and Apirl 30, 2019 (WY1996 – 2019). &lt;/p&gt;
+&lt;/div&gt;
+
+
+---
+name: conclusion
+
+### What we learned so far...
+
+* Interesting spatial gradients across the greater South Everglades, Florida Bay, West Florida Shelf and Keys system.
+  * Combing several large datasets over a long(ish) period of time has provide a holistic system view (some of which "we" hypothesized from "smaller" scale studies)
+  * Highlights the attenuation of some nutrients across the system
+  * Some systems are more of a BGChem hotspot than others
+
+--
+
+* Year-to-year variation in TN and TP across the study area, at times, correspond with pulse and press events (see GAMs).
+  * suggesting a push-pull dynamic between events and spatiotemporal variation in nutrients
+
+--
+
+.content-box-gray[
+*"When you put your hand in a flowing stream, you touch the last that has gone before
+and the first of what is still to come."*
+
+-- Leonardo da Vinci
+]
+
+
+---
+name: last slide
+class: left
+
+### Acknowledgements
+
+#### Data
+
+&lt;img src="https://www.sfwmd.gov/sites/default/files/documents/sfwmd-seal-hq.png" width="10%" /&gt;
+South Florida Water Management District ([DBHYDRO](https://www.sfwmd.gov/science-data/dbhydro))
+
+&lt;img src="./plots/background/SERClogo.png" width="15%" /&gt;
+FIU Southeast Environmental Research Center ([SERC](http://serc.fiu.edu/wqmnetwork/))
+
+&lt;img src="https://fcelter.fiu.edu/_assets/images/fce-logo-200.jpg" width="10%" /&gt;
+FIU Florida Coastal Everglades LTER ([FCE LTER](https://fcelter.fiu.edu/))
+
+#### Slides
+
+* HTML [Slide deck](https://swampthingecology.org/EVER_FKNMS_WQTrend/slides/20220114_FCEBrownBag) &amp;copy; Julian (2022) [![Creative Commons License](https://i.creativecommons.org/l/by/4.0/88x31.png)](http://creativecommons.org/licenses/by/4.0/)
+
+* RMarkdown [Source](https://github.com/SwampThingPaul/EVER_FKNMS_WQTrend)
+
+&lt;br&gt;
+
+---
+name: blank
+class: inverse center middle
+
+## Extras
+
+---
+name: Trend
+&lt;img src="./plots/TrendMaps.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;!-- .center[.small[**Left:** Annual rate of change for geometric mean total nitrogen (TN), dissolved inorganic nutrient (DIN), total phosphorous (TP), soluble reactive phosphorus (SRP) and chlorophyll-a (Chl-a) concentrations at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record. **Right:** Average annual geometric mean TN, DIN, TP, SRP and Chl-a concentrations  across the study area.]] --&gt;
+
+---
+name: Trend
+&lt;img src="./plots/varianceMaps.png" width="90%" style="display: block; margin: auto;" /&gt;
+&lt;!-- **Left:** Variance of annual geometric mean concentrations of total nitrogen (TN), dissolved inorganic nutrient (DIN), total phosphorous (TP), soluble reactive phosphorus (SRP) and chlorophyll-a (Chl-a) concentrations at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record. **Right:** Coefficients of Variation of annual geometric mean TN, DIN, TP, SRP and Chl-a concentrations  across the study area. --&gt;
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "<div class=\"progress-bar-container\">\n  <div class=\"progress-bar\" style=\"width: calc(%current% / %total% * 100%);\">\n  </div>\n</div>\n",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
