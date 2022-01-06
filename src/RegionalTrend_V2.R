@@ -2121,10 +2121,12 @@ GAM.TP.map=tm_shape(shore2,bbox=bbox.lims)+tm_fill(col="cornsilk")+
   tm_borders(col="grey30",lwd=0.1)+
   # tm_polygons(col="cornsilk",border.col="grey")+
   tm_facets(free.scales=FALSE,nrow=1,ncol=1)+
-  tm_layout(panel.labels=paste0("WY",c(1996:2019)),fontfamily = "serif",bg.color="lightblue")+
+  tm_layout(panel.labels=paste0("WY",c(1996:2019)),
+            fontfamily = "serif",bg.color="lightblue", 
+            panel.label.size=0.8,legend.title.size=0.8,legend.text.size=0.6)+
   tm_legend(title="Annual GM TP\n(\u03BCg L\u207B\u00B9)",legend.outside=T)
   GAM.TP.map
-tmap_animation(GAM.TP.map,filename="./Plots/TP_GAM.gif",delay=80,width=450,height=250,loop=T)
+tmap_animation(GAM.TP.map,filename="./Plots/TP_GAM.gif",delay=100,width=550,height=250,loop=T,dpi=150)
 
 fit.TN <- predict(m.TN, pdat.sp)
 pred.TN <- cbind(pdat.sp, Fitted = exp(fit.TN))
@@ -2172,17 +2174,19 @@ bbox.lims=bbox(region.mask)
 GAM.TN.map=tm_shape(shore2,bbox=bbox.lims)+tm_fill(col="cornsilk")+
   tm_shape(GAM.TN.stack2)+
   tm_raster(title="",palette="-viridis",
-            breaks=c(0,0.1,0.2,0.4,0.6,1,2),
-            labels=c("< 0.1","0.1 - 0.2","0.2 - 0.4","0.4 - 0.6","0.6 - 1.0","1.0 - 2.0"))+
+            breaks=c(0,0.1,0.2,0.4,0.6,1,1.5,2),
+            labels=c("< 0.1","0.1 - 0.2","0.2 - 0.4","0.4 - 0.6","0.6 - 1.0","1.0 - 1.5","1.5 - 2.0"))+
   #tm_raster(title="",palette="-cividis",alpha=0.75,style="cont")+
   tm_shape(shore2)+
   tm_borders(col="grey30",lwd=0.1)+
   # tm_polygons(col="cornsilk",border.col="grey")+
   tm_facets(free.scales=FALSE,nrow=1,ncol=1)+
-  tm_layout(panel.labels=paste0("WY",c(1996:2019)),fontfamily = "serif",bg.color="lightblue")+
+  tm_layout(panel.labels=paste0("WY",c(1996:2019)),
+            fontfamily = "serif",bg.color="lightblue", 
+            panel.label.size=0.8,legend.title.size=0.8,legend.text.size=0.6)+
   tm_legend(title="Annual GM TN\n(mg L\u207B\u00B9)",legend.outside=T)
 GAM.TN.map
-tmap_animation(GAM.TN.map,filename="./Plots/TN_GAM.gif",delay=80,width=450,height=250,loop=T)
+tmap_animation(GAM.TN.map,filename="./Plots/TN_GAM.gif",delay=100,width=550,height=250,loop=T,dpi=150)
 
 
 ### TN TP stoich

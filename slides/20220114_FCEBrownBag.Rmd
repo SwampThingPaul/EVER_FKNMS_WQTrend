@@ -20,7 +20,7 @@ editor_options:
 # xaringanExtra::use_webcam()
 xaringanExtra::use_tile_view()
 # xaringanExtra::use_scribble()
-xaringanExtra::use_progress_bar("red", "bottom","0.25em")
+# xaringanExtra::use_progress_bar("red", "bottom","0.25em")
 ```
 
 ```{r setup, include=FALSE}
@@ -109,7 +109,7 @@ bsplus::bs_button(
 name: acknowledgements
 
 ### Co-authors (in no particular order of importance)
-Joseph N. Boyer, Stephen Davis, Jim Fourqurean, Evelyn E. Gaiser, John S Kominoski, Chris Madden, Donatto Surratt, Serge Thomas
+Joseph N. Boyer, Stephen Davis, Jim Fourqurean, Evelyn E. Gaiser, John S Kominoski, Chris Madden, Donatto Surratt & Serge Thomas
 
 --
 
@@ -119,7 +119,7 @@ I'm presenting to you from the former lands of the Calusa. The Everglades, as we
 --
 
 ### Ecosystem Acknowledgment
-We acknowledge the diversity of the ecosystems discussed in this system from the iconic Ridge and Slough to the barrier islands and reefs. The south Florida ecosystem are valuable beyond the vast array of ecosystem services it provides. 
+We acknowledge the diversity of the ecosystems discussed today, from the iconic Ridge and Slough to the barrier islands and reefs. The ecosystems of south Florida are valuable beyond the vast array of ecosystem services it provides. 
 
 ---
 name: disturb101
@@ -130,8 +130,12 @@ name: disturb101
 knitr::include_graphics("./plots/background/Grimmetal_2017_Fig1.jpg")
 ```
 
+--
+
 * Disturbances are crucial drivers of ecological processes
   * Some level of stress leads to disruptions
+
+--
 
 * Applied to exogenic and and endogenic disturbances.
 
@@ -526,28 +530,6 @@ knitr::include_graphics("./plots/GAM_draw_base_both.png")
 ```
 
 ---
-name: TNGAM_tab
-
-### TN Spatio-temporal Model
-
-```{r}
-m.TN.sum=read.csv(paste0(export.path,"TN_gam_mod_sum.csv"))
-m.TN.est=read.csv(paste0(export.path,"TN_gam_mod_est.csv"))
-notidy_as_flextable_gam(x=NULL,data_t=m.TN.est,data_g=m.TN.sum)
-```
-
----
-name: TPGAM_tab
-
-### TP Spatio-temporal Model
-
-```{r}
-m.TP.sum=read.csv(paste0(export.path,"TP_gam_mod_sum.csv"))
-m.TP.est=read.csv(paste0(export.path,"TP_gam_mod_est.csv"))
-notidy_as_flextable_gam(x=NULL,data_t=m.TP.est,data_g=m.TP.sum)
-```
-
----
 name: GAM effect
 
 ```{r,out.width="70%",fig.align="center"}
@@ -644,6 +626,29 @@ name: blank
 class: inverse center middle
 
 ## Extras
+
+---
+name: TNGAM_tab
+
+### TN Spatio-temporal Model
+
+```{r}
+m.TN.sum=read.csv(paste0(export.path,"TN_gam_mod_sum.csv"))
+m.TN.est=read.csv(paste0(export.path,"TN_gam_mod_est.csv"))
+notidy_as_flextable_gam(x=NULL,data_t=m.TN.est,data_g=m.TN.sum)
+```
+
+---
+name: TPGAM_tab
+
+### TP Spatio-temporal Model
+
+```{r}
+m.TP.sum=read.csv(paste0(export.path,"TP_gam_mod_sum.csv"))
+m.TP.est=read.csv(paste0(export.path,"TP_gam_mod_est.csv"))
+notidy_as_flextable_gam(x=NULL,data_t=m.TP.est,data_g=m.TP.sum)
+```
+
 
 ---
 name: Trend
