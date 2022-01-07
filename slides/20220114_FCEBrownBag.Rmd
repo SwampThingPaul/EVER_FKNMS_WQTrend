@@ -524,7 +524,7 @@ For more GAM goodness please see
 name: TNGAM
 
 ### TN and TP Spatio-temporal Model
-```{r,out.width="90%",fig.align="center",fig.cap="Total Nitrogen and Total Phosphorus spatial and temporal generalized additive model effects plot. "}
+```{r,out.width="90%",fig.align="center",fig.cap="Total Nitrogen and Total Phosphorus spatial and temporal generalized additive model effects plot (Deviance explained: TN model 0.97; TP model 0.93). "}
 
 knitr::include_graphics("./plots/GAM_draw_base_both.png")
 ```
