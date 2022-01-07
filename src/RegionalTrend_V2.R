@@ -2072,7 +2072,7 @@ pdat.sp<-with(sites.shp,
 fit.TP <- predict(m.TP, pdat.sp)
 pred.TP <- cbind(pdat.sp, Fitted = exp(fit.TP))
 
-yrs=1996:2019
+yrs=seq(1996,2019,1)
 for(i in 1:length(yrs)){
   tmp=subset(pred.TP,WY==yrs[i])[,c("Fitted","UTMX","UTMY")]
   coordinates(tmp)<-~UTMX + UTMY
@@ -2084,6 +2084,7 @@ for(i in 1:length(yrs)){
   assign(paste0("GAM.TP.",yrs[i]),tmp.m)
   print(i)
 }
+
 
 GAM.TP.stack2=stack(GAM.TP.1996,
                     GAM.TP.1997,
