@@ -526,7 +526,7 @@ name: TNGAM
 ### TN and TP Spatio-temporal Model
 ```{r,out.width="90%",fig.align="center",fig.cap="Total Nitrogen and Total Phosphorus spatial and temporal generalized additive model effects plot (Deviance explained: TN model 0.97; TP model 0.93). "}
 
-knitr::include_graphics("./plots/GAM_draw_base_both.png")
+knitr::include_graphics("./plots/GAM_effect_TN_TP.png")
 ```
 
 ---
@@ -665,3 +665,21 @@ name: Trend
 knitr::include_graphics("./plots/varianceMaps.png")
 ```
 <!-- **Left:** Variance of annual geometric mean concentrations of total nitrogen (TN), dissolved inorganic nutrient (DIN), total phosphorous (TP), soluble reactive phosphorus (SRP) and chlorophyll-a (Chl-a) concentrations at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record. **Right:** Coefficients of Variation of annual geometric mean TN, DIN, TP, SRP and Chl-a concentrations  across the study area. -->
+
+---
+name: Trend
+
+### TN GAM Spatio-temporal effect plots
+```{r,out.width="110%",fig.align="center"}
+
+knitr::include_graphics("./plots/GAM_TN_UTMWY.png")
+```
+
+---
+name: Trend
+
+### TP GAM Spatio-temporal effect plots
+```{r,out.width="110%",fig.align="center"}
+
+knitr::include_graphics("./plots/GAM_TP_UTMWY.png")
+```
