@@ -635,7 +635,7 @@ name: TNGAM_tab
 ```{r}
 m.TN.sum=read.csv(paste0(export.path,"TN_gam_mod_sum.csv"))
 m.TN.est=read.csv(paste0(export.path,"TN_gam_mod_est.csv"))
-notidy_as_flextable_gam(x=NULL,data_t=m.TN.est,data_g=m.TN.sum)
+notidy_as_flextable_gam(x=NULL,data_t=m.TN.sum,data_g=m.TN.est)
 ```
 
 ---
@@ -646,15 +646,15 @@ name: TPGAM_tab
 ```{r}
 m.TP.sum=read.csv(paste0(export.path,"TP_gam_mod_sum.csv"))
 m.TP.est=read.csv(paste0(export.path,"TP_gam_mod_est.csv"))
-notidy_as_flextable_gam(x=NULL,data_t=m.TP.est,data_g=m.TP.sum)
+notidy_as_flextable_gam(x=NULL,data_t=m.TP.sum,data_g=m.TP.est)
 ```
 
 
 ---
 name: Trend
-```{r,out.width="90%",fig.align="center"}
+```{r,out.width="80%",fig.align="center"}
 
-knitr::include_graphics("./plots/TrendMaps.png")
+knitr::include_graphics("./plots/TrendMapsV2.png")
 ```
 <!-- .center[.small[**Left:** Annual rate of change for geometric mean total nitrogen (TN), dissolved inorganic nutrient (DIN), total phosphorous (TP), soluble reactive phosphorus (SRP) and chlorophyll-a (Chl-a) concentrations at individual stations across the Everglades-Florida Bay-West Florida Shelf-Keys ecosystem during the period of record. **Right:** Average annual geometric mean TN, DIN, TP, SRP and Chl-a concentrations  across the study area.]] -->
 
