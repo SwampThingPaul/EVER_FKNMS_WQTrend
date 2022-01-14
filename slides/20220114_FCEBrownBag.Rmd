@@ -144,7 +144,7 @@ knitr::include_graphics("./plots/background/Grimmetal_2017_Fig1.jpg")
 * Grimm et al (2017) Does the ecological concept of disturbance have utility in urban social–ecological–technological systems? [Ecosystem Health and Sustainability](https://esajournals.onlinelibrary.wiley.com/doi/abs/10.1002/ehs2.1255)
 
 * Peters et al (2011) Cross-system comparisons elucidate disturbance complexities and generalities. [Ecosphere](https://esajournals.onlinelibrary.wiley.com/doi/full/10.1890/ES11-00115.1)
-*Grim
+
 ]
 ]
 
