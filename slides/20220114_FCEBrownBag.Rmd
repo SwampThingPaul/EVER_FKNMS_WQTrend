@@ -412,6 +412,7 @@ knitr::include_graphics("./plots/TrendMaps_TN.png")
 * Significant increases lower Shark River, Coastal fringe and Florida Bay.
   * Ecotone effect?
   * Biomass turnover? (fringe = Mangrove; Florida Bay = Seagrass)
+  * Sponge DIN flux? (See Hoer et al 2020)
   * Press/Pulse Disturbance?
 
 * Florida Bay average concentrations lower than freshwater Everglades.
@@ -660,7 +661,7 @@ knitr::include_graphics("./plots/TrendMapsV2.png")
 
 ---
 name: Trend
-```{r,out.width="90%",fig.align="center"}
+```{r,out.width="80%",fig.align="center"}
 
 knitr::include_graphics("./plots/varianceMaps.png")
 ```
