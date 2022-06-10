@@ -11,6 +11,8 @@
 /GIS/
 /_manuscript/
 /Export/
+/Export/wmd_dat.csv
+
 README.Rmd
 
 *.RDataTmp

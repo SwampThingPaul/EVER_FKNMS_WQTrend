@@ -1,6 +1,8 @@
 Southern Everglades and Keys Trend analysis
 ================
 
+[![DOI](https://zenodo.org/badge/388492331.svg)](https://zenodo.org/badge/latestdoi/388492331)
+
 **UNDER CONSTRUCTION**
 
 Contact: Paul Julian ([email](mailto:pjulian@sccf.org))
