@@ -1,6 +1,9 @@
 
 ## Run 7_RegionalTrend_RegionalAnalysis.R first
 
+# WYs=seq(1996,2019,1)
+# dates=date.fun(c(paste(min(WYs)-1,"05-01",sep="-"),paste(max(WYs),"05-01",sep="-")))
+
 # Hydroperiod -------------------------------------------------------------
 
 stage.sites=data.frame(SITE=c("NP201","NESRS1","NESRS2","NP203","P33","P36","NP-112","TSB","R127","TSH"),
@@ -71,10 +74,10 @@ for(i in 1:nrow(SRS.dbkeys)){
 }
 srs.flow$WY=WY(srs.flow$Date)
 srs.flow=merge(srs.flow,SRS.dbkeys,"DBKEY")
-flow.xtab=data.frame(cast(srs.flow,Date+WY+SITE+WQSite~Priority,value="Data.Value",fun.aggregate=function(x) ifelse(sum(x,na.rm=T)==0,NA,sum(x,na.rm=T))))
+flow.xtab=data.frame(reshape::cast(srs.flow,Date+WY+SITE+WQSite~Priority,value="Data.Value",fun.aggregate=function(x) ifelse(sum(x,na.rm=T)==0,NA,sum(x,na.rm=T))))
 flow.xtab$fflow.cfs=with(flow.xtab,ifelse(is.na(P1)==T&is.na(P2)==T,P3,ifelse(is.na(P2)==T&is.na(P3)==T,P1,ifelse(is.na(P1)==T&is.na(P3)==T,P2,P1))));#final flow value for analysis
 
-srs.flow.da.xtab=cast(flow.xtab,Date+WY~SITE,value="fflow.cfs",fun.aggregate=function(x) mean(cfs.to.km3d(ifelse(x<0,NA,x)),na.rm=T))
+srs.flow.da.xtab=reshape::cast(flow.xtab,Date+WY~SITE,value="fflow.cfs",fun.aggregate=function(x) mean(cfs.to.km3d(ifelse(x<0,NA,x)),na.rm=T))
 srs.flow.da.xtab$S355B=rowSums(srs.flow.da.xtab[,c("S355B","S355B_P")],na.rm=T)
 srs.flow.da.xtab=srs.flow.da.xtab[,c("Date","WY","S12A","S12B", "S12C", "S12D", "S333", "S334", "S355A", "S355B","S356","S335")]
 
@@ -91,7 +94,7 @@ srs.flow.da.xtab.WY=ddply(subset(srs.flow.da.xtab,WY%in%seq(1996,2019,1)),"WY",s
 
 plot(TFlow.km3~WY,srs.flow.da.xtab.WY,type="b")
 with(srs.flow.da.xtab.WY,cor.test(WY,TFlow.km3,method="kendall"))
-
+# write.csv(srs.flow.da.xtab.WY,paste0(export.path,"SRS_WYDischarge.csv"),row.names = F)
 # https://www.sfwmd.gov/sites/default/files/documents/ag_item_4_TSCB_Method3.pdf
 # https://www.sfwmd.gov/sites/default/files/documents/TS%26CB_TP_Compliance_1st_qtr_2020_Data_Report_method1%262%263_0.pdf
 
@@ -110,12 +113,12 @@ TS.flow$WY=WY(TS.flow$Date)
 TS.flow=merge(TS.flow,TS.dbkeys,"DBKEY")
 TS.flow$Date=date.fun(TS.flow$Date)
 
-ts.flow.xtab=data.frame(cast(TS.flow,Date+WY+SITE~Priority,value="Data.Value",fun.aggregate=function(x) ifelse(sum(x,na.rm=T)==0,NA,sum(x,na.rm=T))))
+ts.flow.xtab=data.frame(reshape::cast(TS.flow,Date+WY+SITE~Priority,value="Data.Value",fun.aggregate=function(x) ifelse(sum(x,na.rm=T)==0,NA,sum(x,na.rm=T))))
 ts.flow.xtab$P3=NA
 ts.flow.xtab$fflow.cfs=with(ts.flow.xtab,ifelse(is.na(P1)==T&is.na(P2)==T,P3,ifelse(is.na(P2)==T&is.na(P3)==T,P1,ifelse(is.na(P1)==T&is.na(P3)==T,P2,P1))));#final flow value for analysis
 ts.flow.xtab$fflow.cfs=with(ts.flow.xtab,ifelse(SITE%in%c("S332","S175")&Date>date.fun("1999-08-30"),NA,fflow.cfs))
 
-ts.flow.da.xtab=cast(ts.flow.xtab,Date+WY~SITE,value="fflow.cfs",fun.aggregate=function(x) mean(cfs.to.km3d(ifelse(x<0,NA,x)),na.rm=T))
+ts.flow.da.xtab=reshape::cast(ts.flow.xtab,Date+WY~SITE,value="fflow.cfs",fun.aggregate=function(x) mean(cfs.to.km3d(ifelse(x<0,NA,x)),na.rm=T))
 ts.flow.da.xtab[is.na(ts.flow.da.xtab)]<-0
 ts.flow.da.xtab$DBasin.Flow=with(ts.flow.da.xtab,(S332D-S332DX1-S328))
 ts.flow.da.xtab$DBasin.Flow=with(ts.flow.da.xtab,ifelse(DBasin.Flow<0,0,DBasin.Flow))
@@ -126,7 +129,7 @@ ts.flow.da.xtab.WY=ddply(subset(ts.flow.da.xtab,WY%in%seq(1996,2019,1)),"WY",sum
 plot(TFlow.km3~WY,ts.flow.da.xtab.WY,type="b")
 with(ts.flow.da.xtab.WY,cor.test(WY,TFlow.km3,method="kendall"))
 
-
+# write.csv(ts.flow.da.xtab.WY,paste0(export.path,"TSPh_WYDischarge.csv"),row.names = F)
 ##
 SRS.hydro=merge(subset(stg.dat.WY.HP.region,Region%in%c("UpperSRS","MidSRS","LowSRS")),
                 srs.flow.da.xtab.WY,"WY")

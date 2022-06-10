@@ -4,8 +4,9 @@
 # GAM ---------------------------------------------------------------------
 # some ideas https://raw.githack.com/eco4cast/Statistical-Methods-Seminar-Series/main/bolker_mixedmodels/outputs/full_notes.html
 
+gc()
 # TN ----------------------------------------------------------------------
-dat.all.TN.GM=merge(subset(dat.all.GM,variable=="TN"),sites.shp,"STATION")
+dat.all.TN.GM=merge(subset(dat.all.GM,variable=="TN"&WY%in%WYs),sites.shp,"STATION")
 head(dat.all.TN.GM)
 WY.k=23
 loc.k=200
@@ -21,13 +22,13 @@ qq.gam(m.TN)
 pred.org=predict(m.TN,type="terms")
 partial.resids.TN<-pred.org+residuals(m.TN)
 
-hist(partial.resids[,1])
+hist(partial.resids.TN[,1])
 shapiro.test(partial.resids.TN[,1])
 
-hist(partial.resids[,2])
+hist(partial.resids.TN[,2])
 shapiro.test(partial.resids.TN[,2])
 
-hist(partial.resids[,3])
+hist(partial.resids.TN[,3])
 shapiro.test(partial.resids.TN[,3])
 
 nvar=3;layout(matrix(1:nvar,1,nvar))
@@ -52,7 +53,7 @@ m.TN.est=read.csv(paste0(export.path,"TN_gam_mod_est.csv"))
 library(flextable)
 library(magrittr)
 notidy_as_flextable_gam(x=NULL,data_t=m.TN.sum,data_g=m.TN.est,dig.num=2)%>%
-  font(fontname="Times New Roman",part="all") #%>%print("docx")
+  font(fontname="Times New Roman",part="all") %>%print("docx")
 # as_flextable(m.TN)
 
 reg.ext=extent(region.mask)
@@ -156,7 +157,7 @@ dev.off()
 par(family="serif",mar=c(0.1,0.1,0.1,0.1),oma=c(0.2,0.2,0.2,0.2))
 layout(matrix(c(1:25),5,5,byrow=T))
 
-b2=seq(-0.8,0.8,0.1)
+b2=seq(-1,1,0.1)
 pal2=colorRampPalette(c("blue","grey90","red"))(length(b2)-1)
 WY.vals=seq(1996,2019,1)
 for(i in 1:length(WY.vals)){
@@ -206,7 +207,9 @@ download.file("https://gist.github.com/gavinsimpson/e73f011fdaaab4bb5a30/raw/821
               tmpf)
 source(tmpf)
 
+sites.shp.tmp=subset(sites.shp,STATION%in%unique(subset(dat.all.GM,variable=="TN")$STATION))
 
+# pdat.TN2=reshape::expand.grid.df(sites.shp.tmp,data.frame(WY=seq(1996,2019,1)))
 pdat.TN2=reshape::expand.grid.df(sites.shp,data.frame(WY=seq(1996,2019,0.25)))
 p2 <- predict(m.TN, newdata=pdat.TN2,type = "terms", se.fit = TRUE)
 pdat.TN2$p2=p2$fit[,1]
@@ -220,6 +223,7 @@ pdat.TN2 <- transform(pdat.TN2,
                      upper = p2 + (crit.t * se2),
                      lower = p2 - (crit.t * se2))
 pdat.TN2=pdat.TN2[order(pdat.TN2$WY,pdat.TN2$STATION),]
+gc()
 
 m.TN.d <- derivatives(m.TN,newdata=pdat.TN2,
                       term='s(WY)',type = "central",interval="confidence",ncores=12)
@@ -236,9 +240,10 @@ unique(subset(pdat.TN2,is.na(dsig.decr)==F)$WY)
 
 
 # TP ----------------------------------------------------------------------
-dat.all.TP.GM=merge(subset(dat.all.GM,variable=="TP"),sites.shp,"STATION")
+dat.all.TP.GM=merge(subset(dat.all.GM,variable=="TP"&WY%in%WYs),sites.shp,"STATION")
 head(dat.all.TP.GM)
 gc()
+
 WY.k=23
 loc.k=500
 m.TP<-bam(log(GM)~
@@ -247,6 +252,7 @@ m.TP<-bam(log(GM)~
             ti(UTMX,UTMY,WY,d=c(2,1),bs=c("ds","cr"),k=c(90,24)),
           data=dat.all.TP.GM,
           nthreads = 12,discrete=T)
+
 summary(m.TP)
 qq.gam(m.TP)
 nvar=3;layout(matrix(1:nvar,1,nvar))

@@ -215,3 +215,7 @@ region.mask=SpatialPolygonsDataFrame(region.mask,data.frame(ID=1))
 regions2=gUnaryUnion(regions,id=regions@data$Region)
 regions2=SpatialPolygonsDataFrame(regions2,data.frame(Region=c("Coastal_Mangroves", "FLBay", "Keys", "Shelf")),FALSE)
 plot(regions2)
+
+
+# for metadata
+bbox(spTransform(regions2,wgs84))

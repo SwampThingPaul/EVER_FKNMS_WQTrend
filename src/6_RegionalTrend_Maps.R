@@ -6,6 +6,7 @@
 serc.shp2=SpatialPointsDataFrame(serc.shp[,c("UTMX","UTMY")],data=serc.shp,proj4string =utm17)
 wmd.shp2=SpatialPointsDataFrame(wmd.shp[,c("UTMX","UTMY")],data=wmd.shp,proj4string =utm17)
 lter.shp2=SpatialPointsDataFrame(lter.shp[,c("UTMX","UTMY")],data=lter.shp,proj4string =utm17)
+noaa.shp2=SpatialPointsDataFrame(noaa.sites.shp2[,c("UTMX","UTMY")],data=noaa.sites.shp2,proj4string =utm17)
 # utm17=sf::st_crs(26917)[[2]]
 # utm17=sp::CRS(utm17)
 
@@ -29,7 +30,6 @@ attributes(FL.shp)
 
 cols=wesanderson::wes_palette("Zissou1",4,"continuous")
 # png(filename=paste0(plot.path,"SamplingMap.png"),width=6.5,height=4,units="in",res=200,type="windows",bg="white")
-# png(filename=paste0(plot.path,"SamplingMap.png"),width=6.5,height=4,units="in",res=200,type="windows",bg="white")
 par(family="serif",oma=c(0.25,0.25,0.25,0.25),mar=c(0.1,0.1,0.1,0.1),xpd=F)
 # layout(matrix(c(1:2),1,2,byrow=T),widths = c(1,0.3))
 # par(family="serif",mar=c(0.1,0.1,0.1,0.1),oma=c(0.5,0.5,0.5,0.5));
@@ -48,6 +48,7 @@ plot(ENP,add=T,bg=NA,lwd=1)
 plot(serc.shp2,add=T,lwd=0.1,pch=21,bg="white",cex=0.75)
 plot(wmd.shp2,add=T,lwd=0.1,pch=22,bg="grey",cex=0.75)
 plot(lter.shp2,add=T,lwd=0.1,pch=24,bg="black",cex=0.75)
+plot(noaa.shp2,add=T,lwd=0.1,pch=23,bg="black",cex=0.75)
 mapmisc::scaleBar(utm17,"bottomright",bty="n",cex=1,seg.len=4)
 box(lwd=1)
 
@@ -67,9 +68,10 @@ box(lwd=1)
 plot(0:1,0:1,ann=F,axes=F,type="n")
 legend(0.5,0.9,legend=c(paste0("SERC (",length(serc.shp2$STATION),")"),
                         paste0("SFWMD (",length(wmd.shp2$STATION),")"),
-                        paste0("FCE LTER (",length(lter.shp2$STATION),")")),
-       pch=c(21,22,24),lty=c(NA),lwd=c(0.1),
-       col=c("black"),pt.bg=c("white","grey","black"),
+                        paste0("FCE LTER (",length(lter.shp2$STATION),")"),
+                        paste0("NOAA (",length(noaa.shp2$STATION),")")),
+       pch=c(21,22,24,23),lty=c(NA),lwd=c(0.1),
+       col=c("black"),pt.bg=c("white","grey","black","black"),
        pt.cex=1.25,ncol=1,cex=0.8,bty="n",y.intersp=1,x.intersp=0.75,xpd=NA,xjust=0.5,yjust=1,
        title.adj = 0,title="Monitoring\n(Number of Sites)")
 legend(0.5,0.5,legend=c("Freshwater Everglades","Mangrove Fringe","Florida Bay","W. Florida Shelf","Keys"),
@@ -81,7 +83,7 @@ dev.off()
 
 
 # Static Trend and GM maps ------------------------------------------------
-sites.shp2=SpatialPointsDataFrame(sites.shp2[,c("UTMX","UTMY")],data=sites.shp2,proj4string=utm17)
+# sites.shp2=SpatialPointsDataFrame(sites.shp2[,c("UTMX","UTMY")],data=sites.shp2,proj4string=utm17)
 
 cols.val=c("grey","white","red")
 # png(filename=paste0(plot.path,"TrendMapsV2.png"),width=6.5,height=7,units="in",res=200,type="windows",bg="white")
@@ -235,7 +237,7 @@ bbox.lims=bbox(region.mask)
   box(lwd=1)
   plot(0:1,0:1,ann=F,axes=F,type="n")
   legend_image=as.raster(matrix(pal,ncol=1))
-  text(x=0.25, y = c(0.83,0.47), labels = c("< 1","12"),cex=0.6,adj=0,pos=4)
+  text(x=0.25, y = c(0.83,0.47), labels = c("< 1","10"),cex=0.6,adj=0,pos=4)
   rasterImage(legend_image,0.15,0.45,0.25,0.85)
   text(x=0.15,y=0.95,"Average Annual GM SRP\n(\u03BCg P L\u207B\u00B9)",adj=0,cex=0.75)
   
@@ -269,7 +271,7 @@ bbox.lims=bbox(region.mask)
   box(lwd=1)
   plot(0:1,0:1,ann=F,axes=F,type="n")
   legend_image=as.raster(matrix(pal,ncol=1))
-  text(x=0.25, y = c(0.83,0.47), labels = c("< 0.2","1.3"),cex=0.6,adj=0,pos=4)
+  text(x=0.25, y = c(0.83,0.47), labels = c("< 0.2","6.5"),cex=0.6,adj=0,pos=4)
   rasterImage(legend_image,0.15,0.45,0.25,0.85)
   text(x=0.15,y=0.95,"Average Annual GM Chl-a\n(\u03BCg L\u207B\u00B9)",adj=0,cex=0.75)
   
@@ -319,7 +321,7 @@ par(family="serif",oma=c(0.25,0.25,0.25,0.25),mar=c(0.1,0.1,0.1,0.1),xpd=F)
 layout(matrix(c(1:24),6,4,byrow=T),widths = c(1,0.5,1,0.5))
 bbox.lims=bbox(region.mask)
 n=10
-CV.map.bks=seq(0,100,20);#c(0,5,10,20,40,80,100)
+CV.map.bks=seq(0,120,20);#c(0,5,10,20,40,80,100)
 {
   # TN
   plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.05,xpd=F)
@@ -754,7 +756,7 @@ bbox.lims=bbox(region.mask)
   box(lwd=1)
   plot(0:1,0:1,ann=F,axes=F,type="n")
   legend_image=as.raster(matrix(pal,ncol=1))
-  text(x=0.25, y = c(0.83,0.47), labels = c("< 0.2","1.3"),cex=0.6,adj=0,pos=4)
+  text(x=0.25, y = c(0.83,0.47), labels = c("< 0.2","6.5"),cex=0.6,adj=0,pos=4)
   rasterImage(legend_image,0.15,0.45,0.25,0.85)
   text(x=0.15,y=0.95,"Average Annual GM Chl-a\n(\u03BCg L\u207B\u00B9)",adj=0,cex=0.75)
   

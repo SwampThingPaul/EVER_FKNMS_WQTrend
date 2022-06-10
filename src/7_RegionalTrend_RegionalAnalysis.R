@@ -26,6 +26,7 @@ dat.all.SRP.GM2$Region=factor(dat.all.SRP.GM2$Region,levels=c("ENP","Coastal_Man
 
 ## Chl-a
 dat.all.Chla.GM2=merge(subset(dat.all.GM,variable=="Chla"),all.sites.region,"STATION",all.x=T)
+unique(subset(dat.all.Chla.GM2,is.na(Region)==T)$STATION)
 dat.all.Chla.GM2$Region=factor(dat.all.Chla.GM2$Region,levels=c("ENP","Coastal_Mangroves","FLBay","Shelf","Keys"))
 boxplot(GM~Region,dat.all.Chla.GM2,outline=F)
 
@@ -39,7 +40,6 @@ boxplot(GM~Region,dat.all.TOC.GM2,outline=F)
 dat.all.TNTP.GM2=merge(subset(dat.all.GM,variable=="TN_TP"),all.sites.region,"STATION",all.x=T)
 dat.all.TNTP.GM2$Region=factor(dat.all.TNTP.GM2$Region,levels=c("ENP","Coastal_Mangroves","FLBay","Shelf","Keys"))
 boxplot(GM~Region,dat.all.TNTP.GM2,outline=F);abline(h=20)
-
 
 vars=c("STATION","WY","Region","param")
 dat.all.GM$param=dat.all.GM$variable
@@ -89,7 +89,7 @@ region.sum[,vars]%>%
   padding(padding=1,part="all")%>%
   font(fontname="Times New Roman",part="all")%>%
   bold(part="header")%>%
-  autofit() # %>%print("docx")
+  autofit()  #%>%print("docx")
 
 
 cols=c("white",adjustcolor(wesanderson::wes_palette("Zissou1",4,"continuous"),0.5))
@@ -143,7 +143,7 @@ axis_fun(2,ymaj,ymin,format(ymaj))
 axis_fun(1,1:5,1:5,NA,line=0.3,cex=0.9);box(lwd=1)
 mtext(side=2,line=2.5,"SRP (\u03BCg P L\u207B\u00B9)")
 
-ylim.val=c(0,3);by.y=1;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+ylim.val=c(0,7);by.y=2;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
 x=boxplot(GM~Region,dat.all.Chla.GM2,outline=F,ylim=ylim.val,axes=F,ann=F,col=cols,boxwex=0.5)
 Chla.DT=with(dat.all.Chla.GM2,dunn.test(GM, Region))
 Chla.DT.ltr=cldList(P.adjusted ~ comparison,data=Chla.DT,threshold = 0.05)

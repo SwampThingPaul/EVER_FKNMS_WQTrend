@@ -171,60 +171,59 @@ dev.off()
 
 
 # Fire History ------------------------------------------------------------
-all_fire=spTransform(readOGR("C:/Julian_LaCie/_GitHub/vistafire/data","all_fires_cost"),utm17)
-sum(gIsValid(all_fire,byid=T)==F)
-all_fire=gBuffer(all_fire, byid=TRUE, width=0)
-sum(gIsValid(all_fire,byid=T)==F)
-plot(all_fire)
+# all_fire=spTransform(readOGR("C:/Julian_LaCie/_GitHub/vistafire/data","all_fires_cost"),utm17)
+# sum(gIsValid(all_fire,byid=T)==F)
+# all_fire=gBuffer(all_fire, byid=TRUE, width=0)
+# sum(gIsValid(all_fire,byid=T)==F)
+# plot(all_fire)
 # 
 # # Geometry issues
-# all_fire=readOGR(paste0(GIS.path,"/Fire"),"ENP_FIRES_1948-2019_utm")
-# # cleangeo::clgeo_IsValid(all_fire)
-# # report <- cleangeo::clgeo_CollectionReport(all_fire)
-# # cleangeo::clgeo_SummaryReport(report)
-# # test=cleangeo::clgeo_Clean(all_fire)
-# 
-# test=gIsValid(all_fire,byid=T,reason=T)
-# test[test!="Valid Geometry"]
-# test=gIsValid(all_fire,byid=T)
-# test2=spTransform(all_fire,utm17)
-# # test[test==F]
-# # test[test==T]
-# # gIsValid(all_fire[test==T,])
-# # gIsValid(all_fire[test==F,])
-# # 
-# # fix.fire=all_fire[test==F,]
-# # test.cln=cleangeo::clgeo_Clean(fix.fire)
-# # 
-# # gIsValid(test.cln)
-# # fire.fix=bind(all_fire[test==T,],test.cln)
-# # plot(fire.fix)
-# # fire.fix=spTransform(fire.fix,utm17)
-# 
-# all_fire.smp=gSimplify(all_fire, tol = 0.0001)
-# gIsValid(all_fire.smp)
-# test=rmapshaper::ms_clip(all_fire,bbox=bbox(spTransform(gBuffer(ENP,width=1000),wgs84)))
-# plot(test)
-# 
-# all_fire=spTransform(all_fire,utm17)
-# plot(ENP)
-# plot(all_fire,add=T)
-# writeOGR(all_fire,paste0(GIS.path,"/Fire"),"ENP_FIRES_1948-2019_fix",driver="ESRI Shapefile")
+all_fire=spTransform(readOGR(paste0(GIS.path,"/Fire_V2"),"ENP_FIRES_1948-2019"),utm17)
 
-range(all_fire$FireCalend)
-all_fire1=subset(all_fire,FireCalend%in%seq(1995,2019,1))
+
+range(all_fire$YEAR)
+all_fire1=subset(all_fire,YEAR%in%seq(1995,2019,1))
 head(all_fire1)
-range(all_fire1$FireCalend)
+range(all_fire1$YEAR)
 
 all_fire_sub=raster::intersect(all_fire1,ENP)# gIntersection(all_fire1,ENP,byid = TRUE)
 all_fire_sub$area.sqkm=area(all_fire_sub)*1e-6
 plot(all_fire_sub)
-all_fire_sub.sum=ddply(all_fire_sub@data,"FireCalend",summarise,TArea=sum(area.sqkm,na.rm=T),
+all_fire_sub.sum=ddply(all_fire_sub@data,"YEAR",summarise,TArea=sum(area.sqkm,na.rm=T),
                        per.area=(TArea/(gArea(raster::intersect(shore2,ENP))*1e-6))*100)
+all_fire_sub.sum$cum.area=cumsum(all_fire_sub.sum$TArea)
+plot(all_fire_sub.sum$YEAR,rep(1,length(all_fire_sub.sum$YEAR)),pch=21,bg="grey",cex=all_fire_sub.sum$per.area/3)
+plot(TArea~YEAR,all_fire_sub.sum)
+plot(per.area~YEAR,all_fire_sub.sum)
 
-plot(all_fire_sub.sum$FireCalend,rep(1,length(all_fire_sub.sum$FireCalend)),pch=21,bg="grey",cex=all_fire_sub.sum$per.area/3)
-plot(TArea~FireCalend,all_fire_sub.sum)
-plot(per.area~FireCalend,all_fire_sub.sum)
+# png(filename=paste0(plot.path,"ENP_Fire_Area.png"),width=7,height=3.5,units="in",res=200,type="windows",bg="white")
+par(family="serif",mar=c(1,2.5,0.5,3.5),oma=c(2,1,1,0.5));
+layout(matrix(1:2,1,2),widths=c(1,0.75))
+
+ylim.val=c(0,510);by.y=100;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+xlim.val=c(1995,2019);by.x=8;xmaj=seq(xlim.val[1],xlim.val[2],by.x);xmin=seq(xlim.val[1],xlim.val[2],by.x/by.x)
+plot(TArea~YEAR,all_fire_sub.sum,ann=F,type="n",axes=F,ylim=ylim.val,xlim=xlim.val)
+abline(h=ymaj,v=xmaj,lty=1,col=adjustcolor("grey",0.5))
+with(all_fire_sub.sum,pt_line(YEAR,TArea,2,"indianred1",1.5,21,"indianred1"))
+axis_fun(1,xmaj,xmin,xmaj,line=-0.5)
+axis_fun(2,ymaj,ymin,ymaj);
+axis_fun(4,ymaj,ymin,round((ymaj/(gArea(raster::intersect(shore2,ENP))*1e-6))*100,0));box(lwd=1)
+mtext(side=1,line=1.5,"Year")
+mtext(side=2,line=2.5,"Area (km\u00b2)")
+mtext(side=4,line=1.5,"Area (% of ENP)")
+mtext(side=3,adj=0,"Everglades National Park")
+
+par(mar=c(1,4,0.5,0.5))
+ylim.val=c(0,4000);by.y=1000;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+plot(TArea~YEAR,all_fire_sub.sum,ann=F,type="n",axes=F,ylim=ylim.val,xlim=xlim.val)
+abline(h=ymaj,v=xmaj,lty=1,col=adjustcolor("grey",0.5))
+with(all_fire_sub.sum,lines(YEAR,cum.area,col="indianred1",lwd=2))
+axis_fun(1,xmaj,xmin,xmaj,line=-0.5)
+axis_fun(2,ymaj,ymin,ymaj);box(lwd=1)
+mtext(side=2,line=2.75,"Cum. Area (km\u00b2)")
+mtext(side=1,line=1.5,"Year")
+dev.off()
+
 
 
 grd.ENP=as.data.frame(spsample(ENP,type="regular",cellsize=c(100,100)))
@@ -237,7 +236,7 @@ proj4string(grd.ENP)=wkt(utm17)
 
 grd2.ENP=raster(grd.ENP)
 
-grd.fire=rasterize(all_fire1,grd2.ENP,field=all_fire1@data$FireID,fun="count")
+grd.fire=rasterize(all_fire1,grd2.ENP,field=all_fire1@data$FIRE_NAME,fun="count")
 plot(grd.fire)
 grd.fire <- mask(grd.fire, ENP)
 
@@ -277,90 +276,214 @@ bx.val= seq(bot.val,top.val,(top.val-bot.val)/n.bks)
 rect(x.min,bx.val[1:n.bks],x.max,bx.val[2:(n.bks+1)],col=rev(pal),lty=0)
 text(y=bx.val[2:(n.bks+1)]-c(mean(diff(bx.val[2:(n.bks+1)]))/2), x = x.max, labels = rev(labs),cex=0.75,xpd=NA,pos=4,adj=0)
 # text(y=bx.val, x = x.max, labels = rev(labs),cex=0.75,xpd=NA,pos=4,adj=0)
-text(x=mid.val,y=top.val,"Number of fires\n(1995 - 2017)",adj=0,cex=0.75,pos=3,xpd=NA)
+text(x=mid.val,y=top.val,"Number of fires\n(1995 - 2019)",adj=0,cex=0.75,pos=3,xpd=NA)
 dev.off()
 
 # Climate -----------------------------------------------------------------
-## AMO
-# vars=c('year',month.abb)
-# row.count=length(seq(1856,2021,1))
-# noaa.amo.path="https://psl.noaa.gov/data/correlation/amon.us.long.data"
-# 
-# # AMO.dat=read.table("https://psl.noaa.gov/data/correlation/amon.us.long.data",header=F,skip=1,col.names=vars,nrows=row.count,na.string="-99.990")
-# AMO.dat=read.table("https://psl.noaa.gov/data/correlation/amon.sm.long.data",header=F,skip=1,col.names=vars,nrows=row.count,na.string="-99.990")
-# AMO.dat.melt=melt(AMO.dat,id.vars="year")
-# AMO.dat.melt=merge(AMO.dat.melt,data.frame(variable=month.abb,month=1:12))
-# AMO.dat.melt$Date.mon=with(AMO.dat.melt,date.fun(paste(year,month,"01",sep="-")))
-# AMO.dat.melt=AMO.dat.melt[order(AMO.dat.melt$Date.mon),c("Date.mon","value")]
-# AMO.dat.melt$warm=with(AMO.dat.melt,ifelse(value>0,value,0))
-# AMO.dat.melt$dry=with(AMO.dat.melt,ifelse(value<0,value,0))
-# AMO.dat.melt$ma=with(AMO.dat.melt,c(rep(NA,120),zoo::rollapply(value,width=121,FUN=function(x)mean(x,na.rm=T))))
-# head(AMO.dat.melt)
-# tail(AMO.dat.melt)
-# 
-# layout(matrix(c(1:2),2,1,byrow=T))
-# ylim.val=c(-0.4,0.4);by.y=0.5;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
-# xlim.val=date.fun(c("1870-01-01","2016-12-01"));xmaj=seq(xlim.val[1],xlim.val[2],"20 years");xmin=seq(xlim.val[1],xlim.val[2],"1 years")
-# 
-# plot(value~Date.mon,AMO.dat.melt,xlim=xlim.val,ylim=ylim.val,type="n")
-# #with(AMO.dat.melt,lines(Date.mon,ma,col="red"))
-# with(subset(AMO.dat.melt,is.na(value)==F),shaded.range(Date.mon,rep(0,length(Date.mon)),ifelse(value>0,value,0),"indianred1",lty=1))
-# with(subset(AMO.dat.melt,is.na(value)==F),shaded.range(Date.mon,ifelse(value<0,value,0),rep(0,length(Date.mon)),"dodgerblue1",lty=1))
-# abline(h=0)
+## AMO https://psl.noaa.gov/data/timeseries/AMO/
+
+vars=c('year',month.abb)
+row.count=length(seq(1856,2022,1))
+noaa.amo.path="https://psl.noaa.gov/data/correlation/amon.us.long.data"
+
+# AMO.dat=read.table("https://psl.noaa.gov/data/correlation/amon.us.long.data",header=F,skip=1,col.names=vars,nrows=row.count,na.string="-99.990")
+AMO.dat=read.table("https://psl.noaa.gov/data/correlation/amon.us.long.data",
+                   header=F,skip=1,sep="\t",na.string="-99.990",
+                   nrows=row.count)
+spl=strsplit(AMO.dat$V1,split="   ")
+spl[167]
+AMO.dat=data.frame(year=sapply(spl,"[",1),
+                 Jan=sapply(spl,"[",2),
+                 Feb=sapply(spl,"[",3),
+                 Mar=sapply(spl,"[",4),
+                 Apr=sapply(spl,"[",5),
+                 May=sapply(spl,"[",6),
+                 Jun=sapply(spl,"[",7),
+                 Jul=sapply(spl,"[",8),
+                 Aug=sapply(spl,"[",9),
+                 Sep=sapply(spl,"[",10),
+                 Oct=sapply(spl,"[",11),
+                 Nov=sapply(spl,"[",12),
+                 Dec=sapply(spl,"[",13)
+                 )
+AMO.dat[167,]$Feb=sapply(strsplit(AMO.dat[167,]$Feb,split="  "),"[",1)
+AMO.dat[,2:13]=sapply(AMO.dat[,2:13],as.numeric)
+
+AMO.dat.melt=melt(AMO.dat,id.vars="year")
+AMO.dat.melt=merge(AMO.dat.melt,data.frame(variable=month.abb,month=1:12))
+AMO.dat.melt$Date.mon=with(AMO.dat.melt,date.fun(paste(year,month,"01",sep="-")))
+AMO.dat.melt=AMO.dat.melt[order(AMO.dat.melt$Date.mon),c("Date.mon","value")]
+AMO.dat.melt$warm=with(AMO.dat.melt,ifelse(value>0,value,0))
+AMO.dat.melt$dry=with(AMO.dat.melt,ifelse(value<0,value,0))
+AMO.dat.melt$ma=rollmean(AMO.dat.melt$value,k=120,align="center",na.pad=T);# consistent with NOAA smoothing
+# with(AMO.dat.melt,c(rep(NA,120),zoo::rollapply(value,width=121,FUN=function(x)mean(x,na.rm=T))))
+AMO.dat.melt$ma.warm=with(AMO.dat.melt,ifelse(ma>0,ma,0))
+AMO.dat.melt$ma.cool=with(AMO.dat.melt,ifelse(ma<0,ma,0))
+AMO.dat.melt$WY=WY(AMO.dat.melt$Date.mon)
+head(AMO.dat.melt)
+tail(AMO.dat.melt)
+
+plot(value~Date.mon,AMO.dat.melt)
+plot(ma~Date.mon,AMO.dat.melt)
+
+
+# png(filename=paste0(plot.path,"AMO_smoothed.png"),width=6.5,height=3.5,units="in",res=200,type="windows",bg="white")
+par(family="serif",mar=c(1,3,0.5,0.5),oma=c(2,1,0.5,0.25),xpd=F);
+
+ylim.val=c(-0.6,0.6);by.y=0.3;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+xlim.val=date.fun(c("1900-01-01","2022-12-01"));xmaj=seq(xlim.val[1],xlim.val[2],"20 years");xmin=seq(xlim.val[1],xlim.val[2],"1 years")
+
+plot(value~Date.mon,AMO.dat.melt,xlim=xlim.val,ylim=ylim.val,type="n",axes=F,ann=F,xaxs="i")
+abline(h=ymaj,v=xmaj,lty=3,col=adjustcolor("grey",0.5))
+points(value~Date.mon,AMO.dat.melt,pch=19,col=adjustcolor("grey",0.5),cex=0.5)
+lines(value~Date.mon,AMO.dat.melt,col=adjustcolor("grey",0.5),lwd=0.5,lty=2)
+with(subset(AMO.dat.melt,is.na(ma)==F),shaded.range(Date.mon,rep(0,length(Date.mon)),ifelse(ma>0,ma,0),"indianred1",lty=1))
+with(subset(AMO.dat.melt,is.na(ma)==F),shaded.range(Date.mon,ifelse(ma<0,ma,0),rep(0,length(Date.mon)),"dodgerblue1",lty=1))
+abline(h=0)
+axis_fun(1,xmaj,xmin,format(xmaj,"%Y"),line=-0.5)
+axis_fun(2,ymaj,ymin,format(ymaj,nsmall=1));box(lwd=1)
+abline(v=date.fun(c("1995-05-01","2019-05-01")),lty=2)
+text(date.fun(date.fun("1995-05-01")+lubridate::ddays(4383)),ylim.val[2],"Study Period",cex=0.75,font=3)
+mtext(side=2,line=2.5,"AMO Index")
+mtext(side=1,line=1.5,"Year")
+mtext(side=3,adj=0,"10-year center smoothed monthly AMO values",col="grey",font=3)
+dev.off()
+
+
+xlim.val=date.fun(c("1870-01-01","2016-12-01"));xmaj=seq(xlim.val[1],xlim.val[2],"20 years");xmin=seq(xlim.val[1],xlim.val[2],"1 years")
+
+plot(value~Date.mon,AMO.dat.melt,xlim=xlim.val,ylim=ylim.val,type="n")
+#with(AMO.dat.melt,lines(Date.mon,ma,col="red"))
+with(subset(AMO.dat.melt,is.na(value)==F),shaded.range(Date.mon,rep(0,length(Date.mon)),ifelse(value>0,value,0),"indianred1",lty=1))
+with(subset(AMO.dat.melt,is.na(value)==F),shaded.range(Date.mon,ifelse(value<0,value,0),rep(0,length(Date.mon)),"dodgerblue1",lty=1))
+abline(h=0)
+
+
 # 
 # # PDO
 # # https://www.ncdc.noaa.gov/teleconnections/pdo/
-# # pdo=read.csv("https://www.ncdc.noaa.gov/teleconnections/pdo/data.csv",skip=1)
-# nrow.val=length(seq(1854,2021,1))
-# head.val=c("yr",month.abb)
-# pdo=read.table(paste0(data.path,"NOAA/PDO/data.txt"),skip=2,header=F,col.names=head.val,nrows = nrow.val-1)
-# head(pdo);tail(pdo)
-# pdo$yr=as.numeric(pdo$yr)
-# pdo=melt(pdo,id.var="yr")
-# pdo$month.num=with(pdo,as.numeric(match(variable,month.abb)))
-# pdo$monCY.date=with(pdo,date.fun(paste(yr,month.num,1,sep="-")))
-# pdo$WY=WY(pdo$monCY.date)
+pdo=read.delim("https://www.ncei.noaa.gov/pub/data/cmb/ersst/v5/index/ersst.v5.pdo.dat",
+               skip=1,header=T,sep="",na.strings="-99.99")
+nrow.val=length(seq(1854,2022,1))
+head.val=c("yr",month.abb)
+
+#pdo=read.table(paste0(data.path,"NOAA/PDO/data.txt"),skip=2,header=F,col.names=head.val,nrows = nrow.val-1)
+head(pdo);tail(pdo)
+
+pdo[169,]$Feb=substr(pdo[169,]$Feb,1,5)
+pdo$Feb=as.numeric(pdo$Feb)
+
+pdo$Year=as.numeric(pdo$Year)
+pdo=melt(pdo,id.var="Year")
+pdo$month.num=with(pdo,as.numeric(match(variable,month.abb)))
+pdo$monCY.date=with(pdo,date.fun(paste(Year,month.num,1,sep="-")))
+pdo$WY=WY(pdo$monCY.date)
 # pdo$dec.WY=decimal.WY(pdo$monCY.date)
 # pdo=pdo[order(pdo$dec.WY),]
-# 
-# pdo.WY.dat=ddply(pdo,"WY",summarise,mean.PDO=mean(as.numeric(value),na.rm=T),sd.PDO=sd(as.numeric(value),na.rm=T),N.val=N.obs(value))
-# pdo.WY.dat$UCI=with(pdo.WY.dat,mean.PDO+qnorm(0.975)*sd.PDO/sqrt(N.val))
-# pdo.WY.dat$LCI=with(pdo.WY.dat,mean.PDO-qnorm(0.975)*sd.PDO/sqrt(N.val))
-# 
-# plot(mean.PDO~WY,pdo.WY.dat)
-# with(pdo.WY.dat,lines(WY,UCI))
-# with(pdo.WY.dat,lines(WY,LCI))
-# 
-# # png(filename=paste0(plot.path,"ClimateIndex.png"),width=6.5,height=4,units="in",res=200,type="windows",bg="white")
-# par(family="serif",mar=c(1,3,0.5,1.5),oma=c(2,1,0.25,0.25),xpd=F);
-# layout(matrix(c(1:2),2,1,byrow=T))
-# 
-# xlim.val=date.fun(c("1870-01-01","2021-12-01"));xmaj=seq(xlim.val[1],xlim.val[2],"20 years");xmin=seq(xlim.val[1],xlim.val[2],"1 years")
-# ylim.val=c(-0.4,0.4);by.y=0.2;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
-# plot(value~Date.mon,AMO.dat.melt,xlim=xlim.val,ylim=ylim.val,type="n",axes=F,ann=F)
-# abline(h=ymaj,v=xmaj,lty=1,col=adjustcolor("grey",0.5))
-# #with(AMO.dat.melt,lines(Date.mon,ma,col="red"))
-# with(subset(AMO.dat.melt,is.na(value)==F),shaded.range(Date.mon,rep(0,length(Date.mon)),ifelse(value>0,value,0),"indianred1",lty=1))
-# with(subset(AMO.dat.melt,is.na(value)==F),shaded.range(Date.mon,ifelse(value<0,value,0),rep(0,length(Date.mon)),"dodgerblue1",lty=1))
-# abline(h=0)
-# axis_fun(1,xmaj,xmin,NA)
-# axis_fun(2,ymaj,ymin,format(ymaj,nsmall=1));box(lwd=1)
-# abline(v=date.fun(c("1995-05-01","2019-05-01")),lty=2)
-# text(date.fun(date.fun("1995-05-01")+lubridate::ddays(4383)),ylim.val[2],"Study Period",cex=0.75,font=3)
-# mtext(side=2,line=2.5,"AMO Index")
-# 
-# ylim.val=c(-4,4);by.y=2;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
-# plot(value~monCY.date,pdo,xlim=xlim.val,ylim=ylim.val,type="n",axes=F,ann=F)
-# abline(h=ymaj,v=xmaj,lty=1,col=adjustcolor("grey",0.5))
-# with(subset(pdo,is.na(value)==F),shaded.range(monCY.date,rep(0,length(monCY.date)),ifelse(value>0,value,0),"indianred1",lty=1))
-# with(subset(pdo,is.na(value)==F),shaded.range(monCY.date,ifelse(value<0,value,0),rep(0,length(monCY.date)),"dodgerblue1",lty=1))
-# abline(h=0)
-# axis_fun(1,xmaj,xmin,format(xmaj,"%Y"),line=-0.5)
-# axis_fun(2,ymaj,ymin,format(ymaj,nsmall=1));box(lwd=1)
-# abline(v=date.fun(c("1995-05-01","2019-05-01")),lty=2)
-# mtext(side=2,line=2.5,"PDO Index")
-# mtext(side=1,line=1.5,"Year")
-# dev.off()
+
+pdo.WY.dat=ddply(pdo,"WY",summarise,mean.PDO=mean(as.numeric(value),na.rm=T),sd.PDO=sd(as.numeric(value),na.rm=T),N.val=N.obs(value))
+pdo.WY.dat$UCI=with(pdo.WY.dat,mean.PDO+qnorm(0.975)*sd.PDO/sqrt(N.val))
+pdo.WY.dat$LCI=with(pdo.WY.dat,mean.PDO-qnorm(0.975)*sd.PDO/sqrt(N.val))
+pdo.WY.dat=subset(pdo.WY.dat,WY<2022)
+plot(mean.PDO~WY,pdo.WY.dat)
+with(pdo.WY.dat,lines(WY,UCI))
+with(pdo.WY.dat,lines(WY,LCI))
+
+
+amo.WY.dat=ddply(AMO.dat.melt,"WY",summarise,mean.AMO=mean(as.numeric(value),na.rm=T),sd.AMO=sd(as.numeric(value),na.rm=T),N.val=N.obs(value))
+amo.WY.dat$UCI=with(amo.WY.dat,mean.AMO+qnorm(0.975)*sd.AMO/sqrt(N.val))
+amo.WY.dat$LCI=with(amo.WY.dat,mean.AMO-qnorm(0.975)*sd.AMO/sqrt(N.val))
+amo.WY.dat=subset(amo.WY.dat,WY<2022)
+plot(mean.AMO~WY,amo.WY.dat)
+with(amo.WY.dat,lines(WY,UCI))
+with(amo.WY.dat,lines(WY,LCI))
+
+# png(filename=paste0(plot.path,"AMO_PDO.png"),width=6.5,height=4.5,units="in",res=200,type="windows",bg="white")
+par(family="serif",mar=c(1,3,0.5,0.5),oma=c(3,1,0.5,0.25),xpd=F);
+layout(matrix(c(1:2),2,1,byrow=T))
+
+xlim.val=c(1995,2019);by.x=5;xmaj=seq(xlim.val[1],xlim.val[2],by.x);xmin=seq(xlim.val[1],xlim.val[2],by.x/by.x)
+ylim.val=c(-0.4,0.4);by.y=0.2;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+plot(mean.AMO~WY,amo.WY.dat,xlim=xlim.val,ylim=ylim.val,type="n",axes=F,ann=F)
+abline(h=ymaj,v=xmaj,lty=1,col=adjustcolor("grey",0.5))
+#with(AMO.dat.melt,lines(Date.mon,ma,col="red"))
+with(amo.WY.dat,shaded.range(WY,UCI,LCI,"grey",lty=1))
+lines(mean.AMO~WY,amo.WY.dat)
+abline(h=0)
+axis_fun(1,xmaj,xmin,NA)
+axis_fun(2,ymaj,ymin,format(ymaj,nsmall=1));box(lwd=1)
+abline(v=c(1996,2019),lty=2)
+text(1996+diff(c(1996,2019))/2,ylim.val[2],"Study Period",cex=0.75,font=3)
+mtext(side=2,line=2.5,"AMO Index")
+mtext(side=3,adj=0,"Water Year Mean \u00B1 95% CI")
+
+ylim.val=c(-2,2);by.y=1;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+plot(mean.PDO~WY,pdo.WY.dat,xlim=xlim.val,ylim=ylim.val,type="n",axes=F,ann=F)
+abline(h=ymaj,v=xmaj,lty=1,col=adjustcolor("grey",0.5))
+#with(AMO.dat.melt,lines(Date.mon,ma,col="red"))
+with(pdo.WY.dat,shaded.range(WY,UCI,LCI,"grey",lty=1))
+lines(mean.PDO~WY,pdo.WY.dat)
+abline(h=0)
+axis_fun(1,xmaj,xmin,xmaj)
+axis_fun(2,ymaj,ymin,format(ymaj,nsmall=1));box(lwd=1)
+abline(v=c(1996,2019),lty=2)
+mtext(side=2,line=2.5,"PDO Index")
+mtext(side=1,line=2.5,"Water Year\n(May - April)")
+dev.off()
+
+
+# png(filename=paste0(plot.path,"AMO.png"),width=6.5,height=4.5,units="in",res=200,type="windows",bg="white")
+par(family="serif",mar=c(1,3,0.5,0.5),oma=c(3,1,0.5,0.25),xpd=F);
+layout(matrix(c(1:2),2,1,byrow=T))
+
+xlim.val=c(1995,2019);by.x=5;xmaj=seq(xlim.val[1],xlim.val[2],by.x);xmin=seq(xlim.val[1],xlim.val[2],by.x/by.x)
+ylim.val=c(-0.4,0.4);by.y=0.2;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+plot(mean.AMO~WY,amo.WY.dat,xlim=xlim.val,ylim=ylim.val,type="n",axes=F,ann=F)
+abline(h=ymaj,v=xmaj,lty=1,col=adjustcolor("grey",0.5))
+#with(AMO.dat.melt,lines(Date.mon,ma,col="red"))
+with(amo.WY.dat,shaded.range(WY,UCI,LCI,"grey",lty=1))
+lines(mean.AMO~WY,amo.WY.dat)
+abline(h=0)
+axis_fun(1,xmaj,xmin,NA)
+axis_fun(2,ymaj,ymin,format(ymaj,nsmall=1));box(lwd=1)
+abline(v=c(1996,2019),lty=2)
+text(1996+diff(c(1996,2019))/2,ylim.val[2],"Study Period",cex=0.75,font=3)
+mtext(side=2,line=2.5,"AMO Index")
+mtext(side=3,adj=0,"Water Year Mean \u00B1 95% CI")
+
+
+# png(filename=paste0(plot.path,"ClimateIndex.png"),width=6.5,height=4,units="in",res=200,type="windows",bg="white")
+par(family="serif",mar=c(1,3,0.5,1.5),oma=c(2,1,0.25,0.25),xpd=F);
+layout(matrix(c(1:2),2,1,byrow=T))
+
+xlim.val=date.fun(c("1870-01-01","2021-12-01"));xmaj=seq(xlim.val[1],xlim.val[2],"20 years");xmin=seq(xlim.val[1],xlim.val[2],"1 years")
+ylim.val=c(-0.4,0.4);by.y=0.2;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+plot(value~Date.mon,AMO.dat.melt,xlim=xlim.val,ylim=ylim.val,type="n",axes=F,ann=F)
+abline(h=ymaj,v=xmaj,lty=1,col=adjustcolor("grey",0.5))
+#with(AMO.dat.melt,lines(Date.mon,ma,col="red"))
+with(subset(AMO.dat.melt,is.na(value)==F),shaded.range(Date.mon,rep(0,length(Date.mon)),ifelse(value>0,value,0),"indianred1",lty=1))
+with(subset(AMO.dat.melt,is.na(value)==F),shaded.range(Date.mon,ifelse(value<0,value,0),rep(0,length(Date.mon)),"dodgerblue1",lty=1))
+abline(h=0)
+axis_fun(1,xmaj,xmin,NA)
+axis_fun(2,ymaj,ymin,format(ymaj,nsmall=1));box(lwd=1)
+abline(v=date.fun(c("1995-05-01","2019-05-01")),lty=2)
+text(date.fun(date.fun("1995-05-01")+lubridate::ddays(4383)),ylim.val[2],"Study Period",cex=0.75,font=3)
+mtext(side=2,line=2.5,"AMO Index")
+
+ylim.val=c(-4,4);by.y=2;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+plot(value~monCY.date,pdo,xlim=xlim.val,ylim=ylim.val,type="n",axes=F,ann=F)
+abline(h=ymaj,v=xmaj,lty=1,col=adjustcolor("grey",0.5))
+with(subset(pdo,is.na(value)==F),shaded.range(monCY.date,rep(0,length(monCY.date)),ifelse(value>0,value,0),"indianred1",lty=1))
+with(subset(pdo,is.na(value)==F),shaded.range(monCY.date,ifelse(value<0,value,0),rep(0,length(monCY.date)),"dodgerblue1",lty=1))
+abline(h=0)
+axis_fun(1,xmaj,xmin,format(xmaj,"%Y"),line=-0.5)
+axis_fun(2,ymaj,ymin,format(ymaj,nsmall=1));box(lwd=1)
+abline(v=date.fun(c("1995-05-01","2019-05-01")),lty=2)
+mtext(side=2,line=2.5,"PDO Index")
+mtext(side=1,line=1.5,"Year")
+dev.off()
+
+
 # 
 # # png(filename=paste0(plot.path,"ClimateIndex_v2.png"),width=6.5,height=4,units="in",res=200,type="windows",bg="white")
 # par(family="serif",mar=c(1,3,0.5,1.5),oma=c(2,1,0.25,0.25),xpd=F);

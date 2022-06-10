@@ -4,17 +4,19 @@
 .Ruserdata
 
 
+
 ## Added by PJ
 *.Rproj
 /Data/
 /GIS/
 /_manuscript/
-/Export/*
+/Export/
 README.Rmd
 
 *.RDataTmp
 *.RDataTmp*
 
-
+*.RData
+*.RData*
 
 /src/archive

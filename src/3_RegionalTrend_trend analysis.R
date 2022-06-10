@@ -6,14 +6,15 @@ Ncheck=ddply(dat.all.GM,c("STATION","variable"),summarise,N.val=N.obs(WY))
 subset(Ncheck,N.val<3)
 
 ann.trend=ddply(dat.all.GM,c("STATION","variable"),summarise,
-                   est=as.numeric(cor.test(WY,GM,method="kendall")$estimate),
-                   pval=cor.test(WY,GM,method="kendall")$p.value,
-                   sen.slope=as.numeric(zyp::zyp.sen(GM~WY)$coefficients[2]),
-                   N.WY=N.obs(WY))
+                est=as.numeric(cor.test(WY,GM,method="kendall")$estimate),
+                pval=cor.test(WY,GM,method="kendall")$p.value,
+                sen.slope=as.numeric(zyp::zyp.sen(GM~WY)$coefficients[2]),
+                N.WY=N.obs(WY))
 subset(ann.trend,pval<0.05)
 ann.trend$stat.sig=with(ann.trend,ifelse(pval<0.05,"sig","not-sig"))
 ann.trend$stat.sig=with(ann.trend,ifelse(is.na(stat.sig)==T,"Empty",as.character(stat.sig)))
 ann.trend$stat.sig=as.factor(ann.trend$stat.sig)
+
 
 AGM.all=ddply(dat.all.GM,c("STATION","variable"),summarise,
                  mean.GM=mean(GM,na.rm=T),
@@ -23,6 +24,10 @@ AGM.all=ddply(dat.all.GM,c("STATION","variable"),summarise,
                  pop.var=var.val*((N.val-1)/N.val), # population variance sigma^2 
                  sd.val=sd(GM,na.rm=T),
                  CV.val=cv.per(GM)*100)
+
+vars=c("TN","DIN","TP","SRP","Chla","TOC")
+col.vars=c("STATION", "variable", "est", "pval", "sen.slope", "N.WY")
+# write.csv(subset(ann.trend,variable%in%vars)[,col.vars],paste0(export.path,"TrendRslt_TableS2.csv"),row.names=F)
 
 # Spatial -----------------------------------------------------------------
 serc.shp=cbind(data.frame(STATION=serc.sites.shp$STATION),coordinates(serc.sites.shp))
@@ -39,7 +44,75 @@ wmd.shp=cbind(data.frame(STATION=ENP_FLB$STATION),coordinates(ENP_FLB))
 # wmd.shp$STATION=with(wmd.shp,ifelse(STATION=="S332DX","S332D",as.character(STATION)))
 colnames(wmd.shp)=c("STATION","UTMX","UTMY")
 
-sites.shp=rbind(serc.shp,lter.shp,wmd.shp)
+noaa.sites.shp2=cbind(data.frame(STATION=noaa.sites.shp$STATION),coordinates(noaa.sites.shp))
+colnames(noaa.sites.shp2)=c("STATION","UTMX","UTMY")
+
+sites.shp=rbind(serc.shp,lter.shp,wmd.shp,noaa.sites.shp2)
+rm(serc.shp,lter.shp,wmd.shp,noaa.sites.shp2)
+sites.shp.TableS1=merge(sites.shp,all.sites.region[,c("STATION","Region","source")],'STATION',all.x=T)
+
+# write.csv(sites.shp.TableS1,paste0(export.path,"Sites_TableS1.csv"),row.names = F)
+
+length(unique(sites.shp.TableS1$STATION))
+
+##### Quick Data inventory
+dat.inv=merge(dat.all.GM,sites.shp.TableS1[,c("STATION","Region")],"STATION",all.x=T)
+unique(dat.inv$Region)
+unique(subset(dat.inv,is.na(Region)==T)$STATION)
+
+dat.inv2=ddply(subset(dat.inv,is.na(Region)==F),
+               c("Region","WY","variable"),summarise,N.val=N.obs(GM))
+fill=data.frame(expand.grid(Region=unique(dat.inv2$Region),
+            WY=seq(1996,2019,1),
+            variable=unique(dat.inv2$variable)))
+dat.inv2=merge(dat.inv2,fill,c("Region","WY","variable"),all.y=T)
+dat.inv2$N.val[is.na(dat.inv2$N.val)==T]=0
+
+dat.inv2=merge(dat.inv2,data.frame(Region=c("Keys", "Shelf", "FLBay", "ENP", "Coastal_Mangroves"),
+                                   Region.plot=c(5,4,3,1,2)),"Region")
+subset(dat.inv2,Region=="Shelf"&variable=="TP")
+
+plot(Region.plot~WY,subset(dat.inv2,variable=='DIN'))
+axis_fun(2,1:5,1:5,c("ENP", "Coastal_Mangroves", "FLBay", 
+                     "Shelf", "Keys"))
+bks=c(0,1,10,25,50,100,200)
+dat.inv2$count.cat=as.factor(findInterval(dat.inv2$N.val,
+                                              bks))#,rightmost.closed = T,left.open = T))
+cols.vir=rev(viridis::inferno(6))
+cols.vir=rev(viridis::plasma(6))
+cols.vir[1]="white"
+dat.inv2$cols=cols.vir[dat.inv2$count.cat]
+
+ylim.val=c(1,5);by.y=1;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/by.y)
+ylim.val2=ylim.val
+ylim.val=c(ylim.val[1]-0.5,ylim.val[2]+0.5)
+xlim.val=c(1996,2019);by.x=5;xmaj=seq(xlim.val[1],xlim.val[2],by.x);xmin=seq(xlim.val[1],xlim.val[2],by.x/by.x)
+xlim.val=c(xlim.val[1]-0.5,xlim.val[2]+0.5)
+
+par(family="serif",mar=c(2,1,1,0.75),oma=c(1,5,0.5,1));
+layout(matrix(c(1:2),1,2,byrow=T),widths=c(1,0.5))
+
+plot(Region.plot~WY,subset(dat.inv2,variable=='TP'),xlim=xlim.val,ylim=rev(ylim.val),type="n",xaxs="i",yaxs="i",axes=F,ann=F)
+for(i in seq(ylim.val2[1],ylim.val2[2],1)){
+  tmp=subset(dat.inv2,variable=='DIN'&Region.plot==i)  
+    rect(seq(xlim.val[1],xlim.val[2],1),i+0.5,2020.5,i-0.5,col=tmp$cols,border=adjustcolor("grey",0.3),lwd=0.1)
+}
+  axis_fun(1,xmaj,xmin,xmaj,line=-0.75,cex=0.80)
+  axis_fun(2,rev(ymaj),ymin,rev(c("ENP", "Coastal Mangroves", "FLBay", 
+                              "Shelf", "Keys")),cex=0.75)
+  box(lwd=1)
+  mtext(side=2,line=4,"Region")
+  mtext(side=1,line=1.75,"WY",cex=0.95)
+  
+plot(0:1,0:1,axes=F,ann=F,type="n")
+legend("center",legend=c("No Samples","1 - 10", "10 - 25","25 - 50","50 - 100","100 - 200"),
+       lty=0,col="black",pch=22,
+       pt.bg=cols.vir,lwd=0.1,
+       pt.cex=1.5,ncol=1,cex=0.9,bty="n",y.intersp=1,x.intersp=0.75,xpd=NA,xjust=0,yjust=1,
+       title.adj = 0,title="Number of Sites\nDIN")
+
+#####
+
 sites.shp2=SpatialPointsDataFrame(sites.shp[,c("UTMX","UTMY")],data=sites.shp,proj4string = utm17)
 
 sites.shp.TN.trend=merge(sites.shp2,subset(ann.trend,variable=="TN"),"STATION",all.y=T)
@@ -76,6 +149,7 @@ plot(tps.TN.trend)
 m=Tps(coordinates(sites.shp.DIN.trend),sites.shp.DIN.trend$sen.slope)
 tps=interpolate(region.buf.r,m)
 tps.DIN.trend=mask(tps,region.mask)
+plot(tps.DIN.trend)
 
 # TP
 m=Tps(coordinates(sites.shp.TP.trend),sites.shp.TP.trend$sen.slope)
@@ -91,6 +165,14 @@ tps.SRP.trend=mask(tps,region.mask)
 m=Tps(coordinates(sites.shp.Chla.trend),sites.shp.Chla.trend$sen.slope)
 tps=interpolate(region.buf.r,m)
 tps.Chla.trend=mask(tps,region.mask)
+
+
+plot(tps.Chla.trend)
+plot(sites.shp.Chla.trend,pch=ifelse(sites.shp.Chla.trend$sen.slope<0,25,21),
+     bg=ifelse(sites.shp.Chla.trend$sen.slope<0,"red","black"),
+     add=T)
+
+plot(GM~WY,subset(dat.all.GM,variable=="Chla"&STATION=="FLAB13"))
 
 # TOC
 m=Tps(coordinates(sites.shp.TOC.trend),sites.shp.TOC.trend$sen.slope)
