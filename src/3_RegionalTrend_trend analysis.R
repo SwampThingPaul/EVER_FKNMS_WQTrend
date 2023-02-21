@@ -5,7 +5,7 @@
 Ncheck=ddply(dat.all.GM,c("STATION","variable"),summarise,N.val=N.obs(WY))
 subset(Ncheck,N.val<3)
 
-ann.trend=ddply(dat.all.GM,c("STATION","variable"),summarise,
+ann.trend=ddply(subset(dat.all.GM,WY%in%seq(1996,2019,1)),c("STATION","variable"),summarise,
                 est=as.numeric(cor.test(WY,GM,method="kendall")$estimate),
                 pval=cor.test(WY,GM,method="kendall")$p.value,
                 sen.slope=as.numeric(zyp::zyp.sen(GM~WY)$coefficients[2]),
@@ -16,14 +16,15 @@ ann.trend$stat.sig=with(ann.trend,ifelse(is.na(stat.sig)==T,"Empty",as.character
 ann.trend$stat.sig=as.factor(ann.trend$stat.sig)
 
 
-AGM.all=ddply(dat.all.GM,c("STATION","variable"),summarise,
+AGM.all=ddply(subset(dat.all.GM,WY%in%seq(1996,2019,1)),c("STATION","variable"),summarise,
                  mean.GM=mean(GM,na.rm=T),
                  N.val=N.obs(GM),
                  SE.val=SE(GM),
                  var.val=var(GM,na.rm=T),# sample variance s^2; use this one (variance within site)
                  pop.var=var.val*((N.val-1)/N.val), # population variance sigma^2 
                  sd.val=sd(GM,na.rm=T),
-                 CV.val=cv.per(GM)*100)
+                 CV.val=cv.per(GM)*100,
+              min.GM=min(GM,na.rm=T))
 
 vars=c("TN","DIN","TP","SRP","Chla","TOC")
 col.vars=c("STATION", "variable", "est", "pval", "sen.slope", "N.WY")
@@ -110,6 +111,9 @@ legend("center",legend=c("No Samples","1 - 10", "10 - 25","25 - 50","50 - 100","
        pt.bg=cols.vir,lwd=0.1,
        pt.cex=1.5,ncol=1,cex=0.9,bty="n",y.intersp=1,x.intersp=0.75,xpd=NA,xjust=0,yjust=1,
        title.adj = 0,title="Number of Sites\nDIN")
+
+#####
+# write.csv(dat.all.GM,paste0(export.path,"20230103_GM_allparam.csv"),row.names = F)
 
 #####
 

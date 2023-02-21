@@ -26,8 +26,12 @@ serc.sites.shp=spTransform(SpatialPointsDataFrame(serc.sites[,c("LONDEC","LATDEC
 tm_shape(serc.sites.shp)+tm_dots()+
   tm_shape(ENP_FLB)+tm_dots(col="red",alpha=0.5)+
   tm_shape(lter)+tm_dots(col="yellow",alpha=0.5)
+serc.sites.region=data.frame(sf::st_intersection(sf::st_as_sf(noaa.sites.shp),sf::st_as_sf(regions)))[,c("STATION","ESTUARY","SEGMENT_NA","Region")]
+# serc.sites.region=spatialEco::point.in.poly(serc.sites.shp,regions)@data[,c("STATION","ESTUARY","SEGMENT_NA","Region")]
 
-serc.sites.region=spatialEco::point.in.poly(serc.sites.shp,regions)@data[,c("STATION","ESTUARY","SEGMENT_NA","Region")]
+tm_shape(serc.sites.shp)+tm_dots()+
+  tm_shape(subset(serc.sites.shp,STATION==200))+tm_dots(col="red")
+
 # plot(serc.sites.shp)
 # plot(subset(serc.sites.shp,STATION%in%subset(serc.sites.region,is.na(Region)==F)$STATION),add=T,pch=21,bg="red")
 
@@ -155,7 +159,8 @@ fce.wq$STATION=fce.wq$SITENAME
 
 # write.csv(fce.wq,paste0(export.path,"fce_dat.csv"),row.names = F)
 
-LTER.sites.region=spatialEco::point.in.poly(lter,regions)@data[,c("SITE","ESTUARY","SEGMENT_NA","Region")]
+# LTER.sites.region=spatialEco::point.in.poly(lter,regions)@data[,c("SITE","ESTUARY","SEGMENT_NA","Region")]
+LTER.sites.region=data.frame(sf::st_intersection(sf::st_as_sf(lter),sf::st_as_sf(regions)))[,c("SITE","ESTUARY","SEGMENT_NA","Region")]
 LTER.sites.region=subset(LTER.sites.region,is.na(Region)==F)
 LTER.sites.region$source="LTER"
 LTER.sites.region=rbind(subset(LTER.sites.region,Region=="Coastal_Mangroves"),
@@ -321,7 +326,9 @@ points(DBHydro~Date.EST,subset(dat.comb,Station.ID=="FLAB13"&variable=="Chla"),
 
 wmd.dat.xtab.combo=reshape2::dcast(dat.comb,STATION+DATE+WY+season~variable,value.var = "value.f",mean,na.rm=T)
 rm(dat.comb)
-wmd.sites.region=spatialEco::point.in.poly(ENP_FLB,regions)@data[,c("STATION","ESTUARY","SEGMENT_NA","Region")]
+
+# wmd.sites.region=spatialEco::point.in.poly(ENP_FLB,regions)@data[,c("STATION","ESTUARY","SEGMENT_NA","Region")]
+wmd.sites.region=data.frame(sf::st_intersection(sf::st_as_sf(ENP_FLB),sf::st_as_sf(regions)))[,c("STATION","ESTUARY","SEGMENT_NA","Region")]
 wmd.sites.region=subset(wmd.sites.region,is.na(Region)==F)
 wmd.sites.region$source="WMD"
 wmd.sites.region=rbind(wmd.sites.region,
@@ -411,7 +418,10 @@ noaa.sites.shp=SpatialPointsDataFrame(noaa.sites[,c("LONG2","LAT2")],
                                       data=noaa.sites,proj4string = wgs84)
 noaa.sites.shp=spTransform(noaa.sites.shp,utm17)
 
-noaa.sites.region=spatialEco::point.in.poly(noaa.sites.shp,regions)@data[,c("STATION","ESTUARY","SEGMENT_NA","Region")]
+
+
+# noaa.sites.region=spatialEco::point.in.poly(noaa.sites.shp,regions)@data[,c("STATION","ESTUARY","SEGMENT_NA","Region")]
+noaa.sites.region=data.frame(sf::st_intersection(sf::st_as_sf(noaa.sites.shp),sf::st_as_sf(regions)))[,c("STATION","ESTUARY","SEGMENT_NA","Region")]
 noaa.sites.region=subset(noaa.sites.region,is.na(Region)==F)
 noaa.sites.region$source="NOAA"
 noaa.sites.region
@@ -537,3 +547,4 @@ summary(dat.all.GM2.xtab.info)
 # write.csv(dat.all.GM2.xtab.info,paste0(export.path,"20220521_WYGeomean.csv"),row.names=F)
 
 unique(dat.all.GM2.xtab.info$source)
+

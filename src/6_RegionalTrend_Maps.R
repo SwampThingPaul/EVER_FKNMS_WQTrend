@@ -665,6 +665,134 @@ bbox.lims=bbox(region.mask)
 }
 dev.off()
 
+
+subset(sites.shp.NP.trend,stat.sig=="sig")@data
+# png(filename=paste0(plot.path,"TNTP_trendzoom.png"),width=6,height=5,units="in",res=200,type="windows",bg="white")
+layout(matrix(c(1,1,1,2,2,3:7),5,2,byrow=F),widths=c(0.5,1))
+par(family="serif",mar=c(0.1,0.1,0.1,0.1),oma=c(2,0.5,0.5,0.5));
+
+sites_chge=c("NE1","TS/PH2","FLAB23","FLAB24","FLAB44")
+bbox.lims=bbox(ENP)
+plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.01)
+plot(wca,add=T,col="grey90",border=NA)
+plot(canal,add=T,col="lightblue",lwd=1)
+plot(ENP,add=T,bg=NA,lwd=1)
+plot(sites.shp2,add=T,pch=21,bg=NA,col="grey")
+plot(subset(sites.shp2,STATION%in%sites_chge),add=T,pch=21,bg="red")
+text(subset(sites.shp2,STATION%in%sites_chge[c(1,2,3,5)]),"STATION",halo=T,pos=2,offset=0.5)
+text(subset(sites.shp2,STATION%in%sites_chge[4]),"STATION",halo=T,pos=1,offset=0.5)
+mapmisc::scaleBar(utm17,"bottomleft",bty="n",cex=1,seg.len=4)
+box(lwd=1)
+
+plot(0:1,0:1,ann=F,axes=F,type="n")
+legend("center",legend=c("Annual Geometric\nMean Value","Trend \u00B1 95% CI"),
+       pch=c(21,NA),lty=c(NA,1),lwd=c(0.1,1),
+       col=c("black","black"),pt.bg=c("dodgerblue1",NA),
+       pt.cex=1.5,ncol=1,cex=1,bty="n",y.intersp=1,x.intersp=0.75,xpd=NA,xjust=0.5,yjust=1)
+
+
+xlim.val=c(1995,2019);by.x=5;xmaj=seq(xlim.val[1],xlim.val[2],by.x);xmin=seq(xlim.val[1],xlim.val[2],by.x/by.x)
+# ylim.val=c(0,1200);by.y=200;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+ylim.max=c(1000,400,1100,800,200)
+by.y.val=c(250,100,250,200,50)
+par(mar=c(1,5,0.5,0.5),xpd=F)
+for(i in 1:5){
+  ylim.val=c(0,ylim.max[i]);by.y=by.y.val[i];ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+  tmp.dat=subset(dat.all.GM,WY%in%seq(1995,2019,1)&STATION==sites_chge[i]&variable=="TN_TP")
+  plot(GM~WY,tmp.dat,axes=F,ann=F,type="n",xlim=xlim.val,ylim=ylim.val)
+  abline(h=ymaj,v=xmaj,lty=3,lwd=0.5,col="grey")
+  with(tmp.dat,pt_line(WY,GM,2,"dodgerblue1",1,21,"dodgerblue1",pt.lwd=0.01,cex=1.25))
+  mod=mblm(GM~WY,tmp.dat)
+  x.val=seq(min(tmp.dat$WY),max(tmp.dat$WY),length.out=50)
+  mod.pred=predict(mod,data.frame(WY=x.val),interval="confidence")
+  lines(x.val,mod.pred[,1])
+  lines(x.val,mod.pred[,2],lty=2)
+  lines(x.val,mod.pred[,3],lty=2)
+  if(i==5){axis_fun(1,xmaj,xmin,xmaj,line=-0.5)}else{axis_fun(1,xmaj,xmin,NA,line=-0.5)}
+  axis_fun(2,ymaj,ymin,ymaj)
+  box(lwd=1)
+  mtext(side=3,adj=0,paste0(" ",sites_chge[i]),line=-1.25)
+  if(i==3){mtext(side=2,line=3,"Annual Geometric Mean TN:TP")}
+}
+mtext(side=1,line=2,"Water Year")
+dev.off()  
+
+
+
+
+
+# png(filename=paste0(plot.path,"TrendMaps_TN_TP_trend.png"),width=4.5,height=4,units="in",res=200,type="windows",bg="white")
+par(family="serif",oma=c(0.25,0.25,0.25,0.25),mar=c(0.1,0.1,0.1,0.1),xpd=F)
+layout(matrix(c(1:6),3,2,byrow=T),widths = c(1,0.4))
+{
+  # TN
+  plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.05)
+  n=10
+  int.bks=c(min(values(tps.TN.trend),na.rm=T),0+min(values(tps.TN.trend),na.rm=T)/2,0,0+max(values(tps.TN.trend),na.rm=T)/2,max(values(tps.TN.trend),na.rm=T)) #int$brks;#int.bks[2]=0
+  pal=hcl.colors(length(int.bks)-1, "viridis", rev = F,alpha=0.7)
+  image(tps.TN.trend,add=T,breaks=int.bks,col = pal)
+  plot(ENP,add=T,bg=NA,lwd=0.5)
+  plot(regions2,lty=2,add=T,border="grey80",lwd=0.5)
+  plot(sites.shp2,add=T,cex=0.40,pch=21,bg=adjustcolor("grey",0.5),col="grey",lwd=0.1)
+  plot(sites.shp.TN.trend,add=T,pch=21,cex=0.5,bg=adjustcolor(cols.val,0.5)[sites.shp.TN.trend$stat.sig],col=NA);
+  box(lwd=1)
+  mapmisc::scaleBar(utm17,"bottomright",bty="n",cex=1,seg.len=4)
+  plot(0:1,0:1,ann=F,axes=F,type="n")
+  int.bks.vals=format(round(int.bks,3),nsmall=3)
+  labs=c(paste0("< ",int.bks.vals[2]),paste(int.bks.vals[2:3],int.bks.vals[3:4],sep=" - "),paste(paste0(">",int.bks.vals[4])))
+  n.bks=length(int.bks)-1
+  bx.val= seq(0.45,0.85,(0.85-0.45)/n.bks)
+  rect(0.15,bx.val[1:n.bks],0.25,bx.val[2:(n.bks+1)],col=rev(pal),lty=0)
+  text(x=0.25, y = bx.val[2:(n.bks+1)]-c(mean(diff(bx.val[2:(n.bks+1)]))/2), labels = rev(labs),cex=0.6,adj=0,pos=4)
+  text(x=0.15,y=0.95,"TN Thiel-Sen Slope\n(mg N L\u207B\u00B9 Yr\u207B\u00B9)",adj=0,cex=0.75)
+  legend(0.5,0.4,legend=c("Insufficent Data","\u03C1 > 0.05","\u03C1 < 0.05"),
+         pch=21,lty=c(NA),lwd=c(0.1),
+         col=c("grey"),pt.bg=c("grey",cols.val[2:3]),
+         pt.cex=1,ncol=1,cex=0.6,bty="n",y.intersp=1,x.intersp=0.75,xpd=NA,xjust=0.5,yjust=1,title.adj = 0,title="Kendall's trend \u03C1-value")
+  
+  # TP
+  plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.05,xpd=F)
+  int.bks=c(min(values(tps.TP.trend),na.rm=T),0+min(values(tps.TP.trend),na.rm=T)/2,0,0+max(values(tps.TP.trend),na.rm=T)/2,max(values(tps.TP.trend),na.rm=T)) #int$brks;#int.bks[2]=0
+  pal=hcl.colors(length(int.bks)-1, "viridis", rev = F,alpha=0.7)
+  image(tps.TP.trend,add=T,breaks=int.bks,col = pal)
+  plot(ENP,add=T,bg=NA,lwd=0.5)
+  plot(regions2,lty=2,add=T,border="grey80",lwd=0.5)
+  plot(sites.shp2,add=T,cex=0.40,pch=21,bg=adjustcolor("grey",0.5),col="grey",lwd=0.1)
+  plot(sites.shp.TP.trend,add=T,pch=21,cex=0.5,bg=adjustcolor(cols.val,0.5)[sites.shp.TP.trend$stat.sig],col=NA);
+  box(lwd=1)
+  # mapmisc::scaleBar(utm17,"bottomright",bty="n",cex=1,seg.len=4)
+  plot(0:1,0:1,ann=F,axes=F,type="n")
+  int.bks.vals=format(round(int.bks,3),nsmall=3)
+  labs=c(paste0("< ",int.bks.vals[2]),paste(int.bks.vals[2:3],int.bks.vals[3:4],sep=" - "),paste(paste0(">",int.bks.vals[4])))
+  n.bks=length(int.bks)-1
+  bx.val= seq(0.45,0.85,(0.85-0.45)/n.bks)
+  rect(0.15,bx.val[1:n.bks],0.25,bx.val[2:(n.bks+1)],col=rev(pal),lty=0)
+  text(x=0.25, y = bx.val[2:(n.bks+1)]-c(mean(diff(bx.val[2:(n.bks+1)]))/2), labels = rev(labs),cex=0.6,adj=0,pos=4)
+  text(x=0.15,y=0.95,"TP Thiel-Sen Slope\n(\u03BCg P L\u207B\u00B9 Yr\u207B\u00B9)",adj=0,cex=0.75)
+  
+  plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.05,xpd=F)
+  int.bks=c(min(values(tps.NP.trend),na.rm=T),0+min(values(tps.NP.trend),na.rm=T)/2,0,0+max(values(tps.NP.trend),na.rm=T)/2,max(values(tps.NP.trend),na.rm=T)) #int$brks;#int.bks[2]=0
+  pal=hcl.colors(length(int.bks)-1, "viridis", rev = F,alpha=0.7)
+  image(tps.NP.trend,add=T,breaks=int.bks,col = pal)
+  plot(ENP,add=T,bg=NA,lwd=0.5)
+  plot(regions2,lty=2,add=T,border="grey80",lwd=0.5)
+  plot(sites.shp2,add=T,cex=0.40,pch=21,bg=adjustcolor("grey",0.5),col="grey",lwd=0.1)
+  plot(sites.shp.NP.trend,add=T,pch=21,cex=0.5,bg=adjustcolor(cols.val,0.5)[sites.shp.NP.trend$stat.sig],col=NA);
+  box(lwd=1)
+  # mapmisc::scaleBar(utm17,"bottomright",bty="n",cex=1,seg.len=4)
+  plot(0:1,0:1,ann=F,axes=F,type="n")
+  int.bks.vals=format(round(int.bks,3),nsmall=3)
+  labs=c(paste0("< ",int.bks.vals[2]),paste(int.bks.vals[2:3],int.bks.vals[3:4],sep=" - "),paste(paste0(">",int.bks.vals[4])))
+  n.bks=length(int.bks)-1
+  bx.val= seq(0.45,0.85,(0.85-0.45)/n.bks)
+  rect(0.15,bx.val[1:n.bks],0.25,bx.val[2:(n.bks+1)],col=rev(pal),lty=0)
+  text(x=0.25, y = bx.val[2:(n.bks+1)]-c(mean(diff(bx.val[2:(n.bks+1)]))/2), labels = rev(labs),cex=0.6,adj=0,pos=4)
+  text(x=0.15,y=0.95,"N:P Thiel-Sen Slope\n(Yr\u207B\u00B9)",adj=0,cex=0.75)
+}
+dev.off()
+
+
+
 # png(filename=paste0(plot.path,"minNP_map.png"),width=6,height=3,units="in",res=200,type="windows",bg="white")
 par(family="serif",oma=c(0.25,0.25,0.25,0.25),mar=c(0.1,0.1,0.1,0.1),xpd=F)
 layout(matrix(c(1:2),1,2,byrow=T),widths = c(1,0.5))
@@ -673,7 +801,7 @@ plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xl
 plot(ENP,add=T,bg=NA,lwd=0.5)
 plot(regions2,lty=2,add=T,border="grey80",lwd=0.5)
 bks=c(0,16,21,1000)
-sites.shp.NP.GM$redfield=with(sites.shp.NP.GM@data, as.factor(findInterval(min.val,bks,left.open = FALSE,rightmost.closed = TRUE)))
+sites.shp.NP.GM$redfield=with(sites.shp.NP.GM@data, as.factor(findInterval(min.GM,bks,left.open = FALSE,rightmost.closed = TRUE)))
 cols.lim=c("red","yellow","green")
 # cols.lim=with(sites.shp.NP.GM@data,ifelse(min.val<=16,"red","green"))
 plot(sites.shp.NP.GM,add=T,pch=21,cex=0.8,
@@ -763,6 +891,53 @@ bbox.lims=bbox(region.mask)
 }
 dev.off()
 
+# png(filename=paste0(plot.path,"TrendMaps_Chla_v2.png"),width=4.5,height=3.5,units="in",res=200,type="windows",bg="white")
+par(family="serif",oma=c(0.25,0.25,0.25,0.25),mar=c(0.1,0.1,0.1,0.1),xpd=F)
+layout(matrix(c(1:4),2,2,byrow=T),widths = c(1,0.4))
+bbox.lims=bbox(region.mask)
+{
+  # Chla
+  plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.05,xpd=F)
+  int.bks=c(min(values(tps.Chla.trend),na.rm=T),0+min(values(tps.Chla.trend),na.rm=T)/2,0,0+max(values(tps.Chla.trend),na.rm=T)/2,max(values(tps.Chla.trend),na.rm=T)) #int$brks;#int.bks[2]=0
+  pal=hcl.colors(length(int.bks)-1, "viridis", rev = F,alpha=0.7)
+  image(tps.Chla.trend,add=T,breaks=int.bks,col = pal)
+  plot(ENP,add=T,bg=NA,lwd=0.5)
+  plot(regions2,lty=2,add=T,border="grey80",lwd=0.5)
+  plot(sites.shp2,add=T,cex=0.40,pch=21,bg=adjustcolor("grey",0.5),col="grey",lwd=0.1)
+  plot(sites.shp.Chla.trend,add=T,pch=21,cex=0.5,bg=adjustcolor(cols.val,0.5)[sites.shp.Chla.trend$stat.sig],col=NA);
+  box(lwd=1)
+  mapmisc::scaleBar(utm17,"bottomright",bty="n",cex=1,seg.len=4)
+  plot(0:1,0:1,ann=F,axes=F,type="n")
+  int.bks.vals=format(round(int.bks,3),nsmall=3)
+  labs=c(paste0("< ",int.bks.vals[2]),paste(int.bks.vals[2:3],int.bks.vals[3:4],sep=" - "),paste(paste0(">",int.bks.vals[4])))
+  n.bks=length(int.bks)-1
+  bx.val= seq(0.45,0.85,(0.85-0.45)/n.bks)
+  rect(0.15,bx.val[1:n.bks],0.25,bx.val[2:(n.bks+1)],col=rev(pal),lty=0)
+  text(x=0.25, y = bx.val[2:(n.bks+1)]-c(mean(diff(bx.val[2:(n.bks+1)]))/2), labels = rev(labs),cex=0.6,adj=0,pos=4)
+  text(x=0.15,y=0.95,"Chl-a Thiel-Sen Slope\n(\u03BCg L\u207B\u00B9 Yr\u207B\u00B9)",adj=0,cex=0.75)
+  legend(0.5,0.4,legend=c("Insufficent Data","\u03C1 > 0.05","\u03C1 < 0.05"),
+         pch=21,lty=c(NA),lwd=c(0.1),
+         col=c("grey"),pt.bg=c("grey",cols.val[2:3]),
+         pt.cex=1,ncol=1,cex=0.6,bty="n",y.intersp=1,x.intersp=0.75,xpd=NA,xjust=0.5,yjust=1,title.adj = 0,title="Kendall's trend \u03C1-value")
+  
+  plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.05,xpd=F)
+  int=classIntervals(values(tps.Chla.GM)[is.na(values(tps.Chla.GM))==F],n=n,style="equal")
+  int.bks=int$brks
+  pal=hcl.colors(length(int$brks)-1, "Inferno", rev = F,alpha=0.7)
+  image(tps.Chla.GM,add=T,breaks=int.bks,col = pal)
+  plot(ENP,add=T,bg=NA,lwd=0.5)
+  plot(regions2,lty=2,add=T,border="grey80",lwd=0.5)
+  plot(sites.shp.Chla.GM,add=T,pch=21,cex=0.25,bg=adjustcolor("white",0.5),col=NA)
+  box(lwd=1)
+  plot(0:1,0:1,ann=F,axes=F,type="n")
+  legend_image=as.raster(matrix(pal,ncol=1))
+  text(x=0.25, y = c(0.83,0.47), labels = c("< 0.2","6.5"),cex=0.6,adj=0,pos=4)
+  rasterImage(legend_image,0.15,0.45,0.25,0.85)
+  text(x=0.15,y=0.95,"Average Annual GM\nChl-a (\u03BCg L\u207B\u00B9)",adj=0,cex=0.75)
+  
+}
+dev.off()
+
 # png(filename=paste0(plot.path,"TrendMaps_TOC.png"),width=7.5,height=2.25,units="in",res=200,type="windows",bg="white")
 par(family="serif",oma=c(0.25,0.25,0.25,0.25),mar=c(0.1,0.1,0.1,0.1),xpd=F)
 layout(matrix(c(1:4),1,4,byrow=T),widths = c(1,0.4,1,0.5))
@@ -807,5 +982,52 @@ bbox.lims=bbox(region.mask)
   text(x=0.25, y = c(0.83,0.47), labels = c("< 0.2",">20"),cex=0.6,adj=0,pos=4)
   rasterImage(legend_image,0.15,0.45,0.25,0.85)
   text(x=0.15,y=0.95,"Average Annual GM TOC\n(mg C L\u207B\u00B9)",adj=0,cex=0.75)
+}
+dev.off()
+
+# png(filename=paste0(plot.path,"TrendMaps_TOC_v2.png"),width=4.5,height=3.5,units="in",res=200,type="windows",bg="white")
+par(family="serif",oma=c(0.25,0.25,0.25,0.25),mar=c(0.1,0.1,0.1,0.1),xpd=F)
+layout(matrix(c(1:4),2,2,byrow=T),widths = c(1,0.4))
+bbox.lims=bbox(region.mask)
+{
+  # TOC
+  plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.05,xpd=F)
+  int.bks=c(min(values(tps.TOC.trend),na.rm=T),0+min(values(tps.TOC.trend),na.rm=T)/2,0,0+max(values(tps.TOC.trend),na.rm=T)/2,max(values(tps.TOC.trend),na.rm=T)) #int$brks;#int.bks[2]=0
+  pal=hcl.colors(length(int.bks)-1, "viridis", rev = F,alpha=0.7)
+  image(tps.TOC.trend,add=T,breaks=int.bks,col = pal)
+  plot(ENP,add=T,bg=NA,lwd=0.5)
+  plot(regions2,lty=2,add=T,border="grey80",lwd=0.5)
+  plot(sites.shp2,add=T,cex=0.40,pch=21,bg=adjustcolor("grey",0.5),col="grey",lwd=0.1)
+  plot(sites.shp.TOC.trend,add=T,pch=21,cex=0.5,bg=adjustcolor(cols.val,0.5)[sites.shp.TOC.trend$stat.sig],col=NA);
+  box(lwd=1)
+  mapmisc::scaleBar(utm17,"bottomright",bty="n",cex=1,seg.len=4)
+  
+  plot(0:1,0:1,ann=F,axes=F,type="n")
+  int.bks.vals=format(round(int.bks,3),nsmall=3)
+  labs=c(paste0("< ",int.bks.vals[2]),paste(int.bks.vals[2:3],int.bks.vals[3:4],sep=" - "),paste(paste0(">",int.bks.vals[4])))
+  n.bks=length(int.bks)-1
+  bx.val= seq(0.45,0.85,(0.85-0.45)/n.bks)
+  rect(0.15,bx.val[1:n.bks],0.25,bx.val[2:(n.bks+1)],col=rev(pal),lty=0)
+  text(x=0.25, y = bx.val[2:(n.bks+1)]-c(mean(diff(bx.val[2:(n.bks+1)]))/2), labels = rev(labs),cex=0.6,adj=0,pos=4)
+  text(x=0.15,y=0.95,"TOC Thiel-Sen Slope\n(mg C L\u207B\u00B9 Yr\u207B\u00B9)",adj=0,cex=0.75)
+  legend(0.5,0.4,legend=c("Insufficent Data","\u03C1 > 0.05","\u03C1 < 0.05"),
+         pch=21,lty=c(NA),lwd=c(0.1),
+         col=c("grey"),pt.bg=c("grey",cols.val[2:3]),
+         pt.cex=1,ncol=1,cex=0.6,bty="n",y.intersp=1,x.intersp=0.75,xpd=NA,xjust=0.5,yjust=1,title.adj = 0,title="Kendall's trend \u03C1-value")
+  
+  plot(shore,col="cornsilk",border="grey",bg="lightblue",ylim=bbox.lims[c(2,4)],xlim=bbox.lims[c(1,3)],lwd=0.05,xpd=F)
+  int=classIntervals(values(tps.TOC.GM)[is.na(values(tps.TOC.GM))==F],n=n,style="equal")
+  int.bks=int$brks
+  pal=hcl.colors(length(int$brks)-1, "Inferno", rev = F,alpha=0.7)
+  image(tps.TOC.GM,add=T,breaks=int.bks,col = pal)
+  plot(ENP,add=T,bg=NA,lwd=0.5)
+  plot(regions2,lty=2,add=T,border="grey80",lwd=0.5)
+  plot(sites.shp.TOC.GM,add=T,pch=21,cex=0.25,bg=adjustcolor("white",0.5),col=NA)
+  box(lwd=1)
+  plot(0:1,0:1,ann=F,axes=F,type="n")
+  legend_image=as.raster(matrix(pal,ncol=1))
+  text(x=0.25, y = c(0.83,0.47), labels = c("< 0.2",">20"),cex=0.6,adj=0,pos=4)
+  rasterImage(legend_image,0.15,0.45,0.25,0.85)
+  text(x=0.15,y=0.95,"Average Annual GM\nTOC (mg C L\u207B\u00B9)",adj=0,cex=0.75)
 }
 dev.off()
