@@ -11,6 +11,7 @@
 /GIS/
 /_manuscript/
 /Export/
+/Export/wmd_dat.csv
 
 
 README.Rmd
@@ -21,4 +22,5 @@ README.Rmd
 *.RData
 *.RData*
 
-/src/archive
+/src/archive_other
+/src/archive_explore
