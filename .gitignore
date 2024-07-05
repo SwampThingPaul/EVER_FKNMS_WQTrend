@@ -10,9 +10,10 @@
 /Data/
 /GIS/
 /_manuscript/
-/Export/
+/Export
 /Export/wmd_dat.csv
 
+/export/
 
 README.Rmd
 

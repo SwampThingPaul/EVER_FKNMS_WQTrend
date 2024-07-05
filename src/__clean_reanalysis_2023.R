@@ -123,6 +123,7 @@ dev.data.val=function(model,smooth.id,n=400,var.names,nc=nc){
   return(newd)
 }
 
+source(paste0(wd,"/src/cldList_sort.R"))
 
 # load(paste0(export.path,"regiontrend_reanalysis.RData"))
 
@@ -851,14 +852,13 @@ ddply(subset(dat.all.GM,variable%in%c("TN","DIN","TP","SRP","Chla","TOC","TN_TP"
 
 cols=c("white",adjustcolor(wesanderson::wes_palette("Zissou1",4,"continuous"),0.5))
 levels.var.labs=c("ENP\n(Marsh)","Mangrove\nFringe","Florida\nBay","W. Florida\nShelf","Keys\n")
-# png(filename=paste0(plot.path,"revised/Fig2_RegionComp.png"),width=6.5,height=5,units="in",res=200,type="windows",bg="white")
-par(family="serif",mar=c(1,3.5,0.5,0.75),oma=c(3,1,1,0.5));
-layout(matrix(c(1:6),3,2,byrow=T))
 
 ylim.val=c(0,2);by.y=0.5;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
 x=boxplot(GM~Region.f,subset(dat.all.GM,variable=="TN"),outline=F,ylim=ylim.val,axes=F,ann=F,col=cols,boxwex=0.5)
 TN.DT=with(subset(dat.all.GM,variable=="TN"),dunn.test(GM, Region.f))
-TN.DT.ltr=cldList(P.adjusted ~ comparison,data=TN.DT,threshold = 0.05)
+median.sum=aggregate(GM~Region.f,subset(dat.all.GM,variable=="TN"),median,na.rm=T)
+median.sum=median.sum[order(median.sum$GM,decreasing = T),]
+TN.DT.ltr=cldList_sort(P.adjusted ~ comparison,data=TN.DT,threshold = 0.05,cust.sort = median.sum$Region.f)
 TN.DT.ltr$Letter=toupper(TN.DT.ltr$Letter)
 TN.DT.ltr=TN.DT.ltr[order(match(TN.DT.ltr$Group,levels.var)),]
 text(1:5,x$stats[5,],TN.DT.ltr$Letter,pos=3)
@@ -867,16 +867,43 @@ axis_fun(1,1:5,1:5,NA);box(lwd=1)
 mtext(side=2,line=2.5,"TN (mg N L\u207B\u00B9)")
 mtext(side=3,adj=1,line=-1.25,"A ",font=2)
 
-tmp=data.frame(com=TN.DT$comparisons,z.val=TN.DT$Z)
-tmp$comp1=sapply(strsplit(tmp$com,"-"),"[",1)
-tmp$comp2=sapply(strsplit(tmp$com,"-"),"[",2)
-# tapply(subset(dat.all.GM,variable=="TN")$GM, INDEX = subset(dat.all.GM,variable=="TN")$Region.f, FUN = mean)
-tapply(tmp$z.val, INDEX = tmp$comp1, FUN = median)
+
+
+# png(filename=paste0(plot.path,"revised/Fig2_RegionComp.png"),width=6.5,height=5,units="in",res=200,type="cairo",bg="white")
+par(family="serif",mar=c(1,3.5,0.5,0.75),oma=c(3,1,1,0.5));
+layout(matrix(c(1:6),3,2,byrow=T))
+
+ylim.val=c(0,2);by.y=0.5;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
+x=boxplot(GM~Region.f,subset(dat.all.GM,variable=="TN"),outline=F,ylim=ylim.val,axes=F,ann=F,col=cols,boxwex=0.5)
+TN.DT=with(subset(dat.all.GM,variable=="TN"),dunn.test(GM, Region.f))
+median.sum=aggregate(GM~Region.f,subset(dat.all.GM,variable=="TN"),median,na.rm=T)
+median.sum=median.sum[order(median.sum$GM,decreasing = T),]
+TN.DT.ltr=cldList_sort(P.adjusted ~ comparison,data=TN.DT,threshold = 0.05,cust.sort = median.sum$Region.f)
+TN.DT.ltr$Letter=toupper(TN.DT.ltr$Letter)
+TN.DT.ltr=TN.DT.ltr[order(match(TN.DT.ltr$Group,levels.var)),]
+text(1:5,x$stats[5,],TN.DT.ltr$Letter,pos=3)
+axis_fun(2,ymaj,ymin,format(ymaj))
+axis_fun(1,1:5,1:5,NA);box(lwd=1)
+mtext(side=2,line=2.5,"TN (mg N L\u207B\u00B9)")
+mtext(side=3,adj=1,line=-1.25,"A ",font=2)
+
+# tmp=data.frame(com=TN.DT$comparisons,z.val=TN.DT$Z)
+# tmp$comp1=sapply(strsplit(tmp$com,"-"),"[",1)
+# tmp$comp2=sapply(strsplit(tmp$com,"-"),"[",2)
+# # tapply(subset(dat.all.GM,variable=="TN")$GM, INDEX = subset(dat.all.GM,variable=="TN")$Region.f, FUN = mean)
+# tapply(tmp$z.val, INDEX = tmp$comp1, FUN = median)
+# tmp=data.frame(com=TN.DT$comparisons,z.val=TN.DT$Z)
+# tmp$comp1=sapply(strsplit(tmp$com,"-"),"[",1)
+# tmp$comp2=sapply(strsplit(tmp$com,"-"),"[",2)
+# # tapply(subset(dat.all.GM,variable=="TN")$GM, INDEX = subset(dat.all.GM,variable=="TN")$Region.f, FUN = mean)
+# tapply(tmp$z.val, INDEX = tmp$comp1, FUN = median)
 
 ylim.val=c(0,2.1);by.y=0.5;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
 x=boxplot(GM~Region.f,subset(dat.all.GM,variable=="DIN"),outline=F,ylim=ylim.val,axes=F,ann=F,col=cols,boxwex=0.5)
 DIN.DT=with(subset(dat.all.GM,variable=="DIN"),dunn.test(GM, Region.f))
-DIN.DT.ltr=cldList(P.adjusted ~ comparison,data=DIN.DT,threshold = 0.05)
+median.sum=aggregate(GM~Region.f,subset(dat.all.GM,variable=="DIN"),median,na.rm=T)
+median.sum=median.sum[order(median.sum$GM,decreasing = T),]
+DIN.DT.ltr=cldList_sort(P.adjusted ~ comparison,data=DIN.DT,threshold = 0.05,cust.sort = median.sum$Region.f)
 DIN.DT.ltr$Letter=toupper(DIN.DT.ltr$Letter)
 DIN.DT.ltr=DIN.DT.ltr[order(match(DIN.DT.ltr$Group,levels.var)),]
 text(1:5,x$stats[5,],DIN.DT.ltr$Letter,pos=3)
@@ -888,7 +915,9 @@ mtext(side=3,adj=1,line=-1.25,"B ",font=2)
 ylim.val=c(0,60);by.y=20;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
 x=boxplot(GM~Region.f,subset(dat.all.GM,variable=="TP"),outline=F,ylim=ylim.val,axes=F,ann=F,col=cols,boxwex=0.5)
 TP.DT=with(subset(dat.all.GM,variable=="TP"),dunn.test(GM, Region.f))
-TP.DT.ltr=cldList(P.adjusted ~ comparison,data=TP.DT,threshold = 0.05)
+median.sum=aggregate(GM~Region.f,subset(dat.all.GM,variable=="TP"),median,na.rm=T)
+median.sum=median.sum[order(median.sum$GM,decreasing = T),]
+DIN.DT.ltr=cldList_sort(P.adjusted ~ comparison,data=TP.DT,threshold = 0.05,cust.sort = median.sum$Region.f)
 TP.DT.ltr$Letter=toupper(TP.DT.ltr$Letter)
 TP.DT.ltr=TP.DT.ltr[order(match(TP.DT.ltr$Group,levels.var)),]
 text(1:5,x$stats[5,],TP.DT.ltr$Letter,pos=3)
@@ -900,7 +929,9 @@ mtext(side=3,adj=1,line=-1.25,"C ",font=2)
 ylim.val=c(0,10);by.y=2;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
 x=boxplot(GM~Region.f,subset(dat.all.GM,variable=="SRP"),outline=F,ylim=ylim.val,axes=F,ann=F,col=cols,boxwex=0.5)
 SRP.DT=with(subset(dat.all.GM,variable=="SRP"),dunn.test(GM, Region.f))
-SRP.DT.ltr=cldList(P.adjusted ~ comparison,data=SRP.DT,threshold = 0.05)
+median.sum=aggregate(GM~Region.f,subset(dat.all.GM,variable=="SRP"),median,na.rm=T)
+median.sum=median.sum[order(median.sum$GM,decreasing = T),]
+DIN.DT.ltr=cldList_sort(P.adjusted ~ comparison,data=SRP.DT,threshold = 0.05,cust.sort = median.sum$Region.f)
 SRP.DT.ltr$Letter=toupper(SRP.DT.ltr$Letter)
 SRP.DT.ltr=SRP.DT.ltr[order(match(SRP.DT.ltr$Group,levels.var)),]
 text(1:5,x$stats[5,],SRP.DT.ltr$Letter,pos=3)
@@ -912,21 +943,25 @@ mtext(side=3,adj=1,line=-1.25,"D ",font=2)
 
 ylim.val=c(0,7);by.y=2;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
 x=boxplot(GM~Region.f,subset(dat.all.GM,variable=="Chla"),outline=F,ylim=ylim.val,axes=F,ann=F,col=cols,boxwex=0.5)
-Chla.DT=with(subset(dat.all.GM,variable=="SRP"),dunn.test(GM, Region.f))
-Chla.DT.ltr=cldList(P.adjusted ~ comparison,data=Chla.DT,threshold = 0.05)
+Chla.DT=with(subset(dat.all.GM,variable=="Chla"),dunn.test(GM, Region.f))
+median.sum=aggregate(GM~Region.f,subset(dat.all.GM,variable=="Chla"),median,na.rm=T)
+median.sum=median.sum[order(median.sum$GM,decreasing = T),]
+Chla.DT.ltr=cldList_sort(P.adjusted ~ comparison,data=Chla.DT,threshold = 0.05,cust.sort = median.sum$Region.f)
 Chla.DT.ltr$Letter=toupper(Chla.DT.ltr$Letter)
 Chla.DT.ltr=Chla.DT.ltr[order(match(Chla.DT.ltr$Group,levels.var)),]
 text(1:5,x$stats[5,],Chla.DT.ltr$Letter,pos=3)
 axis_fun(2,ymaj,ymin,format(ymaj))
 axis_fun(1,1:5,1:5,levels.var.labs,line=0.3,cex=0.8);box(lwd=1)
 mtext(side=2,line=2.5,"Chl-a (\u03BCg L\u207B\u00B9)")
-mtext(side=1,line=1,outer=T,"Region")
+# mtext(side=1,line=1,outer=T,"Region")
 mtext(side=3,adj=1,line=-1.25,"E ",font=2)
 
 ylim.val=c(0,30);by.y=10;ymaj=seq(ylim.val[1],ylim.val[2],by.y);ymin=seq(ylim.val[1],ylim.val[2],by.y/2)
 x=boxplot(GM~Region.f,subset(dat.all.GM,variable=="TOC"),outline=F,ylim=ylim.val,axes=F,ann=F,col=cols,boxwex=0.5)
-TOC.DT=with(subset(dat.all.GM,variable=="SRP"),dunn.test(GM, Region.f))
-TOC.DT.ltr=cldList(P.adjusted ~ comparison,data=TOC.DT,threshold = 0.05)
+TOC.DT=with(subset(dat.all.GM,variable=="TOC"),dunn.test(GM, Region.f))
+median.sum=aggregate(GM~Region.f,subset(dat.all.GM,variable=="TOC"),median,na.rm=T)
+median.sum=median.sum[order(median.sum$GM,decreasing = T),]
+TOC.DT.ltr=cldList_sort(P.adjusted ~ comparison,data=TOC.DT,threshold = 0.05,cust.sort = median.sum$Region.f)
 TOC.DT.ltr$Letter=toupper(TOC.DT.ltr$Letter)
 TOC.DT.ltr=TOC.DT.ltr[order(match(TOC.DT.ltr$Group,levels.var)),]
 text(1:5,x$stats[5,],TOC.DT.ltr$Letter,pos=3)
@@ -948,7 +983,10 @@ x=boxplot(GM~Region.f,subset(dat.all.GM,variable=="TN_TP"),outline=F,
           ylim=ylim.val,axes=F,ann=F,col=cols,boxwex=0.5,log="y");
 abline(h=16,lty=2,col="indianred1")
 NP.DT=with(subset(dat.all.GM,variable=="TN_TP"),dunn.test(GM, Region.f))
-NP.DT.ltr=cldList(P.adjusted ~ comparison,data=NP.DT,threshold = 0.05)
+median.sum=aggregate(GM~Region.f,subset(dat.all.GM,variable=="TN_TP"),median,na.rm=T)
+median.sum=median.sum[order(median.sum$GM,decreasing = T),]
+NP.DT.ltr=cldList_sort(P.adjusted ~ comparison,data=NP.DT,threshold = 0.05,cust.sort = median.sum$Region.f)
+# NP.DT.ltr=cldList(P.adjusted ~ comparison,data=NP.DT,threshold = 0.05)
 NP.DT.ltr$Letter=toupper(NP.DT.ltr$Letter)
 NP.DT.ltr=NP.DT.ltr[order(match(NP.DT.ltr$Group,levels.var)),]
 text(1:5,x$stats[5,],NP.DT.ltr$Letter,pos=3)
@@ -963,7 +1001,10 @@ x=boxplot(GM~Region.f,subset(dat.all.GM,variable=="DIN_SRP"),outline=F,
           ylim=ylim.val,axes=F,ann=F,col=cols,boxwex=0.5,log="y");
 abline(h=16,lty=2,col="indianred1")
 NP.DT=with(subset(dat.all.GM,variable=="DIN_SRP"),dunn.test(GM, Region.f))
-NP.DT.ltr=cldList(P.adjusted ~ comparison,data=NP.DT,threshold = 0.05)
+median.sum=aggregate(GM~Region.f,subset(dat.all.GM,variable=="DIN_SRP"),median,na.rm=T)
+median.sum=median.sum[order(median.sum$GM,decreasing = T),]
+NP.DT.ltr=cldList_sort(P.adjusted ~ comparison,data=NP.DT,threshold = 0.05,cust.sort = median.sum$Region.f)
+# NP.DT.ltr=cldList(P.adjusted ~ comparison,data=NP.DT,threshold = 0.05)
 NP.DT.ltr$Letter=toupper(NP.DT.ltr$Letter)
 NP.DT.ltr=NP.DT.ltr[order(match(NP.DT.ltr$Group,levels.var)),]
 text(1:5,x$stats[5,],NP.DT.ltr$Letter,pos=3)
@@ -977,7 +1018,10 @@ x=boxplot(GM~Region.f,subset(dat.all.GM,variable=="TOC_TP"),outline=F,
           ylim=ylim.val,axes=F,ann=F,col=cols,boxwex=0.5,log="y");
 abline(h=106,lty=2,col="indianred1")
 NP.DT=with(subset(dat.all.GM,variable=="TOC_TP"),dunn.test(GM, Region.f))
-NP.DT.ltr=cldList(P.adjusted ~ comparison,data=NP.DT,threshold = 0.05)
+median.sum=aggregate(GM~Region.f,subset(dat.all.GM,variable=="TOC_TP"),median,na.rm=T)
+median.sum=median.sum[order(median.sum$GM,decreasing = T),]
+NP.DT.ltr=cldList_sort(P.adjusted ~ comparison,data=NP.DT,threshold = 0.05,cust.sort = median.sum$Region.f)
+# NP.DT.ltr=cldList(P.adjusted ~ comparison,data=NP.DT,threshold = 0.05)
 NP.DT.ltr$Letter=toupper(NP.DT.ltr$Letter)
 NP.DT.ltr=NP.DT.ltr[order(match(NP.DT.ltr$Group,levels.var)),]
 text(1:5,x$stats[5,],NP.DT.ltr$Letter,pos=3)
@@ -991,7 +1035,10 @@ x=boxplot(GM~Region.f,subset(dat.all.GM,variable=="TOC_SRP"),outline=F,
           ylim=ylim.val,axes=F,ann=F,col=cols,boxwex=0.5,log="y");
 abline(h=106,lty=2,col="indianred1")
 NP.DT=with(subset(dat.all.GM,variable=="TOC_SRP"),dunn.test(GM, Region.f))
-NP.DT.ltr=cldList(P.adjusted ~ comparison,data=NP.DT,threshold = 0.05)
+median.sum=aggregate(GM~Region.f,subset(dat.all.GM,variable=="TOC_SRP"),median,na.rm=T)
+median.sum=median.sum[order(median.sum$GM,decreasing = T),]
+NP.DT.ltr=cldList_sort(P.adjusted ~ comparison,data=NP.DT,threshold = 0.05,cust.sort = median.sum$Region.f)
+# NP.DT.ltr=cldList(P.adjusted ~ comparison,data=NP.DT,threshold = 0.05)
 NP.DT.ltr$Letter=toupper(NP.DT.ltr$Letter)
 NP.DT.ltr=NP.DT.ltr[order(match(NP.DT.ltr$Group,levels.var)),]
 text(1:5,x$stats[5,],NP.DT.ltr$Letter,pos=3)
@@ -1005,7 +1052,10 @@ x=boxplot(GM~Region.f,subset(dat.all.GM,variable=="TOC_TN"),outline=F,
           ylim=ylim.val,axes=F,ann=F,col=cols,boxwex=0.5,log="y");
 abline(h=6.6,lty=2,col="indianred1")
 NP.DT=with(subset(dat.all.GM,variable=="TOC_TN"),dunn.test(GM, Region.f))
-NP.DT.ltr=cldList(P.adjusted ~ comparison,data=NP.DT,threshold = 0.05)
+median.sum=aggregate(GM~Region.f,subset(dat.all.GM,variable=="TOC_TN"),median,na.rm=T)
+median.sum=median.sum[order(median.sum$GM,decreasing = T),]
+NP.DT.ltr=cldList_sort(P.adjusted ~ comparison,data=NP.DT,threshold = 0.05,cust.sort = median.sum$Region.f)
+# NP.DT.ltr=cldList(P.adjusted ~ comparison,data=NP.DT,threshold = 0.05)
 NP.DT.ltr$Letter=toupper(NP.DT.ltr$Letter)
 NP.DT.ltr=NP.DT.ltr[order(match(NP.DT.ltr$Group,levels.var)),]
 text(1:5,x$stats[5,],NP.DT.ltr$Letter,pos=3)
@@ -1019,7 +1069,10 @@ x=boxplot(GM~Region.f,subset(dat.all.GM,variable=="TOC_DIN"),outline=F,
           ylim=ylim.val,axes=F,ann=F,col=cols,boxwex=0.5,log="y");
 abline(h=6.6,lty=2,col="indianred1")
 NP.DT=with(subset(dat.all.GM,variable=="TOC_DIN"),dunn.test(GM, Region.f))
-NP.DT.ltr=cldList(P.adjusted ~ comparison,data=NP.DT,threshold = 0.05)
+median.sum=aggregate(GM~Region.f,subset(dat.all.GM,variable=="TOC_DIN"),median,na.rm=T)
+median.sum=median.sum[order(median.sum$GM,decreasing = T),]
+NP.DT.ltr=cldList_sort(P.adjusted ~ comparison,data=NP.DT,threshold = 0.05,cust.sort = median.sum$Region.f)
+# NP.DT.ltr=cldList(P.adjusted ~ comparison,data=NP.DT,threshold = 0.05)
 NP.DT.ltr$Letter=toupper(NP.DT.ltr$Letter)
 NP.DT.ltr=NP.DT.ltr[order(match(NP.DT.ltr$Group,levels.var)),]
 text(1:5,x$stats[5,],NP.DT.ltr$Letter,pos=3)
@@ -1028,10 +1081,7 @@ axis_fun(1,1:5,1:5,levels.var.labs,line=0.3,cex=0.8);box(lwd=1)
 mtext(side=2,line=3,"OC:DIN\n(molar ratio)")
 mtext(side=3,adj=1,line=-1.25,"F ",font=2)
 
-
 mtext(side=1,line=1,outer=T,"Region")
-
-
 dev.off()
 
 #C:N:P 106:16:1
